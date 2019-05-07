@@ -2,8 +2,8 @@ FROM openjdk:8-jre-alpine
 ENV MAVEN_OPTS=""
 ARG BMRG_TAG
 
-COPY pom.xml .
-RUN mvn dependency:go-offline
+#COPY pom.xml .
+#RUN mvn dependency:go-offline
 
 COPY . .
 RUN mvn clean package -Dmaven.test.skip=true -Dversion.name=$BMRG_TAG
