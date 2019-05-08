@@ -1,0 +1,18 @@
+{
+    "_id" : ObjectId("5cd328ae1e9bbbb710590d9d"),
+    "key" : "static_code_analysis",
+    "name" : "Static Code Analysis",
+    "description":"The following policy metrics are retrieved from SonarQube",
+    "order" : "0",
+    "rules" : [{
+        "key": "lines",
+        "type": "number",
+        "defaultValue":""
+    },
+    {
+        "key": "complexity",
+        "type": "percentage",
+        "operator": "Less Than",
+        "defaultValue":""
+    }]
+}

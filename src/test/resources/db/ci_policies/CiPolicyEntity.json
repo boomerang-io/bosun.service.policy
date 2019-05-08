@@ -1,0 +1,14 @@
+{
+    "_id" : ObjectId("5c5b5a0b352b1b614143b7c3"),
+    "name" : "Code Medium Validation",
+    "templateId" : "12345",
+    "teamId": "9999",
+    "rules" : [{
+        "key": "lines",
+        "value":""
+    },
+    {
+        "key": "complexity",
+        "value":""
+    }]
+}
