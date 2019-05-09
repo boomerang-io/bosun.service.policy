@@ -13,7 +13,7 @@ public interface CitadelService {
   
   List<CiPolicy> getPoliciesByTeamId(String teamId);
   
-  CiPolicy addPolicy(String teamId, CiPolicy policy);
+  CiPolicy addPolicy(CiPolicy policy);
   
-  CiPolicy updatePolicy(String teamId, CiPolicy policy);
+  CiPolicy updatePolicy(CiPolicy policy);
 }

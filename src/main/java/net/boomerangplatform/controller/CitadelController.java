@@ -24,7 +24,7 @@ public class CitadelController {
 
   @GetMapping(value = "/teams")
   public ResponseEntity<?> getAllTeams() {
-    return ResponseEntity.ok().build(); // TODO How should I received all teams select distinct ?
+    return ResponseEntity.ok().build(); // TODO same with ci service getTeams
   }
 
   @GetMapping(value = "/policies/definitions")
@@ -45,29 +45,25 @@ public class CitadelController {
 
   @PostMapping(value = "/policies/policies")
   public ResponseEntity<CiPolicy> addPolicy(
-      @RequestParam(value = "teamId", required = true) String teamId,
       @RequestBody CiPolicy policy) {
-    return ResponseEntity.ok().body(citadelService.addPolicy(teamId, policy));
+    return ResponseEntity.ok().body(citadelService.addPolicy(policy));
   }
 
   @PatchMapping(value = "/policies/policies")
   public ResponseEntity<CiPolicy> updatePolicy(
-      @RequestParam(value = "teamId", required = true) String teamId,
       @RequestBody CiPolicy policy) {
-    return ResponseEntity.ok().body(citadelService.updatePolicy(teamId, policy));
+    return ResponseEntity.ok().body(citadelService.updatePolicy(policy));
   }
 
   @GetMapping(value = "/policies/policies/violations")
   public ResponseEntity<?> getViolations(
-      @RequestParam(value = "teamId", required = true) String teamId) { // TODO: what should
-                                                                        // display?
+      @RequestParam(value = "teamId", required = true) String teamId) { // TODO:
     return ResponseEntity.ok().build();
   }
 
   @GetMapping(value = "/policies/policies/insights")
   public ResponseEntity<?> getInsights(
-      @RequestParam(value = "teamId", required = true) String teamId) { // TODO: what should
-                                                                        // display?
+      @RequestParam(value = "teamId", required = true) String teamId) { // TODO:
     return ResponseEntity.ok().build();
   }
 }

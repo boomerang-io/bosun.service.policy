@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import net.boomerangplatform.citadel.model.CiPolicy;
 import net.boomerangplatform.citadel.model.CiPolicyDefinition;
 import net.boomerangplatform.mongo.entity.CiPolicyDefinitionEntity;
@@ -49,9 +50,19 @@ public class CitadelServiceImpl implements CitadelService {
     List<CiPolicyEntity> entities = ciPolicyService.findByTeamId(teamId);
     List<CiPolicy> policies = new ArrayList<>();
 
+    List<CiPolicyDefinitionEntity> definitions = ciPolicyService.findAllDefinitions();
+
     entities.forEach(entity -> {
       CiPolicy policy = new CiPolicy();
       BeanUtils.copyProperties(entity, policy);
+
+      CiPolicyDefinition policyDefinition = new CiPolicyDefinition();
+      CiPolicyDefinitionEntity definitionEntity = definitions.stream()
+          .filter(d -> entity.getCiPolicyDefinitionId().equals(d.getId())).findFirst().orElse(null);
+      Assert.notNull(definitionEntity, "The definition is missing!");
+      BeanUtils.copyProperties(definitionEntity, policyDefinition);
+      policy.setCiPolicyDefinition(policyDefinition);
+
       policies.add(policy);
     });
 
@@ -59,20 +70,17 @@ public class CitadelServiceImpl implements CitadelService {
   }
 
   @Override
-  public CiPolicy addPolicy(String teamId, CiPolicy policy) {
-    policy.setTeamId(teamId);
+  public CiPolicy addPolicy(CiPolicy policy) {
     CiPolicyEntity entity = new CiPolicyEntity();
     BeanUtils.copyProperties(policy, entity);
     entity = ciPolicyService.add(entity);
     policy.setId(entity.getId());
 
     return policy;
-
   }
 
   @Override
-  public CiPolicy updatePolicy(String teamId, CiPolicy policy) {
-    policy.setTeamId(teamId);
+  public CiPolicy updatePolicy(CiPolicy policy) {
     CiPolicyEntity entity = ciPolicyService.findById(policy.getId());
     BeanUtils.copyProperties(policy, entity);
     ciPolicyService.update(entity);
