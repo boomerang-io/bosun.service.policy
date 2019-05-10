@@ -30,10 +30,10 @@ public class OpenPolicyAgentClient {
   @Qualifier("internalRestTemplate")
   private RestTemplate restTemplate;
 
-  public ResponseEntity<DataResponse> validateData(DataRequest dataRequest) {
+  public DataResponse validateData(DataRequest dataRequest) {
 
     final HttpHeaders headers = new HttpHeaders();
-    headers.add("Accept", "application/json");
+    headers.add("Content-Type", "application/json");
     final String url = opaBaseUrl + opaRestDataUrl + "/" + dataRequest.getInput().getPolicy().getKey();
 
     final HttpEntity<DataRequest> request = new HttpEntity<DataRequest>(dataRequest, headers);
@@ -43,6 +43,6 @@ public class OpenPolicyAgentClient {
     } catch (final Exception e) {
       logger.error(e.getMessage(), e);
     }
-    return response;
+    return response.getBody();
   }
 }

@@ -2,6 +2,7 @@ package net.boomerangplatform.opa.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DataRequestInput {
@@ -10,7 +11,7 @@ public class DataRequestInput {
   private DataRequestPolicy policy;
 
   @JsonProperty("data")
-  private DataRequestData data;
+  private JsonNode data;
 
   public DataRequestPolicy getPolicy() {
     return policy;
@@ -20,11 +21,11 @@ public class DataRequestInput {
     this.policy = policy;
   }
 
-  public DataRequestData getData() {
+  public JsonNode getData() {
     return data;
   }
 
-  public void setData(DataRequestData data) {
+  public void setData(JsonNode data) {
     this.data = data;
   }
 }

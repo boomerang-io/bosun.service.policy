@@ -1,0 +1,558 @@
+{
+    "input": {
+        "policy": {
+            "id": "12345",
+            "key": "whitelist",
+            "name": "Whitelist",
+            "description": "",
+            "order": "1",
+            "rules": [
+                {
+                    "type": "maven",
+                    "component": "bob-.*",
+                    "operator": "",
+                    "version": ".*"
+                },
+                {
+                    "type": "maven",
+                    "component": "jackson-annotator",
+                    "operator": "",
+                    "version": "2.8.0"
+                }
+            ]
+        },
+        "data": {
+            "component_name": "service.jar",
+            "component_id": "net.boomerangplatform:service-ci:${version.name}",
+            "package_type": "Maven",
+            "created": "2019-05-04T12:43:27Z",
+            "components": [
+                {
+                    "component_name": "spring-security-core-4.2.3.RELEASE.jar",
+                    "component_id": "org.springframework.security:spring-security-samples-preauth:4.2.3.RELEASE",
+                    "package_type": "Maven",
+                    "created": "2017-06-07T23:20:14Z",
+                    "components": []
+                },
+                {
+                    "component_name": "lib-util-0.2.8.jar",
+                    "component_id": "net.boomerangplatform:lib-util:${version.name}",
+                    "package_type": "Maven",
+                    "created": "2019-04-17T14:40:52Z",
+                    "components": []
+                },
+                {
+                    "component_name": "aspectjweaver-1.8.10.jar",
+                    "component_id": "org.aspectj:aspectjweaver:1.8.10",
+                    "package_type": "Maven",
+                    "created": "2016-12-12T05:08:02Z",
+                    "components": []
+                },
+                {
+                    "component_name": "spring-boot-starter-aop-1.5.7.RELEASE.jar",
+                    "component_id": "org.springframework.boot:spring-boot-starter-aop:1.5.7.RELEASE",
+                    "package_type": "Maven",
+                    "created": "2017-09-12T05:19:16Z",
+                    "components": []
+                },
+                {
+                    "component_name": "lib-audit-0.1.31.jar",
+                    "component_id": "net.boomerangplatform:lib-audit:${version.name}",
+                    "package_type": "Maven",
+                    "created": "2018-11-20T12:22:32Z",
+                    "components": []
+                },
+                {
+                    "component_name": "log4j-web-2.7.jar",
+                    "component_id": "org.apache.logging.log4j:log4j-web:2.7",
+                    "package_type": "Maven",
+                    "created": "2016-10-02T06:31:10Z",
+                    "components": []
+                },
+                {
+                    "component_name": "jackson-annotations-2.8.0.jar",
+                    "component_id": "com.fasterxml.jackson.core:jackson-annotations:2.8.0",
+                    "package_type": "Maven",
+                    "created": "2016-07-03T17:20:36Z",
+                    "components": []
+                },
+                {
+                    "component_name": "json-20090211_1.jar",
+                    "component_id": "org.apache.geronimo.bundles:${pkgArtifactId}:20090211_1",
+                    "package_type": "Maven",
+                    "created": "2010-12-17T04:29:30Z",
+                    "components": []
+                },
+                {
+                    "component_name": "jackson-datatype-json-org-2.8.10.jar",
+                    "component_id": "com.fasterxml.jackson.datatype:jackson-datatype-json-org:2.8.10",
+                    "package_type": "Maven",
+                    "created": "2017-08-24T00:19:22Z",
+                    "components": []
+                },
+                {
+                    "component_name": "lib-mongo-2.4.18.jar",
+                    "component_id": "net.boomerangplatform:lib-mongo:${version.name}",
+                    "package_type": "Maven",
+                    "created": "2019-05-01T11:25:20Z",
+                    "components": []
+                },
+                {
+                    "component_name": "lib-rest-0.0.6.jar",
+                    "component_id": "net.boomerangplatform:lib-rest:0.0.6",
+                    "package_type": "Maven",
+                    "created": "2018-05-01T03:56:32Z",
+                    "components": []
+                },
+                {
+                    "component_name": "commons-lang3-3.7.jar",
+                    "component_id": "org.apache.commons:commons-lang3:3.7",
+                    "package_type": "Maven",
+                    "created": "2017-11-04T07:15:00Z",
+                    "components": []
+                },
+                {
+                    "component_name": "commons-text-1.3.jar",
+                    "component_id": "org.apache.commons:commons-text:1.3",
+                    "package_type": "Maven",
+                    "created": "2018-03-16T06:26:00Z",
+                    "components": []
+                },
+                {
+                    "component_name": "spring-security-web-4.2.3.RELEASE.jar",
+                    "component_id": "org.springframework.security:spring-security-samples-preauth:4.2.3.RELEASE",
+                    "package_type": "Maven",
+                    "created": "2017-06-07T23:20:28Z",
+                    "components": []
+                },
+                {
+                    "component_name": "aopalliance-1.0.jar",
+                    "component_id": "aopalliance:aopalliance:1.0",
+                    "package_type": "Maven",
+                    "created": "2004-03-19T08:57:02Z",
+                    "components": []
+                },
+                {
+                    "component_name": "spring-security-config-4.2.3.RELEASE.jar",
+                    "component_id": "org.springframework.security:spring-security-samples-preauth:4.2.3.RELEASE",
+                    "package_type": "Maven",
+                    "created": "2017-06-07T23:20:36Z",
+                    "components": []
+                },
+                {
+                    "component_name": "jjwt-0.9.0.jar",
+                    "component_id": "io.jsonwebtoken:jjwt:0.9.0",
+                    "package_type": "Maven",
+                    "created": "2017-10-10T10:14:30Z",
+                    "components": []
+                },
+                {
+                    "component_name": "lib-security-0.1.16.jar",
+                    "component_id": "net.boomerangplatform:lib-security:${version.name}",
+                    "package_type": "Maven",
+                    "created": "2019-01-24T13:02:26Z",
+                    "components": []
+                },
+                {
+                    "component_name": "jaxb-api-2.3.0.jar",
+                    "component_id": "javax.xml.bind:jaxb-api:2.3.0",
+                    "package_type": "Maven",
+                    "created": "2017-07-31T08:27:16Z",
+                    "components": []
+                },
+                {
+                    "component_name": "mapstruct-1.2.0.Final.jar",
+                    "component_id": "org.mapstruct:mapstruct:1.2.0.Final",
+                    "package_type": "Maven",
+                    "created": "2017-10-17T18:14:00Z",
+                    "components": []
+                },
+                {
+                    "component_name": "spring-plugin-metadata-1.2.0.RELEASE.jar",
+                    "component_id": "org.springframework.plugin:spring-plugin-metadata:1.2.0.RELEASE",
+                    "package_type": "Maven",
+                    "created": "2015-03-04T20:12:22Z",
+                    "components": []
+                },
+                {
+                    "component_name": "spring-plugin-core-1.2.0.RELEASE.jar",
+                    "component_id": "org.springframework.plugin:spring-plugin-core:1.2.0.RELEASE",
+                    "package_type": "Maven",
+                    "created": "2015-03-04T20:12:12Z",
+                    "components": []
+                },
+                {
+                    "component_name": "classmate-1.3.4.jar",
+                    "component_id": "com.fasterxml:classmate:1.3.4",
+                    "package_type": "Maven",
+                    "created": "2017-09-09T09:47:28Z",
+                    "components": []
+                },
+                {
+                    "component_name": "guava-20.0.jar",
+                    "component_id": "com.google.guava:guava:20.0",
+                    "package_type": "Maven",
+                    "created": "2016-10-28T11:56:18Z",
+                    "components": []
+                },
+                {
+                    "component_name": "javassist-3.21.0-GA.jar",
+                    "component_id": "org.javassist:javassist:3.21.0-GA",
+                    "package_type": "Maven",
+                    "created": "2016-10-03T07:44:56Z",
+                    "components": []
+                },
+                {
+                    "component_name": "reflections-0.9.11.jar",
+                    "component_id": "org.reflections:reflections:0.9.11",
+                    "package_type": "Maven",
+                    "created": "2017-03-24T10:32:14Z",
+                    "components": []
+                },
+                {
+                    "component_name": "springfox-spring-web-2.8.0.jar",
+                    "component_id": "io.springfox:springfox-core:2.8.0",
+                    "package_type": "Maven",
+                    "created": "2018-01-14T10:14:22Z",
+                    "components": []
+                },
+                {
+                    "component_name": "springfox-swagger-common-2.8.0.jar",
+                    "component_id": "io.springfox:springfox-core:2.8.0",
+                    "package_type": "Maven",
+                    "created": "2018-01-14T10:14:46Z",
+                    "components": []
+                },
+                {
+                    "component_name": "springfox-schema-2.8.0.jar",
+                    "component_id": "io.springfox:springfox-core:2.8.0",
+                    "package_type": "Maven",
+                    "created": "2018-01-14T10:14:34Z",
+                    "components": []
+                },
+                {
+                    "component_name": "byte-buddy-1.7.9.jar",
+                    "component_id": "net.bytebuddy:byte-buddy:1.7.9",
+                    "package_type": "Maven",
+                    "created": "2017-11-06T16:54:00Z",
+                    "components": []
+                },
+                {
+                    "component_name": "springfox-core-2.8.0.jar",
+                    "component_id": "io.springfox:springfox-core:2.8.0",
+                    "package_type": "Maven",
+                    "created": "2018-01-14T10:14:08Z",
+                    "components": []
+                },
+                {
+                    "component_name": "springfox-spi-2.8.0.jar",
+                    "component_id": "io.springfox:springfox-core:2.8.0",
+                    "package_type": "Maven",
+                    "created": "2018-01-14T10:14:08Z",
+                    "components": []
+                },
+                {
+                    "component_name": "swagger-models-1.5.14.jar",
+                    "component_id": "io.swagger:swagger-models:1.5.14",
+                    "package_type": "Maven",
+                    "created": "2017-06-13T08:31:16Z",
+                    "components": []
+                },
+                {
+                    "component_name": "swagger-annotations-1.5.14.jar",
+                    "component_id": "io.swagger:swagger-annotations:1.5.14",
+                    "package_type": "Maven",
+                    "created": "2017-06-13T08:30:58Z",
+                    "components": []
+                },
+                {
+                    "component_name": "springfox-swagger2-2.8.0.jar",
+                    "component_id": "io.springfox:springfox-core:2.8.0",
+                    "package_type": "Maven",
+                    "created": "2018-01-14T10:16:04Z",
+                    "components": []
+                },
+                {
+                    "component_name": "spring-boot-actuator-1.5.7.RELEASE.jar",
+                    "component_id": "org.springframework.boot:spring-boot-actuator:1.5.7.RELEASE",
+                    "package_type": "Maven",
+                    "created": "2017-09-12T05:18:10Z",
+                    "components": []
+                },
+                {
+                    "component_name": "spring-boot-starter-actuator-1.5.7.RELEASE.jar",
+                    "component_id": "org.springframework.boot:spring-boot-starter-actuator:1.5.7.RELEASE",
+                    "package_type": "Maven",
+                    "created": "2017-09-12T05:19:42Z",
+                    "components": []
+                },
+                {
+                    "component_name": "commons-io-2.4.jar",
+                    "component_id": "commons-io:commons-io:2.4",
+                    "package_type": "Maven",
+                    "created": "2012-06-12T13:19:42Z",
+                    "components": []
+                },
+                {
+                    "component_name": "commons-codec-1.10.jar",
+                    "component_id": "commons-codec:commons-codec:1.10",
+                    "package_type": "Maven",
+                    "created": "2014-11-06T03:14:42Z",
+                    "components": []
+                },
+                {
+                    "component_name": "httpcore-4.4.6.jar",
+                    "component_id": "org.apache.httpcomponents:httpcore:4.4.6",
+                    "package_type": "Maven",
+                    "created": "2017-01-07T08:49:50Z",
+                    "components": []
+                },
+                {
+                    "component_name": "httpclient-4.5.3.jar",
+                    "component_id": "org.apache.httpcomponents:httpclient:4.5.3",
+                    "package_type": "Maven",
+                    "created": "2017-01-21T11:00:04Z",
+                    "components": []
+                },
+                {
+                    "component_name": "slf4j-api-1.7.25.jar",
+                    "component_id": "org.slf4j:slf4j-api:1.7.25",
+                    "package_type": "Maven",
+                    "created": "2017-03-16T12:36:32Z",
+                    "components": []
+                },
+                {
+                    "component_name": "mongo-java-driver-3.4.3.jar",
+                    "component_id": "org.mongodb:mongo-java-driver:3.4.3",
+                    "package_type": "Maven",
+                    "created": "2017-07-31T11:09:56Z",
+                    "components": []
+                },
+                {
+                    "component_name": "spring-data-commons-1.13.7.RELEASE.jar",
+                    "component_id": "org.springframework.data:spring-data-commons:1.13.7.RELEASE",
+                    "package_type": "Maven",
+                    "created": "2017-09-11T06:53:48Z",
+                    "components": []
+                },
+                {
+                    "component_name": "spring-expression-4.3.11.RELEASE.jar",
+                    "component_id": "org.springframework:spring-expression:4.3.11.RELEASE",
+                    "package_type": "Maven",
+                    "created": "2017-09-11T02:56:06Z",
+                    "components": []
+                },
+                {
+                    "component_name": "spring-beans-4.3.11.RELEASE.jar",
+                    "component_id": "spring-beans-4.3.11.RELEASE.jar",
+                    "package_type": "Generic",
+                    "created": "2017-09-11T02:55:54Z",
+                    "components": []
+                },
+                {
+                    "component_name": "spring-context-4.3.11.RELEASE.jar",
+                    "component_id": "spring-context-4.3.11.RELEASE.jar",
+                    "package_type": "Generic",
+                    "created": "2017-09-11T02:56:20Z",
+                    "components": []
+                },
+                {
+                    "component_name": "spring-tx-4.3.11.RELEASE.jar",
+                    "component_id": "spring-tx-4.3.11.RELEASE.jar",
+                    "package_type": "Generic",
+                    "created": "2017-09-11T02:56:30Z",
+                    "components": []
+                },
+                {
+                    "component_name": "spring-data-mongodb-1.10.7.RELEASE.jar",
+                    "component_id": "org.springframework.data:spring-data-mongodb:1.10.7.RELEASE",
+                    "package_type": "Maven",
+                    "created": "2017-09-11T07:08:12Z",
+                    "components": []
+                },
+                {
+                    "component_name": "jul-to-slf4j-1.7.25.jar",
+                    "component_id": "org.slf4j:jul-to-slf4j:1.7.25",
+                    "package_type": "Maven",
+                    "created": "2017-03-16T12:37:48Z",
+                    "components": []
+                },
+                {
+                    "component_name": "jcl-over-slf4j-1.7.25.jar",
+                    "component_id": "org.slf4j:jcl-over-slf4j:1.7.25",
+                    "package_type": "Maven",
+                    "created": "2017-03-16T12:37:30Z",
+                    "components": []
+                },
+                {
+                    "component_name": "log4j-core-2.7.jar",
+                    "component_id": "org.apache.logging.log4j:log4j-core:2.7",
+                    "package_type": "Maven",
+                    "created": "2016-10-02T06:24:12Z",
+                    "components": []
+                },
+                {
+                    "component_name": "log4j-api-2.7.jar",
+                    "component_id": "org.apache.logging.log4j:log4j-api:2.7",
+                    "package_type": "Maven",
+                    "created": "2016-10-02T06:14:18Z",
+                    "components": []
+                },
+                {
+                    "component_name": "log4j-slf4j-impl-2.7.jar",
+                    "component_id": "org.apache.logging.log4j:log4j-slf4j-impl:2.7",
+                    "package_type": "Maven",
+                    "created": "2016-10-02T06:29:54Z",
+                    "components": []
+                },
+                {
+                    "component_name": "spring-boot-starter-log4j2-1.5.7.RELEASE.jar",
+                    "component_id": "org.springframework.boot:spring-boot-starter-log4j2:1.5.7.RELEASE",
+                    "package_type": "Maven",
+                    "created": "2017-09-12T05:19:40Z",
+                    "components": []
+                },
+                {
+                    "component_name": "snakeyaml-1.17.jar",
+                    "component_id": "org.yaml:snakeyaml:1.17",
+                    "package_type": "Maven",
+                    "created": "2016-02-19T07:13:32Z",
+                    "components": []
+                },
+                {
+                    "component_name": "spring-boot-autoconfigure-1.5.7.RELEASE.jar",
+                    "component_id": "org.springframework.boot:spring-boot-autoconfigure:1.5.7.RELEASE",
+                    "package_type": "Maven",
+                    "created": "2017-09-12T05:13:50Z",
+                    "components": []
+                },
+                {
+                    "component_name": "spring-boot-1.5.7.RELEASE.jar",
+                    "component_id": "org.springframework.boot:spring-boot:1.5.7.RELEASE",
+                    "package_type": "Maven",
+                    "created": "2017-09-12T05:07:20Z",
+                    "components": []
+                },
+                {
+                    "component_name": "spring-boot-starter-1.5.7.RELEASE.jar",
+                    "component_id": "org.springframework.boot:spring-boot-starter:1.5.7.RELEASE",
+                    "package_type": "Maven",
+                    "created": "2017-09-12T05:19:14Z",
+                    "components": []
+                },
+                {
+                    "component_name": "spring-core-4.3.11.RELEASE.jar",
+                    "component_id": "spring-core-4.3.11.RELEASE.jar",
+                    "package_type": "Generic",
+                    "created": "2017-09-11T02:55:48Z",
+                    "components": []
+                },
+                {
+                    "component_name": "spring-webmvc-4.3.11.RELEASE.jar",
+                    "component_id": "spring-webmvc-4.3.11.RELEASE.jar",
+                    "package_type": "Generic",
+                    "created": "2017-09-11T02:58:32Z",
+                    "components": []
+                },
+                {
+                    "component_name": "spring-aop-4.3.11.RELEASE.jar",
+                    "component_id": "spring-aop-4.3.11.RELEASE.jar",
+                    "package_type": "Generic",
+                    "created": "2017-09-11T02:55:56Z",
+                    "components": []
+                },
+                {
+                    "component_name": "spring-web-4.3.11.RELEASE.jar",
+                    "component_id": "spring-web-4.3.11.RELEASE.jar",
+                    "package_type": "Generic",
+                    "created": "2017-09-11T02:57:44Z",
+                    "components": []
+                },
+                {
+                    "component_name": "jackson-core-2.8.10.jar",
+                    "component_id": "com.fasterxml.jackson.core:jackson-core:2.8.10",
+                    "package_type": "Maven",
+                    "created": "2017-08-23T16:24:30Z",
+                    "components": []
+                },
+                {
+                    "component_name": "jackson-databind-2.8.10.jar",
+                    "component_id": "com.fasterxml.jackson.core:jackson-databind:2.8.10",
+                    "package_type": "Maven",
+                    "created": "2017-08-23T23:27:26Z",
+                    "components": []
+                },
+                {
+                    "component_name": "jboss-logging-3.3.1.Final.jar",
+                    "component_id": "org.jboss.logging:jboss-logging:3.3.1.Final",
+                    "package_type": "Maven",
+                    "created": "2017-03-15T08:22:08Z",
+                    "components": []
+                },
+                {
+                    "component_name": "validation-api-1.1.0.Final.jar",
+                    "component_id": "javax.validation:validation-api:1.1.0.Final",
+                    "package_type": "Maven",
+                    "created": "2013-04-10T10:02:44Z",
+                    "components": []
+                },
+                {
+                    "component_name": "hibernate-validator-5.3.5.Final.jar",
+                    "component_id": "org.hibernate:hibernate-validator:5.3.5.Final",
+                    "package_type": "Maven",
+                    "created": "2017-03-15T08:14:58Z",
+                    "components": []
+                },
+                {
+                    "component_name": "tomcat-embed-websocket-8.5.20.jar",
+                    "component_id": "org.apache.tomcat.embed:tomcat-embed-websocket:8.5.20",
+                    "package_type": "Maven",
+                    "created": "2017-08-02T17:36:12Z",
+                    "components": []
+                },
+                {
+                    "component_name": "tomcat-embed-el-8.5.20.jar",
+                    "component_id": "org.apache.tomcat.embed:tomcat-embed-el:8.5.20",
+                    "package_type": "Maven",
+                    "created": "2017-08-02T17:36:12Z",
+                    "components": []
+                },
+                {
+                    "component_name": "tomcat-embed-core-8.5.20.jar",
+                    "component_id": "org.apache.tomcat.embed:tomcat-embed-core:8.5.20",
+                    "package_type": "Maven",
+                    "created": "2017-08-02T17:36:12Z",
+                    "components": []
+                },
+                {
+                    "component_name": "spring-boot-starter-tomcat-1.5.7.RELEASE.jar",
+                    "component_id": "org.springframework.boot:spring-boot-starter-tomcat:1.5.7.RELEASE",
+                    "package_type": "Maven",
+                    "created": "2017-09-12T05:19:30Z",
+                    "components": []
+                },
+                {
+                    "component_name": "spring-boot-starter-web-1.5.7.RELEASE.jar",
+                    "component_id": "org.springframework.boot:spring-boot-starter-web:1.5.7.RELEASE",
+                    "package_type": "Maven",
+                    "created": "2017-09-12T05:19:30Z",
+                    "components": []
+                },
+                {
+                    "component_name": "commons-collections-3.2.2.jar",
+                    "component_id": "commons-collections:commons-collections:3.2.2",
+                    "package_type": "Maven",
+                    "created": "2015-11-12T18:10:38Z",
+                    "components": []
+                },
+                {
+                    "component_name": "commons-beanutils-1.9.3.jar",
+                    "component_id": "commons-beanutils:commons-beanutils:1.9.3",
+                    "package_type": "Maven",
+                    "created": "2016-09-21T12:21:16Z",
+                    "components": []
+                }
+            ]
+        }
+    }
+}

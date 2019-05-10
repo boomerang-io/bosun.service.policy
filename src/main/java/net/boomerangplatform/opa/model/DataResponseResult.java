@@ -1,20 +1,21 @@
 package net.boomerangplatform.opa.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class DataResponseResult {
 
   @JsonProperty("detail")
-  private DataResponseDetail detail;
+  private JsonNode detail;
 
   @JsonProperty("valid")
   private Boolean valid;
 
-  public DataResponseDetail getDetail() {
+  public JsonNode getDetail() {
     return detail;
   }
 
-  public void setDetail(DataResponseDetail detail) {
+  public void setDetail(JsonNode detail) {
     this.detail = detail;
   }
 
