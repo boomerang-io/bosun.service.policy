@@ -1,4 +1,4 @@
-package net.boomerangplatform.service;
+package net.boomerangplatform.repository.service;
 
 import net.boomerangplatform.repository.model.ArtifactSummary;
 import net.boomerangplatform.repository.model.DependencyGraph;
