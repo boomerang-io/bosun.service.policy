@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import net.boomerangplatform.citadel.model.CiPolicy;
+import net.boomerangplatform.citadel.model.CiPolicyConfig;
 import net.boomerangplatform.citadel.model.CiPolicyDefinition;
 import net.boomerangplatform.mongo.entity.CiPolicyDefinitionEntity;
 import net.boomerangplatform.mongo.entity.CiPolicyEntity;
@@ -54,15 +55,15 @@ public class CitadelServiceImpl implements CitadelService {
 
     entities.forEach(entity -> {
       CiPolicy policy = new CiPolicy();
-      BeanUtils.copyProperties(entity, policy);
-
-      CiPolicyDefinition policyDefinition = new CiPolicyDefinition();
-      CiPolicyDefinitionEntity definitionEntity = definitions.stream()
-          .filter(d -> entity.getCiPolicyDefinitionId().equals(d.getId())).findFirst().orElse(null);
-      Assert.notNull(definitionEntity, "The definition is missing!");
-      BeanUtils.copyProperties(definitionEntity, policyDefinition);
-      policy.setCiPolicyDefinition(policyDefinition);
-
+      BeanUtils.copyProperties(entity, policy, "definitions");
+      
+      entity.getDefinitions().forEach(definition -> {
+        CiPolicyConfig config = new CiPolicyConfig();
+        BeanUtils.copyProperties(definition, config);
+        config.setCiPolicyDefinition(getDefinition(definitions, definition.getCiPolicyDefinitionId()));
+        
+        policy.addDefinition(config);
+      });
       policies.add(policy);
     });
 
@@ -72,7 +73,7 @@ public class CitadelServiceImpl implements CitadelService {
   @Override
   public CiPolicy addPolicy(CiPolicy policy) {
     CiPolicyEntity entity = new CiPolicyEntity();
-    BeanUtils.copyProperties(policy, entity);
+    BeanUtils.copyProperties(policy, entity); 
     entity = ciPolicyService.add(entity);
     policy.setId(entity.getId());
 
@@ -88,4 +89,13 @@ public class CitadelServiceImpl implements CitadelService {
     return policy;
   }
 
+  private static CiPolicyDefinition getDefinition(List<CiPolicyDefinitionEntity> definitions, String definitionId) {
+    CiPolicyDefinition policyDefinition = new CiPolicyDefinition();
+    CiPolicyDefinitionEntity definitionEntity = definitions.stream()
+        .filter(d -> definitionId.equals(d.getId())).findFirst().orElse(null);
+    Assert.notNull(definitionEntity, "The definition is missing!");
+    BeanUtils.copyProperties(definitionEntity, policyDefinition);
+    
+    return policyDefinition;
+  }
 }

@@ -1,10 +1,8 @@
 package net.boomerangplatform.citadel.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import net.boomerangplatform.mongo.model.Property;
 
 public class CiPolicy implements Serializable {
 
@@ -16,11 +14,7 @@ public class CiPolicy implements Serializable {
 
   private String teamId;
 
-  private String ciPolicyDefinitionId;
-  
-  private CiPolicyDefinition ciPolicyDefinition;
-
-  private List<Property> rules;
+  private List<CiPolicyConfig> definitions = new ArrayList<>();
 
   public String getId() {
     return id;
@@ -46,33 +40,17 @@ public class CiPolicy implements Serializable {
     this.teamId = teamId;
   }
 
-  @JsonIgnore
-  public String getCiPolicyDefinitionId() {
-    return ciPolicyDefinitionId;
+  public List<CiPolicyConfig> getDefinitions() {
+    return definitions;
   }
 
-  @JsonProperty("templateId")
-  public void setCiPolicyDefinitionId(String ciPolicyDefinitionId) {
-    this.ciPolicyDefinitionId = ciPolicyDefinitionId;
+  public void setDefinitions(List<CiPolicyConfig> definitions) {
+    this.definitions = definitions;
   }
 
-  @JsonProperty("policyDefinition")
-  public CiPolicyDefinition getCiPolicyDefinition() {
-    return ciPolicyDefinition;
-  }
+  public void addDefinition(CiPolicyConfig definition) {
+    definitions.add(definition);
 
-  @JsonIgnore
-  public void setCiPolicyDefinition(CiPolicyDefinition ciPolicyDefinition) {
-    this.ciPolicyDefinition = ciPolicyDefinition;
   }
-
-  public List<Property> getRules() {
-    return rules;
-  }
-
-  public void setRules(List<Property> rules) {
-    this.rules = rules;
-  }
-
 
 }

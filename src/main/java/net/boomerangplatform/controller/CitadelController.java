@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import net.boomerangplatform.citadel.model.CiPolicy;
 import net.boomerangplatform.citadel.model.CiPolicyDefinition;
 import net.boomerangplatform.service.CitadelService;
+import net.boomerangplatform.service.TeamService;
+import net.boomerangplatform.team.model.CiTeam;
 
 @RestController
 @RequestMapping("/citadel")
@@ -22,9 +24,12 @@ public class CitadelController {
   @Autowired
   private CitadelService citadelService;
 
+  @Autowired
+  private TeamService teamService;
+
   @GetMapping(value = "/teams")
-  public ResponseEntity<?> getAllTeams() {
-    return ResponseEntity.ok().build(); // TODO same with ci service getTeams
+  public ResponseEntity<List<CiTeam>> getAllTeams() {
+    return ResponseEntity.ok().body(teamService.getTeams());
   }
 
   @GetMapping(value = "/policies/definitions")
@@ -44,14 +49,12 @@ public class CitadelController {
   }
 
   @PostMapping(value = "/policies/policies")
-  public ResponseEntity<CiPolicy> addPolicy(
-      @RequestBody CiPolicy policy) {
+  public ResponseEntity<CiPolicy> addPolicy(@RequestBody CiPolicy policy) {
     return ResponseEntity.ok().body(citadelService.addPolicy(policy));
   }
 
   @PatchMapping(value = "/policies/policies")
-  public ResponseEntity<CiPolicy> updatePolicy(
-      @RequestBody CiPolicy policy) {
+  public ResponseEntity<CiPolicy> updatePolicy(@RequestBody CiPolicy policy) {
     return ResponseEntity.ok().body(citadelService.updatePolicy(policy));
   }
 

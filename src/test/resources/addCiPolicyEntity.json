@@ -1,13 +1,21 @@
 {
     "name" : "Code High Validation",
-    "templateId" : "5cd328ae1e9bbbb710590d9d",
     "teamId": "9999",
-    "rules" : [{
-        "key": "lines",
-        "value":"99"
-    },
-    {
-        "key": "complexity",
-        "value":"Low"
-    }]
+    "definitions" : [ 
+        {
+            "ciPolicyDefinitionId" : "5cd328ae1e9bbbb710590d9d",
+            "rules" : [ 
+                {
+                    "metric" : "lines",
+                    "operator" : "Less Than",
+                    "value" : "10"
+                }, 
+                {
+                    "metric" : "complexity",
+                    "operator" : "Equals",
+                    "value" : "1000"
+                }
+            ]
+        }
+    ]
 }
