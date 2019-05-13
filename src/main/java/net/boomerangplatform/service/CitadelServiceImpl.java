@@ -61,9 +61,9 @@ public class CitadelServiceImpl implements CitadelService {
         CiPolicyConfig config = new CiPolicyConfig();
         BeanUtils.copyProperties(definition, config);
         config.setCiPolicyDefinition(getDefinition(definitions, definition.getCiPolicyDefinitionId()));
+        
         policy.addDefinition(config);
       });
-
       policies.add(policy);
     });
 
@@ -73,7 +73,7 @@ public class CitadelServiceImpl implements CitadelService {
   @Override
   public CiPolicy addPolicy(CiPolicy policy) {
     CiPolicyEntity entity = new CiPolicyEntity();
-    BeanUtils.copyProperties(policy, entity);
+    BeanUtils.copyProperties(policy, entity); 
     entity = ciPolicyService.add(entity);
     policy.setId(entity.getId());
 

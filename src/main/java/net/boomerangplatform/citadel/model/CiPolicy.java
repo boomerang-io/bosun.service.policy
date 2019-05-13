@@ -14,7 +14,7 @@ public class CiPolicy implements Serializable {
 
   private String teamId;
 
-  private List<CiPolicyConfig> definitions;
+  private List<CiPolicyConfig> definitions = new ArrayList<>();
 
   public String getId() {
     return id;
@@ -41,15 +41,16 @@ public class CiPolicy implements Serializable {
   }
 
   public List<CiPolicyConfig> getDefinitions() {
-    return definitions == null ? new ArrayList<>() : definitions;
+    return definitions;
   }
 
   public void setDefinitions(List<CiPolicyConfig> definitions) {
     this.definitions = definitions;
   }
-  
+
   public void addDefinition(CiPolicyConfig definition) {
-    getDefinitions().add(definition);
+    definitions.add(definition);
+
   }
 
 }

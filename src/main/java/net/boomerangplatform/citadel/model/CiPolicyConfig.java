@@ -21,6 +21,7 @@ public class CiPolicyConfig implements Serializable {
     return ciPolicyDefinitionId;
   }
 
+  @JsonProperty("ciPolicyDefinitionId")
   public void setCiPolicyDefinitionId(String ciPolicyDefinitionId) {
     this.ciPolicyDefinitionId = ciPolicyDefinitionId;
   }

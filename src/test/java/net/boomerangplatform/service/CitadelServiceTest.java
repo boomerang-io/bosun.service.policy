@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.boomerangplatform.AbstractBoomerangTest;
 import net.boomerangplatform.Application;
 import net.boomerangplatform.citadel.model.CiPolicy;
+import net.boomerangplatform.citadel.model.CiPolicyConfig;
 import net.boomerangplatform.citadel.model.CiPolicyDefinition;
 import net.boomerangplatform.mongo.model.Rule;
 
@@ -83,14 +84,18 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
 
     Assert.assertEquals("Code Medium Validation", policy.getName());
     Assert.assertEquals("5c5b5a0b352b1b614143b7c3", policy.getId());
-//    Assert.assertEquals("5cd328ae1e9bbbb710590d9d", policy.getCiPolicyDefinitionId());
-//
-//    Assert.assertEquals(teamId, policy.getTeamId());
-//    Assert.assertEquals(2, policy.getRules().size());
-//    Rule rule = policy.getRules().get(0);
-//
-//    Assert.assertEquals("lines", rule.getMetric());
-//    Assert.assertEquals("88", rule.getValue());
+    Assert.assertEquals(teamId, policy.getTeamId());
+    
+    Assert.assertEquals(1, policy.getDefinitions().size());
+    
+    CiPolicyConfig definition = policy.getDefinitions().get(0);
+    Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definition.getCiPolicyDefinitionId());
+
+    Assert.assertEquals(2, definition.getRules().size());
+    Rule rule = definition.getRules().get(0);
+
+    Assert.assertEquals("lines", rule.getMetric());
+    Assert.assertEquals("88", rule.getValue());
   }
 
 
@@ -99,18 +104,24 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
     CiPolicy policy = new ObjectMapper().readValue(loadResourceAsString("addCiPolicyEntity.json"),
         CiPolicy.class);
     CiPolicy policyReturn = citadelService.addPolicy(policy);
+    
+    System.out.println(parseToJson(policyReturn));
 
     Assert.assertEquals("Code High Validation", policyReturn.getName());
+    Assert.assertEquals(1, policyReturn.getDefinitions().size());
+    
+    CiPolicyConfig definition = policyReturn.getDefinitions().get(0);
+    
+    
+    String definitionId = definition.getCiPolicyDefinitionId();
+    Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definitionId);
 
-//    String definitionId = policyReturn.getCiPolicyDefinitionId();
-//    Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definitionId);
-//
-//
-//    List<CiPolicy> policies = citadelService.getPoliciesByTeamId("9999");
-//    Assert.assertEquals(2, policies.size());
-//
-//    CiPolicy policyFound = policies.get(0);
-//    Assert.assertEquals(definitionId, policyFound.getCiPolicyDefinition().getId());
+
+    List<CiPolicy> policies = citadelService.getPoliciesByTeamId("9999");
+    Assert.assertEquals(2, policies.size());
+
+    CiPolicy policyFound = policies.get(0);
+    Assert.assertEquals(definitionId, policyFound.getDefinitions().get(0).getCiPolicyDefinitionId());
   }
 
 
@@ -124,15 +135,17 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
 
     Assert.assertEquals("Code Low Validation", policyReturn.getName());
 
-//    String definitionId = policyReturn.getCiPolicyDefinitionId();
-//    Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definitionId);
-//
-//
-//    List<CiPolicy> policies = citadelService.getPoliciesByTeamId("9999");
-//    Assert.assertEquals(1, policies.size());
-//
-//    CiPolicy policyFound = policies.get(0);
-//    Assert.assertEquals(definitionId, policyFound.getCiPolicyDefinition().getId());
-//    Assert.assertEquals("Code Low Validation", policyFound.getName());
+    CiPolicyConfig ciPolicyConfig = policyReturn.getDefinitions().get(0);
+    String definitionId = ciPolicyConfig.getCiPolicyDefinitionId();
+    Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definitionId);
+
+
+    List<CiPolicy> policies = citadelService.getPoliciesByTeamId("9999");
+    Assert.assertEquals(1, policies.size());
+
+    CiPolicy policyFound = policies.get(0);
+    CiPolicyConfig ciPolicyConfigFounf = policyFound.getDefinitions().get(0);
+    Assert.assertEquals(definitionId, ciPolicyConfigFounf.getCiPolicyDefinition().getId());
+    Assert.assertEquals("Code Low Validation", policyFound.getName());
   }
 }

@@ -12,7 +12,7 @@
                 }, 
                 {
                     "metric" : "complexity",
-                    "operator" : "Less Than",
+                    "operator" : "Equals",
                     "value" : "1000"
                 }
             ]
