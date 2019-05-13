@@ -4,15 +4,41 @@
     "name" : "Static Code Analysis",
     "description":"The following policy metrics are retrieved from SonarQube",
     "order" : "0",
-    "rules" : [{
-        "key": "lines",
-        "type": "number",
-        "defaultValue":""
-    },
-    {
-        "key": "complexity",
-        "type": "percentage",
-        "operator": "Less Than",
-        "defaultValue":""
-    }]
+    "config" : [ 
+        {
+            "key" : "metric",
+            "label" : "Metric",
+            "type" : "select",
+            "defaultValue" : "",
+            "required" : false,
+            "description" : "",
+            "options" : [ 
+                "lines", 
+                "complexity", 
+                "issues"
+            ]
+        }, 
+        {
+            "key" : "operator",
+            "label" : "Operator",
+            "type" : "select",
+            "defaultValue" : "",
+            "required" : false,
+            "description" : "",
+            "options" : [ 
+                "less than", 
+                "greater than", 
+                "equals"
+            ]
+        }, 
+        {
+            "key" : "value",
+            "label" : "Value",
+            "type" : "text",
+            "defaultValue" : "",
+            "required" : false,
+            "description" : "",
+            "options" : null
+        }
+    ]
 }

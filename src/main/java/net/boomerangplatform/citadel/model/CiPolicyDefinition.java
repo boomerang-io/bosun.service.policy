@@ -2,7 +2,7 @@ package net.boomerangplatform.citadel.model;
 
 import java.io.Serializable;
 import java.util.List;
-import net.boomerangplatform.mongo.model.Rule;
+import net.boomerangplatform.mongo.model.CiPolicyDefinitionConfig;
 
 public class CiPolicyDefinition implements Serializable {
 
@@ -18,7 +18,7 @@ public class CiPolicyDefinition implements Serializable {
 
   private Integer order;
 
-  private List<Rule> rules;
+  private List<CiPolicyDefinitionConfig> config;
 
   public String getId() {
     return id;
@@ -60,11 +60,13 @@ public class CiPolicyDefinition implements Serializable {
     this.order = order;
   }
 
-  public List<Rule> getRules() {
-    return rules;
+  public List<CiPolicyDefinitionConfig> getConfig() {
+    return config;
   }
 
-  public void setRules(List<Rule> rules) {
-    this.rules = rules;
+  public void setConfig(List<CiPolicyDefinitionConfig> config) {
+    this.config = config;
   }
+
+  
 }
