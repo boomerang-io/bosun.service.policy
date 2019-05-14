@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 import net.boomerangplatform.repository.model.ArtifactSummary;
 import net.boomerangplatform.repository.model.DependencyGraph;
+import net.boomerangplatform.repository.model.SonarQubeReport;
 
 public class RepositoryServiceImpl implements RepositoryService {
 
@@ -26,6 +27,9 @@ public class RepositoryServiceImpl implements RepositoryService {
 
 	@Value("${repository.rest.url.artifactsummary}")
 	private String repositoryRestUrlArtifactsummary;
+	
+	@Value("${repository.rest.url.sonarqubereport}")
+	private String repositoryRestUrlSonarqubereport;
 	
 	@Autowired
 	@Qualifier("internalRestTemplate")
@@ -68,6 +72,26 @@ public class RepositoryServiceImpl implements RepositoryService {
 		} catch (final Exception e) {
 			logger.error(e.getMessage(), e);
 			return new ArtifactSummary();
+		}
+	}
+	
+	@Override
+	public SonarQubeReport getSonarQubeReport(String ciComponentId, String version) {
+		
+		final HttpHeaders headers = new HttpHeaders();
+		final HttpEntity<String> request = new HttpEntity<String>(headers);
+
+		String url = repositoryRestUrlBase + repositoryRestUrlSonarqubereport.replace("{ciComponentId}", ciComponentId)
+				.replace("{version}", version);
+
+		logger.info("getSonarQubeReport() - url: " + url);
+
+		try {
+			final ResponseEntity<SonarQubeReport> response = restTemplate.exchange(url, HttpMethod.GET, request, SonarQubeReport.class);
+			return (SonarQubeReport) response.getBody();
+		} catch (final Exception e) {
+			logger.error(e.getMessage(), e);
+			return new SonarQubeReport();
 		}
 	}
 }

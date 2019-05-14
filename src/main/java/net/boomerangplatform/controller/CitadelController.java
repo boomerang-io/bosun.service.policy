@@ -2,6 +2,7 @@ package net.boomerangplatform.controller;
 
 import java.util.List;
 import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import net.boomerangplatform.citadel.model.CiPoliciesActivities;
 import net.boomerangplatform.citadel.model.CiPolicy;
 import net.boomerangplatform.citadel.model.CiPolicyDefinition;
 import net.boomerangplatform.service.CitadelService;
@@ -69,4 +72,13 @@ public class CitadelController {
       @RequestParam(value = "teamId", required = true) String teamId) { // TODO:
     return ResponseEntity.ok().build();
   }
+  
+  
+  @GetMapping(value = "/citadel/policies/validate")
+  public ResponseEntity<CiPoliciesActivities> validatePolicy(
+		  @RequestParam(value = "ciComponentId", required = true) String ciComponentId,
+		  @RequestParam(value = "ciVersionId", required = true) String ciVersionId,
+		  @RequestParam(value = "ciPolicyId", required = true) String ciPolicyId) {
+	    return ResponseEntity.ok().body(citadelService.validatePolicy(ciComponentId, ciVersionId, ciPolicyId));
+	  }
 }
