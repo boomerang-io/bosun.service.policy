@@ -3,9 +3,9 @@ package net.boomerangplatform.service;
 import java.util.List;
 import java.util.Map;
 
-import net.boomerangplatform.citadel.model.CiPoliciesActivities;
-import net.boomerangplatform.citadel.model.CiPolicy;
-import net.boomerangplatform.citadel.model.CiPolicyDefinition;
+import net.boomerangplatform.model.CiPoliciesActivities;
+import net.boomerangplatform.model.CiPolicy;
+import net.boomerangplatform.model.CiPolicyDefinition;
 
 public interface CitadelService {
 

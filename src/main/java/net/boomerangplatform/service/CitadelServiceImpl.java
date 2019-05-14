@@ -13,10 +13,10 @@ import org.springframework.util.Assert;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import net.boomerangplatform.citadel.model.CiPoliciesActivities;
-import net.boomerangplatform.citadel.model.CiPolicy;
-import net.boomerangplatform.citadel.model.CiPolicyDefinition;
-import net.boomerangplatform.citadel.model.Result;
+import net.boomerangplatform.model.CiPoliciesActivities;
+import net.boomerangplatform.model.CiPolicy;
+import net.boomerangplatform.model.CiPolicyDefinition;
+import net.boomerangplatform.model.Result;
 import net.boomerangplatform.mongo.entity.CiPolicyDefinitionEntity;
 import net.boomerangplatform.mongo.entity.CiPolicyEntity;
 import net.boomerangplatform.mongo.model.CiPolicyConfig;

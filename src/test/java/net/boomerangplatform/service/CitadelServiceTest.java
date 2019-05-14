@@ -20,10 +20,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.boomerangplatform.AbstractBoomerangTest;
 import net.boomerangplatform.Application;
-import net.boomerangplatform.citadel.model.CiPolicy;
-import net.boomerangplatform.citadel.model.CiPolicyDefinition;
+import net.boomerangplatform.model.CiPolicy;
+import net.boomerangplatform.model.CiPolicyDefinition;
 import net.boomerangplatform.mongo.model.CiPolicyConfig;
-import net.boomerangplatform.mongo.model.Rule;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles(profiles = "local")
@@ -92,10 +91,10 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
     Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definition.getCiPolicyDefinitionId());
 
     Assert.assertEquals(2, definition.getRules().size());
-    Rule rule = definition.getRules().get(0);
+    Map<String, String> rule = definition.getRules().get(0);
 
-    Assert.assertEquals("lines", rule.getMetric());
-    Assert.assertEquals("88", rule.getValue());
+    Assert.assertEquals("lines", rule.get("metric"));
+    Assert.assertEquals("88", rule.get("value"));
   }
 
 

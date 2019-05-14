@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import net.boomerangplatform.citadel.model.CiPoliciesActivities;
-import net.boomerangplatform.citadel.model.CiPolicy;
-import net.boomerangplatform.citadel.model.CiPolicyDefinition;
+import net.boomerangplatform.model.CiPoliciesActivities;
+import net.boomerangplatform.model.CiPolicy;
+import net.boomerangplatform.model.CiPolicyDefinition;
 import net.boomerangplatform.service.CitadelService;
 import net.boomerangplatform.service.TeamService;
 import net.boomerangplatform.team.model.CiTeam;
