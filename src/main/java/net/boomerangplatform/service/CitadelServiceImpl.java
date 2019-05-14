@@ -4,23 +4,52 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import net.boomerangplatform.citadel.model.CiPoliciesActivities;
 import net.boomerangplatform.citadel.model.CiPolicy;
-import net.boomerangplatform.citadel.model.CiPolicyConfig;
 import net.boomerangplatform.citadel.model.CiPolicyDefinition;
+import net.boomerangplatform.citadel.model.Result;
 import net.boomerangplatform.mongo.entity.CiPolicyDefinitionEntity;
 import net.boomerangplatform.mongo.entity.CiPolicyEntity;
+import net.boomerangplatform.mongo.model.CiPolicyConfig;
 import net.boomerangplatform.mongo.model.OperatorType;
+import net.boomerangplatform.mongo.service.CiPolicyActivityService;
+import net.boomerangplatform.mongo.service.CiPolicyDefinitionService;
 import net.boomerangplatform.mongo.service.CiPolicyService;
+import net.boomerangplatform.opa.model.DataRequest;
+import net.boomerangplatform.opa.model.DataRequestInput;
+import net.boomerangplatform.opa.model.DataRequestPolicy;
+import net.boomerangplatform.opa.model.DataResponse;
+import net.boomerangplatform.opa.service.OpenPolicyAgentClient;
+import net.boomerangplatform.repository.model.DependencyGraph;
+import net.boomerangplatform.repository.model.SonarQubeReport;
+import net.boomerangplatform.repository.service.RepositoryService;
 
 @Service
 public class CitadelServiceImpl implements CitadelService {
 
   @Autowired
   private CiPolicyService ciPolicyService;
+  
+  @Autowired
+  private CiPolicyDefinitionService ciPolicyDefinitionService;
+  
+  @Autowired
+  private CiPolicyActivityService ciPolicyActivityService;
+  
+  @Autowired
+  private RepositoryService repositoryService;
+  
+  @Autowired
+  private OpenPolicyAgentClient openPolicyAgentClient;
 
   @Override
   public List<CiPolicyDefinition> getAllDefinitions() {
@@ -60,9 +89,9 @@ public class CitadelServiceImpl implements CitadelService {
       entity.getDefinitions().forEach(definition -> {
         CiPolicyConfig config = new CiPolicyConfig();
         BeanUtils.copyProperties(definition, config);
-        config.setCiPolicyDefinition(getDefinition(definitions, definition.getCiPolicyDefinitionId()));
-        
-        policy.addDefinition(config);
+//        config.setCiPolicyDefinition(getDefinition(definitions, definition.getCiPolicyDefinitionId()));
+//        
+//        policy.addDefinition(config);
       });
       policies.add(policy);
     });
@@ -87,6 +116,84 @@ public class CitadelServiceImpl implements CitadelService {
     ciPolicyService.update(entity);
 
     return policy;
+  }
+  
+  @Override
+  public CiPoliciesActivities validatePolicy(String ciComponentId, String ciVersionId, String ciPolicyId) {
+	  
+	  CiPoliciesActivities policiesActivities = new CiPoliciesActivities();
+	  policiesActivities.setCiComponentId(ciComponentId);
+	  policiesActivities.setCiPolicyId(ciPolicyId);
+	  policiesActivities.setCiVersionId(ciVersionId);
+	  
+	  List<Result> results = new ArrayList<Result>();
+	  
+	  boolean overallResult = true;
+	  
+	  CiPolicyEntity policyEntity = ciPolicyService.findById(ciPolicyId);
+	  for (CiPolicyConfig policyConfig : policyEntity.getDefinitions()) {
+		  
+		  CiPolicyDefinitionEntity policyDefinitionEntity = ciPolicyDefinitionService.findById(policyConfig.getCiPolicyDefinitionId());
+		  
+		  if (policyDefinitionEntity.getKey().equalsIgnoreCase("static_code_analysis")) {
+			  SonarQubeReport sonarQubeReport = repositoryService.getSonarQubeReport(ciComponentId, ciVersionId);
+			  
+			  DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(), policyDefinitionEntity.getKey(), sonarQubeReport);
+			  
+			  Result result = new Result();
+			  result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
+			  result.setDetail(dataResponse.getResult().getDetail().asText());
+			  result.setValid(dataResponse.getResult().getValid());
+			  
+			  if (!dataResponse.getResult().getValid()) {
+				  overallResult = false;
+			  }
+			  
+			  results.add(result);
+		  }
+		  else if (policyDefinitionEntity.getKey().equalsIgnoreCase("whitelist")) {
+			  DependencyGraph dependencyGraph = repositoryService.getDependencyGraph(ciComponentId, ciVersionId);
+			  
+			  DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(), policyDefinitionEntity.getKey(), dependencyGraph);
+			  
+			  Result result = new Result();
+			  result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
+			  result.setDetail(dataResponse.getResult().getDetail().asText());
+			  result.setValid(dataResponse.getResult().getValid());
+			  
+			  if (!dataResponse.getResult().getValid()) {
+				  overallResult = false;
+			  }
+			  
+			  results.add(result);			  			 		  
+		  }
+	  }
+	  
+	  policiesActivities.setValid(overallResult);
+	  policiesActivities.setResults(results);
+	  
+//	  policiesActivities = ciPolicyActivityService.save(policiesActivities);
+	  
+	  return policiesActivities;
+  }
+  
+  private DataResponse callOpenPolicyAgentClient(String policyDefinitionId, String policyDefinitionKey, Object request) {
+	  
+	  DataRequestPolicy dataRequestPolicy = new DataRequestPolicy();
+	  dataRequestPolicy.setId(policyDefinitionId);
+	  dataRequestPolicy.setKey(policyDefinitionKey);			  			 
+	  
+	  ObjectMapper mapper = new ObjectMapper(); 
+	  JsonNode data = mapper.convertValue(request, JsonNode.class);		  			 
+	  
+	  DataRequestInput dataRequestInput = new DataRequestInput();
+	  dataRequestInput.setPolicy(dataRequestPolicy);
+	  dataRequestInput.setData(data);
+	  
+	  DataRequest dataRequest = new DataRequest();
+	  dataRequest.setInput(dataRequestInput);
+	 
+	  return openPolicyAgentClient.validateData(dataRequest);
   }
 
   private static CiPolicyDefinition getDefinition(List<CiPolicyDefinitionEntity> definitions, String definitionId) {

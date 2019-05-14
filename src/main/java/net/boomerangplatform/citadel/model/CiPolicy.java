@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.boomerangplatform.mongo.model.CiPolicyConfig;
+
 public class CiPolicy implements Serializable {
 
   private static final long serialVersionUID = 1L;
