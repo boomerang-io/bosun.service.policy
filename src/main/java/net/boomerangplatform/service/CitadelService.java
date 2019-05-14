@@ -10,10 +10,12 @@ public interface CitadelService {
   List<CiPolicyDefinition> getAllDefinitions();
 
   Map<String, String> getAllOperators();
-  
+
   List<CiPolicy> getPoliciesByTeamId(String teamId);
-  
+
   CiPolicy addPolicy(CiPolicy policy);
-  
+
   CiPolicy updatePolicy(CiPolicy policy);
+
+  CiPolicy getPolicyById(String ciPolicyId);
 }
