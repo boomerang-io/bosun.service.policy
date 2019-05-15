@@ -152,14 +152,10 @@ public class CitadelServiceImpl implements CitadelService {
 		  CiPolicyDefinitionEntity policyDefinitionEntity = ciPolicyDefinitionService.findById(policyConfig.getCiPolicyDefinitionId());
 		  
 		  if (policyDefinitionEntity.getKey().equalsIgnoreCase("static_code_analysis")) {
-			  SonarQubeReport sonarQubeReport = repositoryService.getSonarQubeReport(ciComponentId, ciComponentVersionEntity.getName());
-			  
-			  if (sonarQubeReport.getMeasures() != null) {
-				  logger.info(sonarQubeReport.getMeasures().getComplexity() + ", " + sonarQubeReport.getMeasures().getNcloc() + ", " + sonarQubeReport.getMeasures().getViolations());  
-			  }		
+			  SonarQubeReport sonarQubeReport = repositoryService.getSonarQubeReport(ciComponentId, ciComponentVersionEntity.getName());			 
 			  
 			  ObjectMapper mapper = new ObjectMapper(); 
-			  JsonNode data = mapper.convertValue(sonarQubeReport, JsonNode.class);			 
+			  JsonNode data = mapper.convertValue(sonarQubeReport, JsonNode.class);
 			  
 			  try {
 				  logger.info(mapper.writeValueAsString(data));	  
@@ -168,7 +164,7 @@ public class CitadelServiceImpl implements CitadelService {
 				  logger.info(e);  
 			  }			  
 			  
-			  DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(), policyDefinitionEntity.getKey(), data);
+			  DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(), policyDefinitionEntity.getKey(), policyConfig.getRules(), data);
 			  
 			  Result result = new Result();
 			  result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
@@ -184,8 +180,6 @@ public class CitadelServiceImpl implements CitadelService {
 		  else if (policyDefinitionEntity.getKey().equalsIgnoreCase("whitelist")) {
 			  DependencyGraph dependencyGraph = repositoryService.getDependencyGraph(ciComponentId, ciComponentVersionEntity.getName());
 			  
-			  logger.info(dependencyGraph.getComponents().size());
-			  
 			  ObjectMapper mapper = new ObjectMapper(); 
 			  JsonNode data = mapper.convertValue(dependencyGraph, JsonNode.class);
 			  
@@ -196,7 +190,7 @@ public class CitadelServiceImpl implements CitadelService {
 				logger.info(e);  
 			  }	
 			  
-			  DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(), policyDefinitionEntity.getKey(), data);
+			  DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(), policyDefinitionEntity.getKey(), policyConfig.getRules(), data);
 			  
 			  Result result = new Result();
 			  result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
@@ -219,11 +213,12 @@ public class CitadelServiceImpl implements CitadelService {
 	  return policiesActivities;
   }
   
-  private DataResponse callOpenPolicyAgentClient(String policyDefinitionId, String policyDefinitionKey, JsonNode data) {
+  private DataResponse callOpenPolicyAgentClient(String policyDefinitionId, String policyDefinitionKey, List<Map<String, String>> rules, JsonNode data) {
 	  
 	  DataRequestPolicy dataRequestPolicy = new DataRequestPolicy();
 	  dataRequestPolicy.setId(policyDefinitionId);
 	  dataRequestPolicy.setKey(policyDefinitionKey);
+	  dataRequestPolicy.setRules(rules);
 	  
 	  DataRequestInput dataRequestInput = new DataRequestInput();
 	  dataRequestInput.setPolicy(dataRequestPolicy);
