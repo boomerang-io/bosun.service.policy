@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import net.boomerangplatform.model.CiPoliciesActivities;
 import net.boomerangplatform.model.CiPolicy;
 import net.boomerangplatform.model.CiPolicyDefinition;
+import net.boomerangplatform.mongo.entity.CiPolicyActivityEntity;
 import net.boomerangplatform.service.CitadelService;
 import net.boomerangplatform.service.TeamService;
 import net.boomerangplatform.team.model.CiTeam;
@@ -81,7 +81,7 @@ public class CitadelController {
   
   
   @GetMapping(value = "/policies/validate")
-  public ResponseEntity<CiPoliciesActivities> validatePolicy(
+  public ResponseEntity<CiPolicyActivityEntity> validatePolicy(
 		  @RequestParam(value = "ciComponentId", required = true) String ciComponentId,
 		  @RequestParam(value = "ciVersionId", required = true) String ciVersionId,
 		  @RequestParam(value = "ciPolicyId", required = true) String ciPolicyId) {

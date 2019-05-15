@@ -16,15 +16,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import net.boomerangplatform.model.CiPoliciesActivities;
 import net.boomerangplatform.model.CiPolicy;
 import net.boomerangplatform.model.CiPolicyDefinition;
-import net.boomerangplatform.model.Result;
+import net.boomerangplatform.mongo.entity.CiComponentEntity;
 import net.boomerangplatform.mongo.entity.CiComponentVersionEntity;
+import net.boomerangplatform.mongo.entity.CiPolicyActivityEntity;
 import net.boomerangplatform.mongo.entity.CiPolicyDefinitionEntity;
 import net.boomerangplatform.mongo.entity.CiPolicyEntity;
 import net.boomerangplatform.mongo.model.CiPolicyConfig;
 import net.boomerangplatform.mongo.model.OperatorType;
+import net.boomerangplatform.mongo.model.Results;
+import net.boomerangplatform.mongo.service.CiComponentService;
 import net.boomerangplatform.mongo.service.CiComponentVersionService;
 import net.boomerangplatform.mongo.service.CiPolicyActivityService;
 import net.boomerangplatform.mongo.service.CiPolicyDefinitionService;
@@ -41,6 +43,9 @@ import net.boomerangplatform.repository.service.RepositoryService;
 @Service
 public class CitadelServiceImpl implements CitadelService {
 
+	@Autowired
+	private CiComponentService ciComponentService;
+	
 	@Autowired
 	private CiComponentVersionService ciComponentVersionService;
 
@@ -129,20 +134,31 @@ public class CitadelServiceImpl implements CitadelService {
 	}
 
 	@Override
-	public CiPoliciesActivities validatePolicy(String ciComponentId, String ciVersionId, String ciPolicyId) {
+	public CiPolicyActivityEntity validatePolicy(String ciComponentId, String ciVersionId, String ciPolicyId) {
 
 		CiComponentVersionEntity ciComponentVersionEntity = ciComponentVersionService.findVersionWithId(ciVersionId);
 
 		if (ciComponentVersionEntity == null) {
-			return new CiPoliciesActivities();
+			return new CiPolicyActivityEntity();
 		}
+		
+		CiComponentEntity CiComponentEntity = ciComponentService.findById(ciComponentId);
 
-		CiPoliciesActivities policiesActivities = new CiPoliciesActivities();
-		policiesActivities.setCiComponentId(ciComponentId);
+		if (CiComponentEntity == null) {
+			return new CiPolicyActivityEntity();
+		}
+		
+		CiPolicyActivityEntity policiesActivities = new CiPolicyActivityEntity();
+		policiesActivities.setCiTeamId(CiComponentEntity.getCiTeamId());
+		policiesActivities.setCiActivityId(null);
+//		policiesActivities.setCiComponentId(ciComponentId);
 		policiesActivities.setCiPolicyId(ciPolicyId);
-		policiesActivities.setCiVersionId(ciVersionId);
+//		policiesActivities.setCiVersionId(ciVersionId);
+		policiesActivities.setValid(false);
+		
+		policiesActivities = ciPolicyActivityService.save(policiesActivities);
 
-		List<Result> results = new ArrayList<Result>();
+		List<Results> results = new ArrayList<Results>();
 
 		boolean overallResult = true;
 
@@ -164,7 +180,7 @@ public class CitadelServiceImpl implements CitadelService {
 				DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(),
 						policyDefinitionEntity.getKey(), policyConfig.getRules(), data);
 
-				Result result = new Result();
+				Results result = new Results();
 				result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
 				result.setDetail(getJsonNodeText(dataResponse.getResult().getDetail()));
 				result.setValid(dataResponse.getResult().getValid());
@@ -186,7 +202,7 @@ public class CitadelServiceImpl implements CitadelService {
 				DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(),
 						policyDefinitionEntity.getKey(), policyConfig.getRules(), data);
 
-				Result result = new Result();
+				Results result = new Results();
 				result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
 				result.setDetail(getJsonNodeText(dataResponse.getResult().getDetail()));
 				result.setValid(dataResponse.getResult().getValid());
@@ -202,7 +218,7 @@ public class CitadelServiceImpl implements CitadelService {
 		policiesActivities.setValid(overallResult);
 		policiesActivities.setResults(results);
 
-		// policiesActivities = ciPolicyActivityService.save(policiesActivities);
+		policiesActivities = ciPolicyActivityService.save(policiesActivities);
 
 		return policiesActivities;
 	}
