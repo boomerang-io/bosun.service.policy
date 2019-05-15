@@ -1,6 +1,7 @@
 package net.boomerangplatform.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,6 +117,7 @@ public class CitadelServiceImpl implements CitadelService {
 
 	@Override
 	public CiPolicy addPolicy(CiPolicy policy) {
+		policy.setCreatedDate(new Date());
 		CiPolicyEntity entity = new CiPolicyEntity();
 		BeanUtils.copyProperties(policy, entity);
 		entity = ciPolicyService.add(entity);
@@ -154,6 +156,7 @@ public class CitadelServiceImpl implements CitadelService {
 //		policiesActivities.setCiComponentId(ciComponentId);
 		policiesActivities.setCiPolicyId(ciPolicyId);
 //		policiesActivities.setCiVersionId(ciVersionId);
+		policiesActivities.setCreatedDate(new Date());
 		policiesActivities.setValid(false);
 		
 		policiesActivities = ciPolicyActivityService.save(policiesActivities);

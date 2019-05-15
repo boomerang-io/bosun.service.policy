@@ -2,57 +2,67 @@ package net.boomerangplatform.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import net.boomerangplatform.mongo.model.CiPolicyConfig;
 
 public class CiPolicy implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  private String id;
+	private String id;
 
-  private String name;
+	private String name;
 
-  private String teamId;
+	private String teamId;
 
-  private List<CiPolicyConfig> definitions = new ArrayList<>();
+	private Date createdDate;
 
-  public String getId() {
-    return id;
-  }
+	private List<CiPolicyConfig> definitions = new ArrayList<>();
 
-  public void setId(String id) {
-    this.id = id;
-  }
+	public String getId() {
+		return id;
+	}
 
-  public String getName() {
-    return name;
-  }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-  public void setName(String name) {
-    this.name = name;
-  }
+	public String getName() {
+		return name;
+	}
 
-  public String getTeamId() {
-    return teamId;
-  }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-  public void setTeamId(String teamId) {
-    this.teamId = teamId;
-  }
+	public String getTeamId() {
+		return teamId;
+	}
 
-  public List<CiPolicyConfig> getDefinitions() {
-    return definitions;
-  }
+	public void setTeamId(String teamId) {
+		this.teamId = teamId;
+	}
 
-  public void setDefinitions(List<CiPolicyConfig> definitions) {
-    this.definitions = definitions;
-  }
+	public Date getCreatedDate() {
+		return createdDate;
+	}
 
-  public void addDefinition(CiPolicyConfig definition) {
-    definitions.add(definition);
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
 
-  }
+	public List<CiPolicyConfig> getDefinitions() {
+		return definitions;
+	}
 
+	public void setDefinitions(List<CiPolicyConfig> definitions) {
+		this.definitions = definitions;
+	}
+
+	public void addDefinition(CiPolicyConfig definition) {
+		definitions.add(definition);
+
+	}
 }
