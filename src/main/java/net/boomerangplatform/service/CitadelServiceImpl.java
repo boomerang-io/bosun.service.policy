@@ -19,10 +19,12 @@ import net.boomerangplatform.model.CiPoliciesActivities;
 import net.boomerangplatform.model.CiPolicy;
 import net.boomerangplatform.model.CiPolicyDefinition;
 import net.boomerangplatform.model.Result;
+import net.boomerangplatform.mongo.entity.CiComponentVersionEntity;
 import net.boomerangplatform.mongo.entity.CiPolicyDefinitionEntity;
 import net.boomerangplatform.mongo.entity.CiPolicyEntity;
 import net.boomerangplatform.mongo.model.CiPolicyConfig;
 import net.boomerangplatform.mongo.model.OperatorType;
+import net.boomerangplatform.mongo.service.CiComponentVersionService;
 import net.boomerangplatform.mongo.service.CiPolicyActivityService;
 import net.boomerangplatform.mongo.service.CiPolicyDefinitionService;
 import net.boomerangplatform.mongo.service.CiPolicyService;
@@ -38,6 +40,9 @@ import net.boomerangplatform.repository.service.RepositoryService;
 @Service
 public class CitadelServiceImpl implements CitadelService {
 
+  @Autowired
+  private CiComponentVersionService ciComponentVersionService;
+	
   @Autowired
   private CiPolicyService ciPolicyService;
   
@@ -125,6 +130,12 @@ public class CitadelServiceImpl implements CitadelService {
   @Override
   public CiPoliciesActivities validatePolicy(String ciComponentId, String ciVersionId, String ciPolicyId) {
 	  
+	  CiComponentVersionEntity ciComponentVersionEntity = ciComponentVersionService.findVersionWithId(ciComponentId);
+	  
+	  if (ciComponentVersionEntity == null) {
+		  return new CiPoliciesActivities();
+	  }
+	  
 	  CiPoliciesActivities policiesActivities = new CiPoliciesActivities();
 	  policiesActivities.setCiComponentId(ciComponentId);
 	  policiesActivities.setCiPolicyId(ciPolicyId);
@@ -140,9 +151,11 @@ public class CitadelServiceImpl implements CitadelService {
 		  CiPolicyDefinitionEntity policyDefinitionEntity = ciPolicyDefinitionService.findById(policyConfig.getCiPolicyDefinitionId());
 		  
 		  if (policyDefinitionEntity.getKey().equalsIgnoreCase("static_code_analysis")) {
-			  SonarQubeReport sonarQubeReport = repositoryService.getSonarQubeReport(ciComponentId, ciVersionId);
+			  SonarQubeReport sonarQubeReport = repositoryService.getSonarQubeReport(ciComponentId, ciComponentVersionEntity.getName());
 			  
-			  logger.info(sonarQubeReport.getMeasures().getComplexity() + ", " + sonarQubeReport.getMeasures().getNcloc() + ", " + sonarQubeReport.getMeasures().getViolations());
+			  if (sonarQubeReport.getMeasures() != null) {
+				  logger.info(sonarQubeReport.getMeasures().getComplexity() + ", " + sonarQubeReport.getMeasures().getNcloc() + ", " + sonarQubeReport.getMeasures().getViolations());  
+			  }		
 			  
 			  DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(), policyDefinitionEntity.getKey(), sonarQubeReport);
 			  
@@ -158,7 +171,7 @@ public class CitadelServiceImpl implements CitadelService {
 			  results.add(result);
 		  }
 		  else if (policyDefinitionEntity.getKey().equalsIgnoreCase("whitelist")) {
-			  DependencyGraph dependencyGraph = repositoryService.getDependencyGraph(ciComponentId, ciVersionId);
+			  DependencyGraph dependencyGraph = repositoryService.getDependencyGraph(ciComponentId, ciComponentVersionEntity.getName());
 			  
 			  logger.info(dependencyGraph.getComponents().size());
 			  
