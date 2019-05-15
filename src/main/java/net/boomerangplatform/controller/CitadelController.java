@@ -80,7 +80,7 @@ public class CitadelController {
   }
   
   
-  @GetMapping(value = "/citadel/policies/validate")
+  @GetMapping(value = "/policies/validate")
   public ResponseEntity<CiPoliciesActivities> validatePolicy(
 		  @RequestParam(value = "ciComponentId", required = true) String ciComponentId,
 		  @RequestParam(value = "ciVersionId", required = true) String ciVersionId,
