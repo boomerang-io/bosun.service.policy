@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -158,9 +159,14 @@ public class CitadelServiceImpl implements CitadelService {
 			  }		
 			  
 			  ObjectMapper mapper = new ObjectMapper(); 
-			  JsonNode data = mapper.convertValue(sonarQubeReport, JsonNode.class);
+			  JsonNode data = mapper.convertValue(sonarQubeReport, JsonNode.class);			 
 			  
-			  logger.info(data.textValue());
+			  try {
+				  logger.info(mapper.writeValueAsString(data));	  
+			  }
+			  catch (JsonProcessingException e) {
+				  logger.info(e);  
+			  }			  
 			  
 			  DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(), policyDefinitionEntity.getKey(), data);
 			  
@@ -183,7 +189,12 @@ public class CitadelServiceImpl implements CitadelService {
 			  ObjectMapper mapper = new ObjectMapper(); 
 			  JsonNode data = mapper.convertValue(dependencyGraph, JsonNode.class);
 			  
-			  logger.info(data.textValue());
+			  try {
+				  logger.info(mapper.writeValueAsString(data));	  
+			  }
+			  catch (JsonProcessingException e) {
+				logger.info(e);  
+			  }	
 			  
 			  DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(), policyDefinitionEntity.getKey(), data);
 			  
