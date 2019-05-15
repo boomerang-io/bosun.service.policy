@@ -5,6 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,6 +52,8 @@ public class CitadelServiceImpl implements CitadelService {
   
   @Autowired
   private OpenPolicyAgentClient openPolicyAgentClient;
+  
+  Logger logger = LogManager.getLogger();
 
   @Override
   public List<CiPolicyDefinition> getAllDefinitions() {
@@ -138,6 +142,8 @@ public class CitadelServiceImpl implements CitadelService {
 		  if (policyDefinitionEntity.getKey().equalsIgnoreCase("static_code_analysis")) {
 			  SonarQubeReport sonarQubeReport = repositoryService.getSonarQubeReport(ciComponentId, ciVersionId);
 			  
+			  logger.info(sonarQubeReport.getMeasures().getComplexity() + ", " + sonarQubeReport.getMeasures().getNcloc() + ", " + sonarQubeReport.getMeasures().getViolations());
+			  
 			  DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(), policyDefinitionEntity.getKey(), sonarQubeReport);
 			  
 			  Result result = new Result();
@@ -153,6 +159,8 @@ public class CitadelServiceImpl implements CitadelService {
 		  }
 		  else if (policyDefinitionEntity.getKey().equalsIgnoreCase("whitelist")) {
 			  DependencyGraph dependencyGraph = repositoryService.getDependencyGraph(ciComponentId, ciVersionId);
+			  
+			  logger.info(dependencyGraph.getComponents().size());
 			  
 			  DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(), policyDefinitionEntity.getKey(), dependencyGraph);
 			  
@@ -184,7 +192,9 @@ public class CitadelServiceImpl implements CitadelService {
 	  dataRequestPolicy.setKey(policyDefinitionKey);			  			 
 	  
 	  ObjectMapper mapper = new ObjectMapper(); 
-	  JsonNode data = mapper.convertValue(request, JsonNode.class);		  			 
+	  JsonNode data = mapper.convertValue(request, JsonNode.class);
+	  
+	  logger.info(data.textValue());
 	  
 	  DataRequestInput dataRequestInput = new DataRequestInput();
 	  dataRequestInput.setPolicy(dataRequestPolicy);
