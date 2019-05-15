@@ -57,23 +57,23 @@ public class CitadelController {
     return ResponseEntity.ok().body(citadelService.getPolicyById(ciPolicyId));
   }
 
-  @PostMapping(value = "/policies/policies")
+  @PostMapping(value = "/policies")
   public ResponseEntity<CiPolicy> addPolicy(@RequestBody CiPolicy policy) {
     return ResponseEntity.ok().body(citadelService.addPolicy(policy));
   }
 
-  @PatchMapping(value = "/policies/policies")
+  @PatchMapping(value = "/policies")
   public ResponseEntity<CiPolicy> updatePolicy(@RequestBody CiPolicy policy) {
     return ResponseEntity.ok().body(citadelService.updatePolicy(policy));
   }
 
-  @GetMapping(value = "/policies/policies/violations")
+  @GetMapping(value = "/policies/violations")
   public ResponseEntity<?> getViolations(
       @RequestParam(value = "teamId", required = true) String teamId) { // TODO:
     return ResponseEntity.ok().build();
   }
 
-  @GetMapping(value = "/policies/policies/insights")
+  @GetMapping(value = "/policies/insights")
   public ResponseEntity<?> getInsights(
       @RequestParam(value = "teamId", required = true) String teamId) { // TODO:
     return ResponseEntity.ok().build();
