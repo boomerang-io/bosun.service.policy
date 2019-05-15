@@ -157,7 +157,12 @@ public class CitadelServiceImpl implements CitadelService {
 				  logger.info(sonarQubeReport.getMeasures().getComplexity() + ", " + sonarQubeReport.getMeasures().getNcloc() + ", " + sonarQubeReport.getMeasures().getViolations());  
 			  }		
 			  
-			  DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(), policyDefinitionEntity.getKey(), sonarQubeReport);
+			  ObjectMapper mapper = new ObjectMapper(); 
+			  JsonNode data = mapper.convertValue(sonarQubeReport, JsonNode.class);
+			  
+			  logger.info(data.textValue());
+			  
+			  DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(), policyDefinitionEntity.getKey(), data);
 			  
 			  Result result = new Result();
 			  result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
@@ -175,7 +180,12 @@ public class CitadelServiceImpl implements CitadelService {
 			  
 			  logger.info(dependencyGraph.getComponents().size());
 			  
-			  DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(), policyDefinitionEntity.getKey(), dependencyGraph);
+			  ObjectMapper mapper = new ObjectMapper(); 
+			  JsonNode data = mapper.convertValue(dependencyGraph, JsonNode.class);
+			  
+			  logger.info(data.textValue());
+			  
+			  DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(), policyDefinitionEntity.getKey(), data);
 			  
 			  Result result = new Result();
 			  result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
@@ -198,16 +208,11 @@ public class CitadelServiceImpl implements CitadelService {
 	  return policiesActivities;
   }
   
-  private DataResponse callOpenPolicyAgentClient(String policyDefinitionId, String policyDefinitionKey, Object request) {
+  private DataResponse callOpenPolicyAgentClient(String policyDefinitionId, String policyDefinitionKey, JsonNode data) {
 	  
 	  DataRequestPolicy dataRequestPolicy = new DataRequestPolicy();
 	  dataRequestPolicy.setId(policyDefinitionId);
-	  dataRequestPolicy.setKey(policyDefinitionKey);			  			 
-	  
-	  ObjectMapper mapper = new ObjectMapper(); 
-	  JsonNode data = mapper.convertValue(request, JsonNode.class);
-	  
-	  logger.info(data.textValue());
+	  dataRequestPolicy.setKey(policyDefinitionKey);
 	  
 	  DataRequestInput dataRequestInput = new DataRequestInput();
 	  dataRequestInput.setPolicy(dataRequestPolicy);
