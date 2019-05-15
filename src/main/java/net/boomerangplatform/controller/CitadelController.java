@@ -62,8 +62,8 @@ public class CitadelController {
     return ResponseEntity.ok().body(citadelService.addPolicy(policy));
   }
 
-  @PatchMapping(value = "/policies")
-  public ResponseEntity<CiPolicy> updatePolicy(@RequestBody CiPolicy policy) {
+  @PatchMapping(value = "/policies/{ciPolicyId}")
+  public ResponseEntity<CiPolicy> updatePolicy(@PathVariable String ciPolicyId, @RequestBody CiPolicy policy) {
     return ResponseEntity.ok().body(citadelService.updatePolicy(policy));
   }
 
