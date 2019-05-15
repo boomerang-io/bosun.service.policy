@@ -2,8 +2,6 @@ package net.boomerangplatform.controller;
 
 import java.util.List;
 import java.util.Map;
-import javax.websocket.server.PathParam;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,8 +46,8 @@ public class CitadelController {
 
   @GetMapping(value = "/policies")
   public ResponseEntity<List<CiPolicy>> getPolicies(
-      @RequestParam(value = "teamId", required = true) String teamId) {
-    return ResponseEntity.ok().body(citadelService.getPoliciesByTeamId(teamId));
+      @RequestParam(value = "ciTeamId", required = true) String ciTeamId) {
+    return ResponseEntity.ok().body(citadelService.getPoliciesByTeamId(ciTeamId));
   }
   
   @GetMapping(value = "/policies/{ciPolicyId}")
@@ -58,24 +56,24 @@ public class CitadelController {
   }
 
   @PostMapping(value = "/policies/policies")
-  public ResponseEntity<CiPolicy> addPolicy(@RequestBody CiPolicy policy) {
-    return ResponseEntity.ok().body(citadelService.addPolicy(policy));
+  public ResponseEntity<CiPolicy> addPolicy(@RequestBody CiPolicy ciPolicy) {
+    return ResponseEntity.ok().body(citadelService.addPolicy(ciPolicy));
   }
 
   @PatchMapping(value = "/policies/policies")
-  public ResponseEntity<CiPolicy> updatePolicy(@RequestBody CiPolicy policy) {
-    return ResponseEntity.ok().body(citadelService.updatePolicy(policy));
+  public ResponseEntity<CiPolicy> updatePolicy(@RequestBody CiPolicy ciPolicy) {
+    return ResponseEntity.ok().body(citadelService.updatePolicy(ciPolicy));
   }
 
   @GetMapping(value = "/policies/policies/violations")
   public ResponseEntity<?> getViolations(
-      @RequestParam(value = "teamId", required = true) String teamId) { // TODO:
+      @RequestParam(value = "ciTeamId", required = true) String ciTeamId) { // TODO:
     return ResponseEntity.ok().build();
   }
 
   @GetMapping(value = "/policies/policies/insights")
   public ResponseEntity<?> getInsights(
-      @RequestParam(value = "teamId", required = true) String teamId) { // TODO:
+      @RequestParam(value = "ciTeamId", required = true) String ciTeamId) { // TODO:
     return ResponseEntity.ok().build();
   }
   
