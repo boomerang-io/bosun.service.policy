@@ -130,7 +130,7 @@ public class CitadelServiceImpl implements CitadelService {
   @Override
   public CiPoliciesActivities validatePolicy(String ciComponentId, String ciVersionId, String ciPolicyId) {
 	  
-	  CiComponentVersionEntity ciComponentVersionEntity = ciComponentVersionService.findVersionWithId(ciComponentId);
+	  CiComponentVersionEntity ciComponentVersionEntity = ciComponentVersionService.findVersionWithId(ciVersionId);
 	  
 	  if (ciComponentVersionEntity == null) {
 		  return new CiPoliciesActivities();
