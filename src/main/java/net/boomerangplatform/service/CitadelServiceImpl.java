@@ -41,202 +41,207 @@ import net.boomerangplatform.repository.service.RepositoryService;
 @Service
 public class CitadelServiceImpl implements CitadelService {
 
-  @Autowired
-  private CiComponentVersionService ciComponentVersionService;
-	
-  @Autowired
-  private CiPolicyService ciPolicyService;
-  
-  @Autowired
-  private CiPolicyDefinitionService ciPolicyDefinitionService;
-  
-  @Autowired
-  private CiPolicyActivityService ciPolicyActivityService;
-  
-  @Autowired
-  private RepositoryService repositoryService;
-  
-  @Autowired
-  private OpenPolicyAgentClient openPolicyAgentClient;
-  
-  Logger logger = LogManager.getLogger();
+	@Autowired
+	private CiComponentVersionService ciComponentVersionService;
 
-  @Override
-  public List<CiPolicyDefinition> getAllDefinitions() {
-    List<CiPolicyDefinitionEntity> entitis = ciPolicyService.findAllDefinitions();
-    List<CiPolicyDefinition> descriptions = new ArrayList<>();
+	@Autowired
+	private CiPolicyService ciPolicyService;
 
-    entitis.forEach(entity -> {
-      CiPolicyDefinition description = new CiPolicyDefinition();
-      BeanUtils.copyProperties(entity, description);
-      descriptions.add(description);
-    });
+	@Autowired
+	private CiPolicyDefinitionService ciPolicyDefinitionService;
 
-    return descriptions;
-  }
+	@Autowired
+	private CiPolicyActivityService ciPolicyActivityService;
 
-  @Override
-  public Map<String, String> getAllOperators() {
-    Map<String, String> operators = new LinkedHashMap<>();
-    for (OperatorType type : OperatorType.values()) {
-      operators.put(type.name(), type.getOperator());
-    }
+	@Autowired
+	private RepositoryService repositoryService;
 
-    return operators;
-  }
+	@Autowired
+	private OpenPolicyAgentClient openPolicyAgentClient;
 
-  @Override
-  public List<CiPolicy> getPoliciesByTeamId(String teamId) {
-    List<CiPolicyEntity> entities = ciPolicyService.findByTeamId(teamId);
-    List<CiPolicy> policies = new ArrayList<>();
+	Logger logger = LogManager.getLogger();
 
-    entities.forEach(entity -> {
-      CiPolicy policy = new CiPolicy();
-      BeanUtils.copyProperties(entity, policy);
-      policies.add(policy);
-    });
+	@Override
+	public List<CiPolicyDefinition> getAllDefinitions() {
+		List<CiPolicyDefinitionEntity> entitis = ciPolicyService.findAllDefinitions();
+		List<CiPolicyDefinition> descriptions = new ArrayList<>();
 
-    return policies;
-  }
+		entitis.forEach(entity -> {
+			CiPolicyDefinition description = new CiPolicyDefinition();
+			BeanUtils.copyProperties(entity, description);
+			descriptions.add(description);
+		});
 
-  @Override
-  public CiPolicy getPolicyById(String ciPolicyId) {
-    CiPolicyEntity entity = ciPolicyService.findById(ciPolicyId);
+		return descriptions;
+	}
 
-    CiPolicy policy = new CiPolicy();
-    BeanUtils.copyProperties(entity, policy);
+	@Override
+	public Map<String, String> getAllOperators() {
+		Map<String, String> operators = new LinkedHashMap<>();
+		for (OperatorType type : OperatorType.values()) {
+			operators.put(type.name(), type.getOperator());
+		}
 
-    return policy;
-  }
+		return operators;
+	}
 
-  @Override
-  public CiPolicy addPolicy(CiPolicy policy) {
-    CiPolicyEntity entity = new CiPolicyEntity();
-    BeanUtils.copyProperties(policy, entity); 
-    entity = ciPolicyService.add(entity);
-    policy.setId(entity.getId());
+	@Override
+	public List<CiPolicy> getPoliciesByTeamId(String teamId) {
+		List<CiPolicyEntity> entities = ciPolicyService.findByTeamId(teamId);
+		List<CiPolicy> policies = new ArrayList<>();
 
-    return policy;
-  }
+		entities.forEach(entity -> {
+			CiPolicy policy = new CiPolicy();
+			BeanUtils.copyProperties(entity, policy);
+			policies.add(policy);
+		});
 
-  @Override
-  public CiPolicy updatePolicy(CiPolicy policy) {
-    CiPolicyEntity entity = ciPolicyService.findById(policy.getId());
-    BeanUtils.copyProperties(policy, entity);
-    ciPolicyService.update(entity);
+		return policies;
+	}
 
-    return policy;
-  }
-  
-  @Override
-  public CiPoliciesActivities validatePolicy(String ciComponentId, String ciVersionId, String ciPolicyId) {
-	  
-	  CiComponentVersionEntity ciComponentVersionEntity = ciComponentVersionService.findVersionWithId(ciVersionId);
-	  
-	  if (ciComponentVersionEntity == null) {
-		  return new CiPoliciesActivities();
-	  }
-	  
-	  CiPoliciesActivities policiesActivities = new CiPoliciesActivities();
-	  policiesActivities.setCiComponentId(ciComponentId);
-	  policiesActivities.setCiPolicyId(ciPolicyId);
-	  policiesActivities.setCiVersionId(ciVersionId);
-	  
-	  List<Result> results = new ArrayList<Result>();
-	  
-	  boolean overallResult = true;
-	  
-	  CiPolicyEntity policyEntity = ciPolicyService.findById(ciPolicyId);
-	  for (CiPolicyConfig policyConfig : policyEntity.getDefinitions()) {
-		  
-		  CiPolicyDefinitionEntity policyDefinitionEntity = ciPolicyDefinitionService.findById(policyConfig.getCiPolicyDefinitionId());
-		  
-		  if (policyDefinitionEntity.getKey().equalsIgnoreCase("static_code_analysis")) {
-			  SonarQubeReport sonarQubeReport = repositoryService.getSonarQubeReport(ciComponentId, ciComponentVersionEntity.getName());			 
-			  
-			  ObjectMapper mapper = new ObjectMapper(); 
-			  JsonNode data = mapper.convertValue(sonarQubeReport, JsonNode.class);
-			  
-			  try {
-				  logger.info(mapper.writeValueAsString(data));	  
-			  }
-			  catch (JsonProcessingException e) {
-				  logger.info(e);  
-			  }			  
-			  
-			  DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(), policyDefinitionEntity.getKey(), policyConfig.getRules(), data);
-			  
-			  Result result = new Result();
-			  result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
-			  result.setDetail(dataResponse.getResult().getDetail().asText());
-			  result.setValid(dataResponse.getResult().getValid());
-			  
-			  if (!dataResponse.getResult().getValid()) {
-				  overallResult = false;
-			  }
-			  
-			  results.add(result);
-		  }
-		  else if (policyDefinitionEntity.getKey().equalsIgnoreCase("whitelist")) {
-			  DependencyGraph dependencyGraph = repositoryService.getDependencyGraph(ciComponentId, ciComponentVersionEntity.getName());
-			  
-			  ObjectMapper mapper = new ObjectMapper(); 
-			  JsonNode data = mapper.convertValue(dependencyGraph, JsonNode.class);
-			  
-			  try {
-				  logger.info(mapper.writeValueAsString(data));	  
-			  }
-			  catch (JsonProcessingException e) {
-				logger.info(e);  
-			  }	
-			  
-			  DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(), policyDefinitionEntity.getKey(), policyConfig.getRules(), data);
-			  
-			  Result result = new Result();
-			  result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
-			  result.setDetail(dataResponse.getResult().getDetail().asText());
-			  result.setValid(dataResponse.getResult().getValid());
-			  
-			  if (!dataResponse.getResult().getValid()) {
-				  overallResult = false;
-			  }
-			  
-			  results.add(result);			  			 		  
-		  }
-	  }
-	  
-	  policiesActivities.setValid(overallResult);
-	  policiesActivities.setResults(results);
-	  
-//	  policiesActivities = ciPolicyActivityService.save(policiesActivities);
-	  
-	  return policiesActivities;
-  }
-  
-  private DataResponse callOpenPolicyAgentClient(String policyDefinitionId, String policyDefinitionKey, List<Map<String, String>> rules, JsonNode data) {
-	  
-	  DataRequestPolicy dataRequestPolicy = new DataRequestPolicy();
-	  dataRequestPolicy.setId(policyDefinitionId);
-	  dataRequestPolicy.setKey(policyDefinitionKey);
-	  dataRequestPolicy.setRules(rules);
-	  
-	  DataRequestInput dataRequestInput = new DataRequestInput();
-	  dataRequestInput.setPolicy(dataRequestPolicy);
-	  dataRequestInput.setData(data);
-	  
-	  DataRequest dataRequest = new DataRequest();
-	  dataRequest.setInput(dataRequestInput);
-	 
-	  return openPolicyAgentClient.validateData(dataRequest);
-  }
+	@Override
+	public CiPolicy getPolicyById(String ciPolicyId) {
+		CiPolicyEntity entity = ciPolicyService.findById(ciPolicyId);
 
-  private static CiPolicyDefinition getDefinition(List<CiPolicyDefinitionEntity> definitions, String definitionId) {
-    CiPolicyDefinition policyDefinition = new CiPolicyDefinition();
-    CiPolicyDefinitionEntity definitionEntity = definitions.stream()
-        .filter(d -> definitionId.equals(d.getId())).findFirst().orElse(null);
-    Assert.notNull(definitionEntity, "The definition is missing!");
-    BeanUtils.copyProperties(definitionEntity, policyDefinition);
-    
-    return policyDefinition;
-  }
+		CiPolicy policy = new CiPolicy();
+		BeanUtils.copyProperties(entity, policy);
+
+		return policy;
+	}
+
+	@Override
+	public CiPolicy addPolicy(CiPolicy policy) {
+		CiPolicyEntity entity = new CiPolicyEntity();
+		BeanUtils.copyProperties(policy, entity);
+		entity = ciPolicyService.add(entity);
+		policy.setId(entity.getId());
+
+		return policy;
+	}
+
+	@Override
+	public CiPolicy updatePolicy(CiPolicy policy) {
+		CiPolicyEntity entity = ciPolicyService.findById(policy.getId());
+		BeanUtils.copyProperties(policy, entity);
+		ciPolicyService.update(entity);
+
+		return policy;
+	}
+
+	@Override
+	public CiPoliciesActivities validatePolicy(String ciComponentId, String ciVersionId, String ciPolicyId) {
+
+		CiComponentVersionEntity ciComponentVersionEntity = ciComponentVersionService.findVersionWithId(ciVersionId);
+
+		if (ciComponentVersionEntity == null) {
+			return new CiPoliciesActivities();
+		}
+
+		CiPoliciesActivities policiesActivities = new CiPoliciesActivities();
+		policiesActivities.setCiComponentId(ciComponentId);
+		policiesActivities.setCiPolicyId(ciPolicyId);
+		policiesActivities.setCiVersionId(ciVersionId);
+
+		List<Result> results = new ArrayList<Result>();
+
+		boolean overallResult = true;
+
+		CiPolicyEntity policyEntity = ciPolicyService.findById(ciPolicyId);
+		for (CiPolicyConfig policyConfig : policyEntity.getDefinitions()) {
+
+			CiPolicyDefinitionEntity policyDefinitionEntity = ciPolicyDefinitionService
+					.findById(policyConfig.getCiPolicyDefinitionId());
+
+			if (policyDefinitionEntity.getKey().equalsIgnoreCase("static_code_analysis")) {
+				SonarQubeReport sonarQubeReport = repositoryService.getSonarQubeReport(ciComponentId,
+						ciComponentVersionEntity.getName());
+
+				ObjectMapper mapper = new ObjectMapper();
+				JsonNode data = mapper.convertValue(sonarQubeReport, JsonNode.class);
+
+				logger.info(getJsonNodeText(data));
+
+				DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(),
+						policyDefinitionEntity.getKey(), policyConfig.getRules(), data);
+
+				Result result = new Result();
+				result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
+				result.setDetail(getJsonNodeText(dataResponse.getResult().getDetail()));
+				result.setValid(dataResponse.getResult().getValid());
+
+				if (!dataResponse.getResult().getValid()) {
+					overallResult = false;
+				}
+
+				results.add(result);
+			} else if (policyDefinitionEntity.getKey().equalsIgnoreCase("whitelist")) {
+				DependencyGraph dependencyGraph = repositoryService.getDependencyGraph(ciComponentId,
+						ciComponentVersionEntity.getName());
+
+				ObjectMapper mapper = new ObjectMapper();
+				JsonNode data = mapper.convertValue(dependencyGraph, JsonNode.class);
+
+				logger.info(getJsonNodeText(data));
+
+				DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(),
+						policyDefinitionEntity.getKey(), policyConfig.getRules(), data);
+
+				Result result = new Result();
+				result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
+				result.setDetail(getJsonNodeText(dataResponse.getResult().getDetail()));
+				result.setValid(dataResponse.getResult().getValid());
+
+				if (!dataResponse.getResult().getValid()) {
+					overallResult = false;
+				}
+
+				results.add(result);
+			}
+		}
+
+		policiesActivities.setValid(overallResult);
+		policiesActivities.setResults(results);
+
+		// policiesActivities = ciPolicyActivityService.save(policiesActivities);
+
+		return policiesActivities;
+	}
+
+	private DataResponse callOpenPolicyAgentClient(String policyDefinitionId, String policyDefinitionKey,
+			List<Map<String, String>> rules, JsonNode data) {
+
+		DataRequestPolicy dataRequestPolicy = new DataRequestPolicy();
+		dataRequestPolicy.setId(policyDefinitionId);
+		dataRequestPolicy.setKey(policyDefinitionKey);
+		dataRequestPolicy.setRules(rules);
+
+		DataRequestInput dataRequestInput = new DataRequestInput();
+		dataRequestInput.setPolicy(dataRequestPolicy);
+		dataRequestInput.setData(data);
+
+		DataRequest dataRequest = new DataRequest();
+		dataRequest.setInput(dataRequestInput);
+
+		return openPolicyAgentClient.validateData(dataRequest);
+	}
+
+	private static CiPolicyDefinition getDefinition(List<CiPolicyDefinitionEntity> definitions, String definitionId) {
+		CiPolicyDefinition policyDefinition = new CiPolicyDefinition();
+		CiPolicyDefinitionEntity definitionEntity = definitions.stream().filter(d -> definitionId.equals(d.getId()))
+				.findFirst().orElse(null);
+		Assert.notNull(definitionEntity, "The definition is missing!");
+		BeanUtils.copyProperties(definitionEntity, policyDefinition);
+
+		return policyDefinition;
+	}
+
+	private String getJsonNodeText(JsonNode node) {
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			return mapper.writeValueAsString(node);
+		} catch (JsonProcessingException e) {
+			logger.info(e);
+		}
+		return null;
+	}
 }
