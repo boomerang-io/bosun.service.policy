@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,10 +13,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import net.boomerangplatform.AbstractBoomerangTest;
 import net.boomerangplatform.Application;
 import net.boomerangplatform.model.CiPolicy;
@@ -35,7 +32,7 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
 
   @Override
   protected String[] getCollections() {
-    return new String[] {"ci_policies", "ci_policies_definitions"};
+    return new String[] {"ci_policies", "ci_policies_definitions", "ci_policies_activities"};
   }
 
   @Override
@@ -44,6 +41,11 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
     data.put("ci_policies", Arrays.asList("db/ci_policies/CiPolicyEntity.json"));
     data.put("ci_policies_definitions",
         Arrays.asList("db/ci_policies_definitions/CiPolicyDefinitionEntity.json"));
+    data.put("ci_policies_activities",
+        Arrays.asList("db/ci_policies_activities/CiPolicyActivityEntity.json",
+            "db/ci_policies_activities/CiPolicyActivityEntity2.json",
+            "db/ci_policies_activities/CiPolicyActivityEntity3.json"));
+
 
     return data;
   }
@@ -84,9 +86,9 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
     Assert.assertEquals("Code Medium Validation", policy.getName());
     Assert.assertEquals("5c5b5a0b352b1b614143b7c3", policy.getId());
     Assert.assertEquals(teamId, policy.getTeamId());
-    
+
     Assert.assertEquals(1, policy.getDefinitions().size());
-    
+
     CiPolicyConfig definition = policy.getDefinitions().get(0);
     Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definition.getCiPolicyDefinitionId());
 
@@ -103,15 +105,15 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
     CiPolicy policy = new ObjectMapper().readValue(loadResourceAsString("addCiPolicyEntity.json"),
         CiPolicy.class);
     CiPolicy policyReturn = citadelService.addPolicy(policy);
-    
+
     System.out.println(parseToJson(policyReturn));
 
     Assert.assertEquals("Code High Validation", policyReturn.getName());
     Assert.assertEquals(1, policyReturn.getDefinitions().size());
-    
+
     CiPolicyConfig definition = policyReturn.getDefinitions().get(0);
-    
-    
+
+
     String definitionId = definition.getCiPolicyDefinitionId();
     Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definitionId);
 
@@ -120,7 +122,8 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
     Assert.assertEquals(2, policies.size());
 
     CiPolicy policyFound = policies.get(0);
-    Assert.assertEquals(definitionId, policyFound.getDefinitions().get(0).getCiPolicyDefinitionId());
+    Assert.assertEquals(definitionId,
+        policyFound.getDefinitions().get(0).getCiPolicyDefinitionId());
   }
 
 
@@ -143,8 +146,19 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
     Assert.assertEquals(1, policies.size());
 
     CiPolicy policyFound = policies.get(0);
-    CiPolicyConfig ciPolicyConfigFounf = policyFound.getDefinitions().get(0);
-//    Assert.assertEquals(definitionId, ciPolicyConfigFounf.getCiPolicyDefinition().getId());
     Assert.assertEquals("Code Low Validation", policyFound.getName());
+  }
+
+  @Test
+  public void testGetInsights() throws IOException {
+    Map<CiPolicy, Integer> insights = citadelService.getInsights("9999");
+
+    Assert.assertEquals(1, insights.entrySet().size());
+    for (Map.Entry<CiPolicy, Integer> entry : insights.entrySet()) {
+      Assert.assertEquals("Code Medium Validation", entry.getKey().getName());
+      Assert.assertEquals("5c5b5a0b352b1b614143b7c3", entry.getKey().getId());
+      Assert.assertEquals(1, entry.getValue().intValue());
+    }
+
   }
 }
