@@ -304,21 +304,21 @@ public class CitadelServiceImpl implements CitadelService {
 	}
 
 	@Override
-	public Map<CiPolicy, Integer> getInsights(String teamId) {
+	public Map<String, Integer> getInsights(String teamId) {
 		Map<String, Integer> insights = new HashMap<>();
 		LocalDate date = LocalDate.now().minusMonths(PERIOD_MONTHS);
 
 		List<CiPolicyActivityEntity> activities = ciPolicyActivityService
 				.findByCiTeamIdAndValidAndCreatedDateAfter(teamId, false, fromLocalDate(date));
-
+		
 		for (CiPolicyActivityEntity activity : activities) {
 			String ciPolicyId = activity.getCiPolicyId();
 			insights.put(ciPolicyId, insights.get(ciPolicyId) == null ? 1 : (insights.get(ciPolicyId) + 1));
 		}
 
-		Map<CiPolicy, Integer> insightsWithPolicy = new HashMap<>();
+		Map<String, Integer> insightsWithPolicy = new HashMap<>();
 		for (Map.Entry<String, Integer> entry : insights.entrySet()) {
-			insightsWithPolicy.put(getPolicyById(entry.getKey()), entry.getValue());
+			insightsWithPolicy.put(getPolicyById(entry.getKey()).getId(), entry.getValue());
 		}
 
 		return insightsWithPolicy;

@@ -151,12 +151,13 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
 
   @Test
   public void testGetInsights() throws IOException {
-    Map<CiPolicy, Integer> insights = citadelService.getInsights("9999");
+    Map<String, Integer> insights = citadelService.getInsights("9999");
 
     Assert.assertEquals(1, insights.entrySet().size());
-    for (Map.Entry<CiPolicy, Integer> entry : insights.entrySet()) {
-      Assert.assertEquals("Code Medium Validation", entry.getKey().getName());
-      Assert.assertEquals("5c5b5a0b352b1b614143b7c3", entry.getKey().getId());
+    for (Map.Entry<String, Integer> entry : insights.entrySet()) {
+      CiPolicy policy = citadelService.getPolicyById(entry.getKey());
+      Assert.assertEquals("Code Medium Validation", policy.getName());
+      Assert.assertEquals("5c5b5a0b352b1b614143b7c3", policy.getId());
       Assert.assertEquals(1, entry.getValue().intValue());
     }
 

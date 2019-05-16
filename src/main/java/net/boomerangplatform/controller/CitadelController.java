@@ -2,6 +2,7 @@ package net.boomerangplatform.controller;
 
 import java.util.List;
 import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import net.boomerangplatform.model.CiPolicy;
 import net.boomerangplatform.model.CiPolicyDefinition;
 import net.boomerangplatform.mongo.entity.CiPolicyActivityEntity;
@@ -65,17 +67,17 @@ public class CitadelController {
       @RequestBody CiPolicy policy) {
     return ResponseEntity.ok().body(citadelService.updatePolicy(policy));
   }
-
+  
   @GetMapping(value = "/policies/violations")
-  public ResponseEntity<Map<CiPolicy, Integer>> getViolations(
+  public ResponseEntity<?> getViolations(
       @RequestParam(value = "teamId", required = true) String teamId) {
-    return ResponseEntity.ok().body(citadelService.getInsights(teamId));
+    return ResponseEntity.ok().build();
   }
 
   @GetMapping(value = "/policies/insights")
-  public ResponseEntity<?> getInsights(
-      @RequestParam(value = "teamId", required = true) String teamId) { // TODO:
-    return ResponseEntity.ok().build();
+  public ResponseEntity<Map<String, Integer>> getInsights(
+      @RequestParam(value = "teamId", required = true) String teamId) {
+    return ResponseEntity.ok().body(citadelService.getInsights(teamId));
   }
 
 
