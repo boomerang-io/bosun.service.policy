@@ -3,6 +3,7 @@ package net.boomerangplatform.service;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -20,7 +21,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.boomerangplatform.model.CiPolicy;
+import net.boomerangplatform.model.CiPolicyActivitiesInsights;
 import net.boomerangplatform.model.CiPolicyDefinition;
+import net.boomerangplatform.model.CiPolicyInsights;
 import net.boomerangplatform.mongo.entity.CiComponentEntity;
 import net.boomerangplatform.mongo.entity.CiComponentVersionEntity;
 import net.boomerangplatform.mongo.entity.CiPolicyActivityEntity;
@@ -304,8 +307,8 @@ public class CitadelServiceImpl implements CitadelService {
 	}
 
 	@Override
-	public Map<String, Integer> getInsights(String teamId) {
-		Map<String, Integer> insights = new HashMap<>();
+	public List<CiPolicyInsights> getInsights(String teamId) {
+		Map<String, CiPolicyInsights> insights = new HashMap<>();
 		LocalDate date = LocalDate.now().minusMonths(PERIOD_MONTHS);
 
 		List<CiPolicyActivityEntity> activities = ciPolicyActivityService
@@ -313,15 +316,49 @@ public class CitadelServiceImpl implements CitadelService {
 		
 		for (CiPolicyActivityEntity activity : activities) {
 			String ciPolicyId = activity.getCiPolicyId();
-			insights.put(ciPolicyId, insights.get(ciPolicyId) == null ? 1 : (insights.get(ciPolicyId) + 1));
+			
+			CiPolicyInsights ciPolicyInsights = insights.get(ciPolicyId);
+			if (ciPolicyInsights == null) {
+				CiPolicy ciPolicy = getPolicyById(ciPolicyId);
+				
+				ciPolicyInsights = new CiPolicyInsights();
+				ciPolicyInsights.setCiPolicyId(ciPolicy.getId());
+				ciPolicyInsights.setCiPolicyName(ciPolicy.getName());
+				ciPolicyInsights.setCiPolicyCreatedDate(ciPolicy.getCreatedDate());			
+			}
+			
+			Integer failCount = 0;
+			for (Results results : activity.getResults()) {
+				if (!results.getValid()) {
+					failCount++;
+				}
+			}
+			
+			CiPolicyActivitiesInsights ciPolicyActivitiesInsights = null;
+			
+			for (CiPolicyActivitiesInsights activites : ciPolicyInsights.getInsights()) {
+				if (activites.getCiPolicyActivityId().equalsIgnoreCase(activity.getId())) {
+					ciPolicyActivitiesInsights = activites;
+					ciPolicyInsights.getInsights().remove(activites);
+					break;
+				}
+			}
+			
+			if (ciPolicyActivitiesInsights == null) {
+				ciPolicyActivitiesInsights = new CiPolicyActivitiesInsights();
+				ciPolicyActivitiesInsights.setCiPolicyActivityId(activity.getId());
+				ciPolicyActivitiesInsights.setCiPolicyActivityCreatedDate(activity.getCreatedDate());
+				ciPolicyActivitiesInsights.setViolations(failCount);
+			}
+			else {
+				ciPolicyActivitiesInsights.setViolations(ciPolicyActivitiesInsights.getViolations() + failCount);
+			}				
+			
+			ciPolicyInsights.getInsights().add(ciPolicyActivitiesInsights);			
+			insights.put(ciPolicyId, ciPolicyInsights);
 		}
-
-		Map<String, Integer> insightsWithPolicy = new HashMap<>();
-		for (Map.Entry<String, Integer> entry : insights.entrySet()) {
-			insightsWithPolicy.put(getPolicyById(entry.getKey()).getId(), entry.getValue());
-		}
-
-		return insightsWithPolicy;
+		
+		return new ArrayList<CiPolicyInsights>(insights.values());
 	}
 
 	private DataResponse callOpenPolicyAgentClient(String policyDefinitionId, String policyDefinitionKey,

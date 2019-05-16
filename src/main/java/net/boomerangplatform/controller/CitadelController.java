@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import net.boomerangplatform.model.CiPolicy;
 import net.boomerangplatform.model.CiPolicyDefinition;
+import net.boomerangplatform.model.CiPolicyInsights;
 import net.boomerangplatform.mongo.entity.CiPolicyActivityEntity;
 import net.boomerangplatform.service.CitadelService;
 import net.boomerangplatform.service.TeamService;
@@ -36,7 +37,7 @@ public class CitadelController {
     return ResponseEntity.ok().body(teamService.getTeams());
   }
 
-  @GetMapping(value = "/policies/definitions")
+  @GetMapping(value = "/definitions")
   public ResponseEntity<List<CiPolicyDefinition>> getAllDefinitions() {
     return ResponseEntity.ok().body(citadelService.getAllDefinitions());
   }
@@ -75,7 +76,7 @@ public class CitadelController {
   }
 
   @GetMapping(value = "/policies/insights")
-  public ResponseEntity<Map<String, Integer>> getInsights(
+  public ResponseEntity<List<CiPolicyInsights>> getInsights(
       @RequestParam(value = "teamId", required = true) String teamId) {
     return ResponseEntity.ok().body(citadelService.getInsights(teamId));
   }

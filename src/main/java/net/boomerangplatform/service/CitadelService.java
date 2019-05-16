@@ -5,6 +5,7 @@ import java.util.Map;
 
 import net.boomerangplatform.model.CiPolicy;
 import net.boomerangplatform.model.CiPolicyDefinition;
+import net.boomerangplatform.model.CiPolicyInsights;
 import net.boomerangplatform.mongo.entity.CiPolicyActivityEntity;
 
 public interface CitadelService {
@@ -23,5 +24,5 @@ public interface CitadelService {
   
   CiPolicyActivityEntity validatePolicy(String ciComponentId, String ciVersionId, String ciPolicyId);
   
-  Map<String, Integer> getInsights(String teamId);
+  List<CiPolicyInsights> getInsights(String teamId);
 }

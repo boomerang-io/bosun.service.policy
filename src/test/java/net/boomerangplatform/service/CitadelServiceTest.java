@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,12 +14,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import net.boomerangplatform.AbstractBoomerangTest;
 import net.boomerangplatform.Application;
 import net.boomerangplatform.model.CiPolicy;
+import net.boomerangplatform.model.CiPolicyActivitiesInsights;
 import net.boomerangplatform.model.CiPolicyDefinition;
+import net.boomerangplatform.model.CiPolicyInsights;
 import net.boomerangplatform.mongo.model.CiPolicyConfig;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -149,17 +154,19 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
     Assert.assertEquals("Code Low Validation", policyFound.getName());
   }
 
-  @Test
-  public void testGetInsights() throws IOException {
-    Map<String, Integer> insights = citadelService.getInsights("9999");
+	@Test
+	public void testGetInsights() throws IOException {
+		List<CiPolicyInsights> insights = citadelService.getInsights("9999");
 
-    Assert.assertEquals(1, insights.entrySet().size());
-    for (Map.Entry<String, Integer> entry : insights.entrySet()) {
-      CiPolicy policy = citadelService.getPolicyById(entry.getKey());
-      Assert.assertEquals("Code Medium Validation", policy.getName());
-      Assert.assertEquals("5c5b5a0b352b1b614143b7c3", policy.getId());
-      Assert.assertEquals(1, entry.getValue().intValue());
-    }
-
-  }
+		Assert.assertEquals(1, insights.size());
+		CiPolicyInsights entry = insights.get(0);
+		CiPolicy policy = citadelService.getPolicyById(entry.getCiPolicyId());
+		Assert.assertEquals("Code Medium Validation", policy.getName());
+		Assert.assertEquals("5c5b5a0b352b1b614143b7c3", policy.getId());
+		Integer failCount = 0;
+		for (CiPolicyActivitiesInsights ciPolicyActivitiesInsights : entry.getInsights()) {
+			failCount += ciPolicyActivitiesInsights.getViolations();
+		}
+		Assert.assertEquals(Integer.valueOf(1), failCount);
+	}
 }
