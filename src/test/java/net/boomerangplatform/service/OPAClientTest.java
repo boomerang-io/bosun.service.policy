@@ -2,75 +2,121 @@ package net.boomerangplatform.service;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withNoContent;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
+import java.util.List;
+import javax.annotation.Resource;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
+import org.springframework.test.web.client.ExpectedCount;
+import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.web.client.RestTemplate;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonPointer;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.ObjectCodec;
+import com.fasterxml.jackson.core.JsonParser.NumberType;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import net.boomerangplatform.Application;
+import net.boomerangplatform.opa.exception.OPAClientException;
 import net.boomerangplatform.opa.model.DataRequest;
 import net.boomerangplatform.opa.model.DataResponse;
+import net.boomerangplatform.opa.model.DataResponseResult;
 import net.boomerangplatform.opa.service.OpenPolicyAgentClient;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {Application.class})
 @SpringBootTest
 @ActiveProfiles("local")
-public abstract class OPAClientTest {
+public class OPAClientTest {
 
-  @Autowired private OpenPolicyAgentClient opaClient;
+  @Autowired
+  private OpenPolicyAgentClient opaClient;
+
+  @Autowired
+  @Qualifier("internalRestTemplate")
+  @Resource(name = "internalRestTemplate")
+  protected RestTemplate restTemplate;
+
+  protected MockRestServiceServer server;
+
+
+  private static final String opaURL = "http://localhost:8181/v1/data/citadel/";
+
+  @Before
+  public void setUp() {
+    this.server = MockRestServiceServer.createServer(restTemplate);
+  }
 
   @Test
-  public void testValidateDataTrue() throws IOException {
-    DataRequest dataRequest =
-        new ObjectMapper().readValue(getMockFile("dataRequestWhitelistTrue.json"), DataRequest.class);
+  public void testValidateData() throws IOException {
+    DataRequest dataRequest = new ObjectMapper()
+        .readValue(getMockFile("dataRequestWhitelistTrue.json"), DataRequest.class);
+
+    String key = dataRequest.getInput().getPolicy().getKey();
+    String url = opaURL + key;
+
+    this.server.expect(requestTo(url))
+        .andRespond(withSuccess(parseToJson(getDataResponse()), MediaType.APPLICATION_JSON));
 
     DataResponse dataResponse = opaClient.validateData(dataRequest);
-    
-    System.out.println("Valid: " + dataResponse.getResult().getValid().toString());
-    
+
     assertNotNull(dataResponse);
     assertTrue(dataResponse.getResult().getValid());
-  }
-  
-  @Test
-  public void testValidateDataFalse() throws IOException {
-    DataRequest dataRequest =
-        new ObjectMapper().readValue(getMockFile("dataRequestWhitelistFalse.json"), DataRequest.class);
 
-    DataResponse dataResponse = opaClient.validateData(dataRequest);
-    
-    System.out.println("Valid: " + dataResponse.getResult().getValid().toString());
-    
-    assertNotNull(dataResponse);
-    assertFalse(dataResponse.getResult().getValid());
-  }
-  
-  @Test
-  public void testValidateDataInvalidModel() throws IOException {
-    DataRequest dataRequest =
-        new ObjectMapper().readValue(getMockFile("dataRequestWhitelistInvalidModel.json"), DataRequest.class);
-
-    DataResponse dataResponse = opaClient.validateData(dataRequest);
-    
-    System.out.println("Valid: " + dataResponse.getResult().getValid().toString());
-    
-    assertNotNull(dataResponse);
-    assertFalse(dataResponse.getResult().getValid());
+    this.server.verify();
   }
 
+  @Test(expected = OPAClientException.class)
+  public void testValidateDataWithNullResponse() throws IOException {
+    DataRequest dataRequest = new ObjectMapper()
+        .readValue(getMockFile("dataRequestWhitelistFalse.json"), DataRequest.class);
+
+    String key = dataRequest.getInput().getPolicy().getKey();
+    String url = opaURL + key;
+
+    this.server.expect(requestTo(url)).andRespond(withBadRequest());
+
+    opaClient.validateData(dataRequest);
+
+    this.server.verify();
+  }
+
+  private DataResponse getDataResponse() {
+    DataResponse dataResponse = new DataResponse();
+    DataResponseResult result = new DataResponseResult();
+
+    final ObjectMapper mapper = new ObjectMapper();
+    JsonNode node = mapper.createObjectNode();
+    result.setDetail(node);
+    result.setValid(true);
+
+    dataResponse.setResult(result);
+
+    return dataResponse;
+  }
 
   protected String getMockFile(String path) {
 
@@ -84,5 +130,10 @@ public abstract class OPAClientTest {
       e.printStackTrace();
     }
     return content;
+  }
+
+  protected String parseToJson(final Object template) throws JsonProcessingException {
+    final ObjectMapper mapper = new ObjectMapper();
+    return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(template);
   }
 }
