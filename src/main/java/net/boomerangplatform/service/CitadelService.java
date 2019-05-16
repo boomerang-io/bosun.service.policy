@@ -22,4 +22,6 @@ public interface CitadelService {
   CiPolicy getPolicyById(String ciPolicyId);
   
   CiPolicyActivityEntity validatePolicy(String ciComponentId, String ciVersionId, String ciPolicyId);
+  
+  Map<CiPolicy, Integer> getInsights(String teamId);
 }
