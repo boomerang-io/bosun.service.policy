@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import net.boomerangplatform.model.CiPolicy;
 import net.boomerangplatform.model.CiPolicyDefinition;
 import net.boomerangplatform.model.CiPolicyInsights;
+import net.boomerangplatform.model.CiPolicyViolations;
 import net.boomerangplatform.mongo.entity.CiPolicyActivityEntity;
 import net.boomerangplatform.service.CitadelService;
 import net.boomerangplatform.service.TeamService;
@@ -70,9 +71,9 @@ public class CitadelController {
   }
   
   @GetMapping(value = "/policies/violations")
-  public ResponseEntity<?> getViolations(
-      @RequestParam(value = "teamId", required = true) String teamId) {
-    return ResponseEntity.ok().build();
+  public ResponseEntity<List<CiPolicyViolations>> getViolations(
+      @RequestParam(value = "ciTeamId", required = true) String ciTeamId) {
+    return ResponseEntity.ok().body(citadelService.getViolations(ciTeamId));
   }
 
   @GetMapping(value = "/policies/insights")
@@ -84,10 +85,9 @@ public class CitadelController {
 
   @GetMapping(value = "/policies/validate")
   public ResponseEntity<CiPolicyActivityEntity> validatePolicy(
-      @RequestParam(value = "ciComponentId", required = true) String ciComponentId,
-      @RequestParam(value = "ciVersionId", required = true) String ciVersionId,
+      @RequestParam(value = "ciComponentActivityId", required = true) String ciComponentActivityId,
       @RequestParam(value = "ciPolicyId", required = true) String ciPolicyId) {
     return ResponseEntity.ok()
-        .body(citadelService.validatePolicy(ciComponentId, ciVersionId, ciPolicyId));
+        .body(citadelService.validatePolicy(ciComponentActivityId, ciPolicyId));
   }
 }

@@ -3,7 +3,6 @@ package net.boomerangplatform.service;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -14,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -24,6 +24,8 @@ import net.boomerangplatform.model.CiPolicy;
 import net.boomerangplatform.model.CiPolicyActivitiesInsights;
 import net.boomerangplatform.model.CiPolicyDefinition;
 import net.boomerangplatform.model.CiPolicyInsights;
+import net.boomerangplatform.model.CiPolicyViolations;
+import net.boomerangplatform.mongo.entity.CiComponentActivityEntity;
 import net.boomerangplatform.mongo.entity.CiComponentEntity;
 import net.boomerangplatform.mongo.entity.CiComponentVersionEntity;
 import net.boomerangplatform.mongo.entity.CiPolicyActivityEntity;
@@ -32,6 +34,7 @@ import net.boomerangplatform.mongo.entity.CiPolicyEntity;
 import net.boomerangplatform.mongo.model.CiPolicyConfig;
 import net.boomerangplatform.mongo.model.OperatorType;
 import net.boomerangplatform.mongo.model.Results;
+import net.boomerangplatform.mongo.service.CiComponentActivityService;
 import net.boomerangplatform.mongo.service.CiComponentService;
 import net.boomerangplatform.mongo.service.CiComponentVersionService;
 import net.boomerangplatform.mongo.service.CiPolicyActivityService;
@@ -50,7 +53,11 @@ import net.boomerangplatform.repository.service.RepositoryService;
 @Service
 public class CitadelServiceImpl implements CitadelService {
 
-	private static final int PERIOD_MONTHS = 3;
+	@Value("${insights.period.months}")
+	private String insightsPeriodMonths;
+	
+	@Autowired
+	private CiComponentActivityService ciComponentActivityService;
 
 	@Autowired
 	private CiComponentService ciComponentService;
@@ -144,26 +151,16 @@ public class CitadelServiceImpl implements CitadelService {
 	}
 
 	@Override
-	public CiPolicyActivityEntity validatePolicy(String ciComponentId, String ciVersionId, String ciPolicyId) {
-
-		CiComponentVersionEntity ciComponentVersionEntity = ciComponentVersionService.findVersionWithId(ciVersionId);
-
-		if (ciComponentVersionEntity == null) {
-			return new CiPolicyActivityEntity();
-		}
-
-		CiComponentEntity ciComponentEntity = ciComponentService.findById(ciComponentId);
-
-		if (ciComponentEntity == null) {
-			return new CiPolicyActivityEntity();
-		}
+	public CiPolicyActivityEntity validatePolicy(String ciComponentActivityId, String ciPolicyId) {
+		
+		CiComponentActivityEntity ciComponentActivityEntity = ciComponentActivityService.findById(ciComponentActivityId);		
+		CiComponentEntity ciComponentEntity = ciComponentService.findById(ciComponentActivityEntity.getCiComponentId());
+		CiComponentVersionEntity ciComponentVersionEntity = ciComponentVersionService.findVersionWithId(ciComponentActivityEntity.getCiComponentVersionId());		
 
 		CiPolicyActivityEntity policiesActivities = new CiPolicyActivityEntity();
 		policiesActivities.setCiTeamId(ciComponentEntity.getCiTeamId());
-		policiesActivities.setCiActivityId(null);
-		// policiesActivities.setCiComponentId(ciComponentId);
+		policiesActivities.setCiComponentActivityId(ciComponentActivityEntity.getId());
 		policiesActivities.setCiPolicyId(ciPolicyId);
-		// policiesActivities.setCiVersionId(ciVersionId);
 		policiesActivities.setCreatedDate(new Date());
 		policiesActivities.setValid(false);
 
@@ -180,7 +177,7 @@ public class CitadelServiceImpl implements CitadelService {
 					.findById(policyConfig.getCiPolicyDefinitionId());
 
 			if ("static_code_analysis".equalsIgnoreCase(policyDefinitionEntity.getKey())) {
-				SonarQubeReport sonarQubeReport = repositoryService.getSonarQubeReport(ciComponentId,
+				SonarQubeReport sonarQubeReport = repositoryService.getSonarQubeReport(ciComponentEntity.getId(),
 						ciComponentVersionEntity.getName());
 
 				ObjectMapper mapper = new ObjectMapper();
@@ -203,7 +200,7 @@ public class CitadelServiceImpl implements CitadelService {
 				results.add(result);
 				
 			} else if ("package_safelist".equalsIgnoreCase(policyDefinitionEntity.getKey())) {
-				DependencyGraph dependencyGraph = repositoryService.getDependencyGraph(ciComponentId,
+				DependencyGraph dependencyGraph = repositoryService.getDependencyGraph(ciComponentEntity.getId(),
 						ciComponentVersionEntity.getName());
 
 				ObjectMapper mapper = new ObjectMapper();
@@ -226,7 +223,7 @@ public class CitadelServiceImpl implements CitadelService {
 				results.add(result);
 				
 			} else if ("cve_safelist".equalsIgnoreCase(policyDefinitionEntity.getKey())) {
-				ArtifactSummary artifactSummary = repositoryService.getArtifactSummary(ciComponentId,
+				ArtifactSummary artifactSummary = repositoryService.getArtifactSummary(ciComponentEntity.getId(),
 						ciComponentVersionEntity.getName());
 
 				if (!artifactSummary.getArtifacts().isEmpty()) {
@@ -261,7 +258,7 @@ public class CitadelServiceImpl implements CitadelService {
 					results.add(result);
 				}				
 			} else if ("security_issue_analysis".equalsIgnoreCase(policyDefinitionEntity.getKey())) {
-				ArtifactSummary artifactSummary = repositoryService.getArtifactSummary(ciComponentId,
+				ArtifactSummary artifactSummary = repositoryService.getArtifactSummary(ciComponentEntity.getId(),
 						ciComponentVersionEntity.getName());
 
 				if (!artifactSummary.getArtifacts().isEmpty()) {
@@ -309,7 +306,7 @@ public class CitadelServiceImpl implements CitadelService {
 	@Override
 	public List<CiPolicyInsights> getInsights(String teamId) {
 		Map<String, CiPolicyInsights> insights = new HashMap<>();
-		LocalDate date = LocalDate.now().minusMonths(PERIOD_MONTHS);
+		LocalDate date = LocalDate.now().minusMonths(Integer.valueOf(insightsPeriodMonths));
 
 		List<CiPolicyActivityEntity> activities = ciPolicyActivityService
 				.findByCiTeamIdAndValidAndCreatedDateAfter(teamId, false, fromLocalDate(date));
@@ -359,6 +356,25 @@ public class CitadelServiceImpl implements CitadelService {
 		}
 		
 		return new ArrayList<CiPolicyInsights>(insights.values());
+	}
+	
+	@Override
+	public List<CiPolicyViolations> getViolations(String ciTeamId) {
+		List<CiPolicyViolations> violations = new ArrayList<CiPolicyViolations>();	
+		
+		List<CiComponentEntity> components = ciComponentService.findByCiTeamId(ciTeamId);
+		for (CiComponentEntity component : components) {
+			if (component.getIsActive()) {
+				
+				
+				
+			}
+		}
+		
+		
+		
+		
+		return violations;
 	}
 
 	private DataResponse callOpenPolicyAgentClient(String policyDefinitionId, String policyDefinitionKey,
