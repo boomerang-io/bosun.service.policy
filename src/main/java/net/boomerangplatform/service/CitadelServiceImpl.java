@@ -125,7 +125,7 @@ public class CitadelServiceImpl implements CitadelService {
 
 	@Override
 	public CiPolicy addPolicy(CiPolicy policy) {
-		policy.setCreatedDate(fromLocalDate(LocalDate.now()));
+		policy.setCreatedDate(new Date());
 		CiPolicyEntity entity = new CiPolicyEntity();
 		BeanUtils.copyProperties(policy, entity);
 		entity = ciPolicyService.add(entity);
@@ -164,7 +164,7 @@ public class CitadelServiceImpl implements CitadelService {
 		// policiesActivities.setCiComponentId(ciComponentId);
 		policiesActivities.setCiPolicyId(ciPolicyId);
 		// policiesActivities.setCiVersionId(ciVersionId);
-		policiesActivities.setCreatedDate(fromLocalDate(LocalDate.now()));
+		policiesActivities.setCreatedDate(new Date());
 		policiesActivities.setValid(false);
 
 		policiesActivities = ciPolicyActivityService.save(policiesActivities);
