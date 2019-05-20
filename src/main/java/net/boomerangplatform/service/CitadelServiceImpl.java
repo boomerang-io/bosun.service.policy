@@ -194,7 +194,7 @@ public class CitadelServiceImpl implements CitadelService {
 				ObjectMapper mapper = new ObjectMapper();
 				JsonNode data = mapper.convertValue(sonarQubeReport, JsonNode.class);
 
-				LOGGER.info(getJsonNodeText(data));
+				LOGGER.info("static_code_analysis=" + getJsonNodeText(data));
 
 				DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(),
 						policyDefinitionEntity.getKey(), policyConfig.getRules(), data);
@@ -217,7 +217,7 @@ public class CitadelServiceImpl implements CitadelService {
 				ObjectMapper mapper = new ObjectMapper();
 				JsonNode data = mapper.convertValue(dependencyGraph, JsonNode.class);
 
-				LOGGER.info(getJsonNodeText(data));
+				LOGGER.info("package_safelist=" + getJsonNodeText(data));
 
 				DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(),
 						policyDefinitionEntity.getKey(), policyConfig.getRules(), data);
@@ -241,7 +241,7 @@ public class CitadelServiceImpl implements CitadelService {
 					ObjectMapper mapper = new ObjectMapper();
 					JsonNode data = mapper.convertValue(artifactSummary.getArtifacts().get(0).getIssues(), JsonNode.class);
 
-					LOGGER.info(getJsonNodeText(data));
+					LOGGER.info("cve_safelist=" + getJsonNodeText(data));
 
 					DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(),
 							policyDefinitionEntity.getKey(), policyConfig.getRules(), data);
@@ -276,7 +276,7 @@ public class CitadelServiceImpl implements CitadelService {
 					ObjectMapper mapper = new ObjectMapper();
 					JsonNode data = mapper.convertValue(artifactSummary.getArtifacts().get(0).getIssues(), JsonNode.class);
 
-					LOGGER.info(getJsonNodeText(data));
+					LOGGER.info("security_issue_analysis=" + getJsonNodeText(data));
 
 					DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(),
 							policyDefinitionEntity.getKey(), policyConfig.getRules(), data);
