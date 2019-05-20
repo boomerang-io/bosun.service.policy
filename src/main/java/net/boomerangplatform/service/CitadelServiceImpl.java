@@ -315,12 +315,12 @@ public class CitadelServiceImpl implements CitadelService {
 	}
 
 	@Override
-	public List<CiPolicyInsights> getInsights(String teamId) {
+	public List<CiPolicyInsights> getInsights(String ciTeamId) {
 		Map<String, CiPolicyInsights> insights = new HashMap<>();
 		LocalDate date = LocalDate.now().minusMonths(Integer.valueOf(insightsPeriodMonths));
 
 		List<CiPolicyActivityEntity> activities = ciPolicyActivityService
-				.findByCiTeamIdAndValidAndCreatedDateAfter(teamId, false, fromLocalDate(date));
+				.findByCiTeamIdAndValidAndCreatedDateAfter(ciTeamId, false, fromLocalDate(date));
 		
 		for (CiPolicyActivityEntity activity : activities) {
 			String ciPolicyId = activity.getCiPolicyId();
