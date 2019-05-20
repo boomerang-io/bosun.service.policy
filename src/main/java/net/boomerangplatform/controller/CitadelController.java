@@ -50,8 +50,8 @@ public class CitadelController {
 
   @GetMapping(value = "/policies")
   public ResponseEntity<List<CiPolicy>> getPolicies(
-      @RequestParam(value = "teamId", required = true) String teamId) {
-    return ResponseEntity.ok().body(citadelService.getPoliciesByTeamId(teamId));
+      @RequestParam(value = "ciTeamId", required = true) String ciTeamId) {
+    return ResponseEntity.ok().body(citadelService.getPoliciesByTeamId(ciTeamId));
   }
 
   @GetMapping(value = "/policies/{ciPolicyId}")

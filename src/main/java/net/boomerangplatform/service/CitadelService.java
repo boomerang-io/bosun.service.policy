@@ -15,7 +15,7 @@ public interface CitadelService {
 
   Map<String, String> getAllOperators();
 
-  List<CiPolicy> getPoliciesByTeamId(String teamId);
+  List<CiPolicy> getPoliciesByTeamId(String ciTeamId);
 
   CiPolicy addPolicy(CiPolicy policy);
 

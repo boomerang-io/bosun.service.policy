@@ -118,8 +118,8 @@ public class CitadelServiceImpl implements CitadelService {
 	}
 
 	@Override
-	public List<CiPolicy> getPoliciesByTeamId(String teamId) {
-		List<CiPolicyEntity> entities = ciPolicyService.findByTeamId(teamId);
+	public List<CiPolicy> getPoliciesByTeamId(String ciTeamId) {
+		List<CiPolicyEntity> entities = ciPolicyService.findByTeamId(ciTeamId);
 		List<CiPolicy> policies = new ArrayList<>();
 
 		entities.forEach(entity -> {
