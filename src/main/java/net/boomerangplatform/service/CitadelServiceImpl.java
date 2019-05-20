@@ -383,21 +383,36 @@ public class CitadelServiceImpl implements CitadelService {
 			}
 		}
 		
+		LOGGER.info("stagesWithGates.count=" + stagesWithGates.size());
+		
 		List<CiPolicyViolations> violations = new ArrayList<CiPolicyViolations>();
 		
 		List<CiComponentEntity> components = ciComponentService.findByCiTeamId(ciTeamId);
 		for (CiComponentEntity component : components) {
 			if (component.getIsActive()) {
+				
+				LOGGER.info("component.name=" + component.getName());
+				
 				for (CiStageEntity stage : stagesWithGates) {
 					CiComponentActivityEntity componentActivity = ciComponentActivityService.findTopByCiComponentIdAndTypeAndCiStageIdOrderByCreationDateDesc(component.getId(), CiComponentActivityType.BUILD, stage.getId());
-					if (componentActivity != null) {						
+					if (componentActivity != null) {	
+						
+						LOGGER.info("componentActivity.id=" + componentActivity.getId());
+						
 						List<CiPolicyActivityEntity> policyActivities = ciPolicyActivityService.findByCiComponentActivityId(componentActivity.getId());
+						
+						LOGGER.info("policyActivities.size=" + policyActivities.size());
+						
 						for (CiPolicyActivityEntity policyActivity : policyActivities) {
-							if (!policyActivity.getValid()) {
+							if (!policyActivity.getValid()) {																
 								
+								CiPolicyEntity policy = ciPolicyService.findById(policyActivity.getCiPolicyId());
 								
-								CiPolicyEntity policy = ciPolicyService.findById(policyActivity.getCiPolicyId());		
+								LOGGER.info("policy.name=" + policy.getName());
+								
 								CiComponentVersionEntity componentVersion = ciComponentVersionService.findVersionWithId(componentActivity.getCiComponentVersionId());
+								
+								LOGGER.info("componentVersion.name=" + componentVersion.getName());
 									
 								CiPolicyViolations violation = new CiPolicyViolations();
 								violation.setCiComponentId(component.getId());
