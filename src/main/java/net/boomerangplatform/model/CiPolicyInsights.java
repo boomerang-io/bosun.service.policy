@@ -7,49 +7,49 @@ import java.util.List;
 
 public class CiPolicyInsights implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	private String ciPolicyId;
-	private String ciPolicyName;
-	private Date ciPolicyCreatedDate;
-	private List<CiPolicyActivitiesInsights> insights;
-	
-	public CiPolicyInsights() {
-		
-	}
+  private String ciPolicyId;
+  private String ciPolicyName;
+  private Date ciPolicyCreatedDate;
+  private List<CiPolicyActivitiesInsights> insights;
 
-	public String getCiPolicyId() {
-		return ciPolicyId;
-	}
+  public CiPolicyInsights() {
+    // Do nothing
+  }
 
-	public void setCiPolicyId(String ciPolicyId) {
-		this.ciPolicyId = ciPolicyId;
-	}
+  public String getCiPolicyId() {
+    return ciPolicyId;
+  }
 
-	public String getCiPolicyName() {
-		return ciPolicyName;
-	}
+  public void setCiPolicyId(String ciPolicyId) {
+    this.ciPolicyId = ciPolicyId;
+  }
 
-	public void setCiPolicyName(String ciPolicyName) {
-		this.ciPolicyName = ciPolicyName;
-	}
+  public String getCiPolicyName() {
+    return ciPolicyName;
+  }
 
-	public Date getCiPolicyCreatedDate() {
-		return ciPolicyCreatedDate;
-	}
+  public void setCiPolicyName(String ciPolicyName) {
+    this.ciPolicyName = ciPolicyName;
+  }
 
-	public void setCiPolicyCreatedDate(Date ciPolicyCreatedDate) {
-		this.ciPolicyCreatedDate = ciPolicyCreatedDate;
-	}
+  public Date getCiPolicyCreatedDate() {
+    return ciPolicyCreatedDate;
+  }
 
-	public List<CiPolicyActivitiesInsights> getInsights() {
-		if (insights == null) {
-			insights = new ArrayList<CiPolicyActivitiesInsights>();
-		}
-		return insights;
-	}
+  public void setCiPolicyCreatedDate(Date ciPolicyCreatedDate) {
+    this.ciPolicyCreatedDate = ciPolicyCreatedDate;
+  }
 
-	public void setInsights(List<CiPolicyActivitiesInsights> insights) {
-		this.insights = insights;
-	}
+  public List<CiPolicyActivitiesInsights> getInsights() {
+    if (insights == null) {
+      insights = new ArrayList<>();
+    }
+    return insights;
+  }
+
+  public void setInsights(List<CiPolicyActivitiesInsights> insights) {
+    this.insights = insights;
+  }
 }

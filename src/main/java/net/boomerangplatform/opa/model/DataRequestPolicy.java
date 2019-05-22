@@ -3,7 +3,6 @@ package net.boomerangplatform.opa.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -69,9 +68,9 @@ public class DataRequestPolicy {
   }
 
   public List<Map<String, String>> getRules() {
-	if (rules == null) {
-		rules = new ArrayList<Map<String, String>>();
-	}
+    if (rules == null) {
+      rules = new ArrayList<>();
+    }
     return rules;
   }
 

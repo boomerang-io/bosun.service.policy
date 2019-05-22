@@ -5,74 +5,74 @@ import java.util.List;
 
 public class CiPoliciesActivities {
 
-	private String id;
-	private String ciComponentId;
-	private String ciVersionId;
-	private String ciPolicyId;
-	private String ciActivityId;
-	private List<Result> results;
-	private boolean valid;
-	
-	public CiPoliciesActivities() {
-		
-	}
+  private String id;
+  private String ciComponentId;
+  private String ciVersionId;
+  private String ciPolicyId;
+  private String ciActivityId;
+  private List<Result> results;
+  private boolean valid;
 
-	public String getId() {
-		return id;
-	}
+  public CiPoliciesActivities() {
+    // Do nothing
+  }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+  public String getId() {
+    return id;
+  }
 
-	public String getCiComponentId() {
-		return ciComponentId;
-	}
+  public void setId(String id) {
+    this.id = id;
+  }
 
-	public void setCiComponentId(String ciComponentId) {
-		this.ciComponentId = ciComponentId;
-	}
+  public String getCiComponentId() {
+    return ciComponentId;
+  }
 
-	public String getCiVersionId() {
-		return ciVersionId;
-	}
+  public void setCiComponentId(String ciComponentId) {
+    this.ciComponentId = ciComponentId;
+  }
 
-	public void setCiVersionId(String ciVersionId) {
-		this.ciVersionId = ciVersionId;
-	}
+  public String getCiVersionId() {
+    return ciVersionId;
+  }
 
-	public String getCiPolicyId() {
-		return ciPolicyId;
-	}
+  public void setCiVersionId(String ciVersionId) {
+    this.ciVersionId = ciVersionId;
+  }
 
-	public void setCiPolicyId(String ciPolicyId) {
-		this.ciPolicyId = ciPolicyId;
-	}
+  public String getCiPolicyId() {
+    return ciPolicyId;
+  }
 
-	public String getCiActivityId() {
-		return ciActivityId;
-	}
+  public void setCiPolicyId(String ciPolicyId) {
+    this.ciPolicyId = ciPolicyId;
+  }
 
-	public void setCiActivityId(String ciActivityId) {
-		this.ciActivityId = ciActivityId;
-	}
+  public String getCiActivityId() {
+    return ciActivityId;
+  }
 
-	public List<Result> getResults() {
-		if (results == null) {
-			results = new ArrayList<Result>();
-		}
-		return results;
-	}
+  public void setCiActivityId(String ciActivityId) {
+    this.ciActivityId = ciActivityId;
+  }
 
-	public void setResults(List<Result> results) {
-		this.results = results;
-	}
+  public List<Result> getResults() {
+    if (results == null) {
+      results = new ArrayList<>();
+    }
+    return results;
+  }
 
-	public boolean isValid() {
-		return valid;
-	}
+  public void setResults(List<Result> results) {
+    this.results = results;
+  }
 
-	public void setValid(boolean valid) {
-		this.valid = valid;
-	}
+  public boolean isValid() {
+    return valid;
+  }
+
+  public void setValid(boolean valid) {
+    this.valid = valid;
+  }
 }

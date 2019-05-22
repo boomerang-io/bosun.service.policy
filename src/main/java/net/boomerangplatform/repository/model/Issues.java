@@ -6,84 +6,84 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Issues {
 
-	@JsonProperty("total")
-	private Integer total;
-	
-	@JsonProperty("blocker")
-	private Integer blocker;
-	
-	@JsonProperty("critical")
-	private Integer critical;
-	
-	@JsonProperty("major")
-	private Integer major;
-	
-	@JsonProperty("minor")
-	private Integer minor;
-	
-	@JsonProperty("info")
-	private Integer info;
-	
-	@JsonProperty("filesAnalyzed")
-	private Integer filesAnalyzed;
-	
-	public Issues() {
-		
-	}
+  @JsonProperty("total")
+  private Integer total;
 
-	public Integer getTotal() {
-		return total;
-	}
+  @JsonProperty("blocker")
+  private Integer blocker;
 
-	public void setTotal(Integer total) {
-		this.total = total;
-	}
+  @JsonProperty("critical")
+  private Integer critical;
 
-	public Integer getBlocker() {
-		return blocker;
-	}
+  @JsonProperty("major")
+  private Integer major;
 
-	public void setBlocker(Integer blocker) {
-		this.blocker = blocker;
-	}
+  @JsonProperty("minor")
+  private Integer minor;
 
-	public Integer getCritical() {
-		return critical;
-	}
+  @JsonProperty("info")
+  private Integer info;
 
-	public void setCritical(Integer critical) {
-		this.critical = critical;
-	}
+  @JsonProperty("filesAnalyzed")
+  private Integer filesAnalyzed;
 
-	public Integer getMajor() {
-		return major;
-	}
+  public Issues() {
+    // Do nothing
+  }
 
-	public void setMajor(Integer major) {
-		this.major = major;
-	}
+  public Integer getTotal() {
+    return total;
+  }
 
-	public Integer getMinor() {
-		return minor;
-	}
+  public void setTotal(Integer total) {
+    this.total = total;
+  }
 
-	public void setMinor(Integer minor) {
-		this.minor = minor;
-	}
+  public Integer getBlocker() {
+    return blocker;
+  }
 
-	public Integer getInfo() {
-		return info;
-	}
+  public void setBlocker(Integer blocker) {
+    this.blocker = blocker;
+  }
 
-	public void setInfo(Integer info) {
-		this.info = info;
-	}
+  public Integer getCritical() {
+    return critical;
+  }
 
-	public Integer getFilesAnalyzed() {
-		return filesAnalyzed;
-	}
+  public void setCritical(Integer critical) {
+    this.critical = critical;
+  }
 
-	public void setFilesAnalyzed(Integer filesAnalyzed) {
-		this.filesAnalyzed = filesAnalyzed;
-	}
+  public Integer getMajor() {
+    return major;
+  }
+
+  public void setMajor(Integer major) {
+    this.major = major;
+  }
+
+  public Integer getMinor() {
+    return minor;
+  }
+
+  public void setMinor(Integer minor) {
+    this.minor = minor;
+  }
+
+  public Integer getInfo() {
+    return info;
+  }
+
+  public void setInfo(Integer info) {
+    this.info = info;
+  }
+
+  public Integer getFilesAnalyzed() {
+    return filesAnalyzed;
+  }
+
+  public void setFilesAnalyzed(Integer filesAnalyzed) {
+    this.filesAnalyzed = filesAnalyzed;
+  }
 }

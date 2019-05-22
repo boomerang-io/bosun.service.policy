@@ -5,37 +5,37 @@ import java.util.Date;
 
 public class CiPolicyActivitiesInsights implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	private String ciPolicyActivityId;
-	private Date ciPolicyActivityCreatedDate;
-	private Integer violations;
-	
-	public CiPolicyActivitiesInsights() {
-		
-	}
+  private String ciPolicyActivityId;
+  private Date ciPolicyActivityCreatedDate;
+  private Integer violations;
 
-	public String getCiPolicyActivityId() {
-		return ciPolicyActivityId;
-	}
+  public CiPolicyActivitiesInsights() {
+    // Do nothing
+  }
 
-	public void setCiPolicyActivityId(String ciPolicyActivityId) {
-		this.ciPolicyActivityId = ciPolicyActivityId;
-	}
+  public String getCiPolicyActivityId() {
+    return ciPolicyActivityId;
+  }
 
-	public Date getCiPolicyActivityCreatedDate() {
-		return ciPolicyActivityCreatedDate;
-	}
+  public void setCiPolicyActivityId(String ciPolicyActivityId) {
+    this.ciPolicyActivityId = ciPolicyActivityId;
+  }
 
-	public void setCiPolicyActivityCreatedDate(Date ciPolicyActivityCreatedDate) {
-		this.ciPolicyActivityCreatedDate = ciPolicyActivityCreatedDate;
-	}
+  public Date getCiPolicyActivityCreatedDate() {
+    return ciPolicyActivityCreatedDate;
+  }
 
-	public Integer getViolations() {
-		return violations;
-	}
+  public void setCiPolicyActivityCreatedDate(Date ciPolicyActivityCreatedDate) {
+    this.ciPolicyActivityCreatedDate = ciPolicyActivityCreatedDate;
+  }
 
-	public void setViolations(Integer violations) {
-		this.violations = violations;
-	}
+  public Integer getViolations() {
+    return violations;
+  }
+
+  public void setViolations(Integer violations) {
+    this.violations = violations;
+  }
 }
