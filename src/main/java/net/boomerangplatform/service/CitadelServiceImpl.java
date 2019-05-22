@@ -184,126 +184,128 @@ public class CitadelServiceImpl implements CitadelService {
 
 		CiPolicyEntity policyEntity = ciPolicyService.findById(ciPolicyId);
 		for (CiPolicyConfig policyConfig : policyEntity.getDefinitions()) {
-
-			CiPolicyDefinitionEntity policyDefinitionEntity = ciPolicyDefinitionService
-					.findById(policyConfig.getCiPolicyDefinitionId());
-
-			if ("static_code_analysis".equalsIgnoreCase(policyDefinitionEntity.getKey())) {
-				SonarQubeReport sonarQubeReport = repositoryService.getSonarQubeReport(ciComponentEntity.getId(),
-						ciComponentVersionEntity.getName());
-
-				ObjectMapper mapper = new ObjectMapper();
-				JsonNode data = mapper.convertValue(sonarQubeReport, JsonNode.class);
-
-				LOGGER.info("static_code_analysis=" + getJsonNodeText(data));
-
-				DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(),
-						policyDefinitionEntity.getKey(), policyConfig.getRules(), data);
-
-				Results result = new Results();
-				result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
-				result.setDetail(getJsonNodeText(dataResponse.getResult().getDetail()));
-				result.setValid(dataResponse.getResult().getValid());
-
-				if (!dataResponse.getResult().getValid()) {
-					overallResult = false;
-				}
-
-				results.add(result);
-				
-			} else if ("package_safelist".equalsIgnoreCase(policyDefinitionEntity.getKey())) {
-				DependencyGraph dependencyGraph = repositoryService.getDependencyGraph(ciComponentEntity.getId(),
-						ciComponentVersionEntity.getName());
-
-				ObjectMapper mapper = new ObjectMapper();
-				JsonNode data = mapper.convertValue(dependencyGraph, JsonNode.class);
-
-				LOGGER.info("package_safelist=" + getJsonNodeText(data));
-
-				DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(),
-						policyDefinitionEntity.getKey(), policyConfig.getRules(), data);
-
-				Results result = new Results();
-				result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
-				result.setDetail(getJsonNodeText(dataResponse.getResult().getDetail()));
-				result.setValid(dataResponse.getResult().getValid());
-
-				if (!dataResponse.getResult().getValid()) {
-					overallResult = false;
-				}
-
-				results.add(result);
-				
-			} else if ("cve_safelist".equalsIgnoreCase(policyDefinitionEntity.getKey())) {
-				ArtifactSummary artifactSummary = repositoryService.getArtifactSummary(ciComponentEntity.getId(),
-						ciComponentVersionEntity.getName());
-
-				if (!artifactSummary.getArtifacts().isEmpty()) {
+			
+			if (!policyConfig.getRules().isEmpty()) {
+				CiPolicyDefinitionEntity policyDefinitionEntity = ciPolicyDefinitionService
+						.findById(policyConfig.getCiPolicyDefinitionId());
+	
+				if ("static_code_analysis".equalsIgnoreCase(policyDefinitionEntity.getKey())) {
+					SonarQubeReport sonarQubeReport = repositoryService.getSonarQubeReport(ciComponentEntity.getId(),
+							ciComponentVersionEntity.getName());
+	
 					ObjectMapper mapper = new ObjectMapper();
-					JsonNode data = mapper.convertValue(artifactSummary.getArtifacts().get(0).getIssues(), JsonNode.class);
-
-					LOGGER.info("cve_safelist=" + getJsonNodeText(data));
-
+					JsonNode data = mapper.convertValue(sonarQubeReport, JsonNode.class);
+	
+					LOGGER.info("static_code_analysis=" + getJsonNodeText(data));
+	
 					DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(),
 							policyDefinitionEntity.getKey(), policyConfig.getRules(), data);
-
+	
 					Results result = new Results();
 					result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
 					result.setDetail(getJsonNodeText(dataResponse.getResult().getDetail()));
 					result.setValid(dataResponse.getResult().getValid());
-
+	
 					if (!dataResponse.getResult().getValid()) {
 						overallResult = false;
 					}
-					
-					results.add(result);					
-				}
-				else {
-					
-					Results result = new Results();
-					result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
-					result.setDetail(null);
-					result.setValid(false);
-
-					overallResult = false;
-					
+	
 					results.add(result);
-				}				
-			} else if ("security_issue_analysis".equalsIgnoreCase(policyDefinitionEntity.getKey())) {
-				ArtifactSummary artifactSummary = repositoryService.getArtifactSummary(ciComponentEntity.getId(),
-						ciComponentVersionEntity.getName());
-
-				if (!artifactSummary.getArtifacts().isEmpty()) {
+					
+				} else if ("package_safelist".equalsIgnoreCase(policyDefinitionEntity.getKey())) {
+					DependencyGraph dependencyGraph = repositoryService.getDependencyGraph(ciComponentEntity.getId(),
+							ciComponentVersionEntity.getName());
+	
 					ObjectMapper mapper = new ObjectMapper();
-					JsonNode data = mapper.convertValue(artifactSummary.getArtifacts().get(0).getIssues(), JsonNode.class);
-
-					LOGGER.info("security_issue_analysis=" + getJsonNodeText(data));
-
+					JsonNode data = mapper.convertValue(dependencyGraph, JsonNode.class);
+	
+					LOGGER.info("package_safelist=" + getJsonNodeText(data));
+	
 					DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(),
 							policyDefinitionEntity.getKey(), policyConfig.getRules(), data);
-
+	
 					Results result = new Results();
 					result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
 					result.setDetail(getJsonNodeText(dataResponse.getResult().getDetail()));
 					result.setValid(dataResponse.getResult().getValid());
-
+	
 					if (!dataResponse.getResult().getValid()) {
 						overallResult = false;
 					}
-					
+	
 					results.add(result);
+					
+				} else if ("cve_safelist".equalsIgnoreCase(policyDefinitionEntity.getKey())) {
+					ArtifactSummary artifactSummary = repositoryService.getArtifactSummary(ciComponentEntity.getId(),
+							ciComponentVersionEntity.getName());
+	
+					if (!artifactSummary.getArtifacts().isEmpty()) {
+						ObjectMapper mapper = new ObjectMapper();
+						JsonNode data = mapper.convertValue(artifactSummary.getArtifacts().get(0).getIssues(), JsonNode.class);
+	
+						LOGGER.info("cve_safelist=" + getJsonNodeText(data));
+	
+						DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(),
+								policyDefinitionEntity.getKey(), policyConfig.getRules(), data);
+	
+						Results result = new Results();
+						result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
+						result.setDetail(getJsonNodeText(dataResponse.getResult().getDetail()));
+						result.setValid(dataResponse.getResult().getValid());
+	
+						if (!dataResponse.getResult().getValid()) {
+							overallResult = false;
+						}
+						
+						results.add(result);					
+					}
+					else {
+						
+						Results result = new Results();
+						result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
+						result.setDetail(null);
+						result.setValid(false);
+	
+						overallResult = false;
+						
+						results.add(result);
+					}				
+				} else if ("security_issue_analysis".equalsIgnoreCase(policyDefinitionEntity.getKey())) {
+					ArtifactSummary artifactSummary = repositoryService.getArtifactSummary(ciComponentEntity.getId(),
+							ciComponentVersionEntity.getName());
+	
+					if (!artifactSummary.getArtifacts().isEmpty()) {
+						ObjectMapper mapper = new ObjectMapper();
+						JsonNode data = mapper.convertValue(artifactSummary.getArtifacts().get(0).getIssues(), JsonNode.class);
+	
+						LOGGER.info("security_issue_analysis=" + getJsonNodeText(data));
+	
+						DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(),
+								policyDefinitionEntity.getKey(), policyConfig.getRules(), data);
+	
+						Results result = new Results();
+						result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
+						result.setDetail(getJsonNodeText(dataResponse.getResult().getDetail()));
+						result.setValid(dataResponse.getResult().getValid());
+	
+						if (!dataResponse.getResult().getValid()) {
+							overallResult = false;
+						}
+						
+						results.add(result);
+					}
+					else {
+						
+						Results result = new Results();
+						result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
+						result.setDetail(null);
+						result.setValid(false);
+	
+						overallResult = false;
+						
+						results.add(result);
+					}	
 				}
-				else {
-					
-					Results result = new Results();
-					result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
-					result.setDetail(null);
-					result.setValid(false);
-
-					overallResult = false;
-					
-					results.add(result);
-				}	
 			}
 		}
 
