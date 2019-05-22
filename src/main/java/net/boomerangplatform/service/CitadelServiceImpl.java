@@ -385,7 +385,7 @@ public class CitadelServiceImpl implements CitadelService {
 		
 		LOGGER.info("stagesWithGates.count=" + stagesWithGates.size());
 		
-		List<CiPolicyViolations> violations = new ArrayList<CiPolicyViolations>();
+		Map<String, CiPolicyViolations> violationsMap = new HashMap<String, CiPolicyViolations>();
 		
 		List<CiComponentEntity> components = ciComponentService.findByCiTeamId(ciTeamId);
 		for (CiComponentEntity component : components) {
@@ -413,28 +413,40 @@ public class CitadelServiceImpl implements CitadelService {
 								CiComponentVersionEntity componentVersion = ciComponentVersionService.findVersionWithId(componentActivity.getCiComponentVersionId());
 								
 								LOGGER.info("componentVersion.name=" + componentVersion.getName());
-									
-								CiPolicyViolations violation = new CiPolicyViolations();
-								violation.setCiComponentId(component.getId());
-								violation.setCiComponentName(component.getName());
-								violation.setCiComponentVersionId(componentVersion.getId());
-								violation.setCiComponentVersionName(componentVersion.getName());
-								violation.setCiPolicyId(policy.getId());
-								violation.setCiPolicyName(policy.getName());
-								violation.setCiStageId(stage.getId());
-								violation.setCiStageName(stage.getName());
-								violation.setViolations(0);
 																
+								StringBuffer key = new StringBuffer();
+								key.append(policy.getId()).append(component.getId()).append(componentVersion.getId()).append(stage.getId());
+								
+								LOGGER.info("key=" + key.toString());
+								
+								CiPolicyViolations violation = violationsMap.get(key.toString());								
+								if (violation == null) {
+									violation = new CiPolicyViolations();
+									violation.setCiComponentId(component.getId());
+									violation.setCiComponentName(component.getName());
+									violation.setCiComponentVersionId(componentVersion.getId());
+									violation.setCiComponentVersionName(componentVersion.getName());
+									violation.setCiPolicyId(policy.getId());
+									violation.setCiPolicyName(policy.getName());
+									violation.setCiStageId(stage.getId());
+									violation.setCiStageName(stage.getName());
+									violation.setViolations(0);				
+									violation.setCiPolicyActivityCreatedDate(policyActivity.getCreatedDate());
+								}
+								else if (policyActivity.getCreatedDate().after(violation.getCiPolicyActivityCreatedDate())) {
+									violation.setViolations(0);				
+									violation.setCiPolicyActivityCreatedDate(policyActivity.getCreatedDate());
+								}
 								
 								Integer violationsTotal = 0;								
 								for (Results result : policyActivity.getResults()) {
 									if (!result.getValid()) {										
 										violationsTotal++;
 									}
-								}								
+								}							
 								violation.setViolations(violation.getViolations() + violationsTotal);
 								
-								violations.add(violation);
+								violationsMap.put(key.toString(), violation);
 							}
 						}					
 					}
@@ -442,7 +454,7 @@ public class CitadelServiceImpl implements CitadelService {
 			}
 		}		
 		
-		return violations;
+		return new ArrayList<CiPolicyViolations>(violationsMap.values());
 	}
 
 	private DataResponse callOpenPolicyAgentClient(String policyDefinitionId, String policyDefinitionKey,

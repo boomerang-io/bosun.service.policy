@@ -1,19 +1,21 @@
 package net.boomerangplatform.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class CiPolicyViolations implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	private String ciPolicyId;
-	private String ciPolicyName;
+	private String ciPolicyName;	
 	private String ciStageId;
 	private String ciStageName;
 	private String ciComponentId;
 	private String ciComponentName;
 	private String ciComponentVersionId;
 	private String ciComponentVersionName;
+	private Date ciPolicyActivityCreatedDate;
 
 	private Integer violations;
 
@@ -91,5 +93,13 @@ public class CiPolicyViolations implements Serializable {
 
 	public void setViolations(Integer violations) {
 		this.violations = violations;
+	}
+
+	public Date getCiPolicyActivityCreatedDate() {
+		return ciPolicyActivityCreatedDate;
+	}
+
+	public void setCiPolicyActivityCreatedDate(Date ciPolicyActivityCreatedDate) {
+		this.ciPolicyActivityCreatedDate = ciPolicyActivityCreatedDate;
 	}
 }
