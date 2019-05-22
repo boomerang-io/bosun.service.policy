@@ -20,6 +20,8 @@ public class CiPolicy implements Serializable {
 	private Date createdDate;
 
 	private List<CiPolicyConfig> definitions = new ArrayList<>();
+	
+	private List<String> stages;
 
 	public String getId() {
 		return id;
@@ -64,5 +66,16 @@ public class CiPolicy implements Serializable {
 	public void addDefinition(CiPolicyConfig definition) {
 		definitions.add(definition);
 
+	}
+
+	public List<String> getStages() {
+		if (stages == null) {
+			stages = new ArrayList<String>();
+		}
+		return stages;
+	}
+
+	public void setStages(List<String> stages) {
+		this.stages = stages;
 	}
 }
