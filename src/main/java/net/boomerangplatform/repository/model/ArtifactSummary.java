@@ -1,6 +1,7 @@
 package net.boomerangplatform.repository.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,20 +10,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ArtifactSummary {
 
   @JsonProperty("artifacts")
-  private List<Artifact> artifacts;
+  private List<Artifact> artifacts = new ArrayList<>();
 
   public ArtifactSummary() {
     // Do nothing
   }
 
   public List<Artifact> getArtifacts() {
-    if (artifacts == null) {
-      artifacts = new ArrayList<>();
-    }
-    return artifacts;
+    return Collections.unmodifiableList(artifacts);
   }
 
   public void setArtifacts(List<Artifact> artifacts) {
-    this.artifacts = artifacts;
+    this.artifacts =
+        artifacts == null ? new ArrayList<>() : new ArrayList<>(artifacts);
   }
 }

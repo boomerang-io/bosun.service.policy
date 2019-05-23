@@ -52,14 +52,16 @@ public class RepositoryServiceImpl implements RepositoryService {
 
     LOGGER.info("getDependencyGraph() - url: " + url);
 
+    DependencyGraph result = new DependencyGraph();
     try {
       final ResponseEntity<DependencyGraph> response =
           restTemplate.exchange(url, HttpMethod.GET, request, DependencyGraph.class);
-      return response.getBody();
+      result = response.getBody();
     } catch (final RestClientException e) {
       LOGGER.error(e.getMessage(), e);
-      return new DependencyGraph(); // TODO
     }
+
+    return result;
   }
 
   @Override
@@ -73,14 +75,16 @@ public class RepositoryServiceImpl implements RepositoryService {
 
     LOGGER.info("getArtifactSummary() - url: " + url);
 
+    ArtifactSummary result = new ArtifactSummary();
     try {
       final ResponseEntity<ArtifactSummary> response =
           restTemplate.exchange(url, HttpMethod.GET, request, ArtifactSummary.class);
-      return response.getBody();
+      result = response.getBody();
     } catch (final RestClientException e) {
       LOGGER.error(e.getMessage(), e);
-      return new ArtifactSummary(); // TODO
     }
+
+    return result;
   }
 
   @Override
@@ -94,13 +98,15 @@ public class RepositoryServiceImpl implements RepositoryService {
 
     LOGGER.info("getSonarQubeReport() - url: " + url);
 
+    SonarQubeReport result = new SonarQubeReport();
     try {
       final ResponseEntity<SonarQubeReport> response =
           restTemplate.exchange(url, HttpMethod.GET, request, SonarQubeReport.class);
-      return response.getBody();
+      result = response.getBody();
     } catch (final RestClientException e) {
       LOGGER.error(e.getMessage(), e);
-      return new SonarQubeReport(); // TODO
     }
+
+    return result;
   }
 }

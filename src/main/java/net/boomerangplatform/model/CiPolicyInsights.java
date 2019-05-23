@@ -12,7 +12,7 @@ public class CiPolicyInsights implements Serializable {
   private String ciPolicyId;
   private String ciPolicyName;
   private Date ciPolicyCreatedDate;
-  private List<CiPolicyActivitiesInsights> insights;
+  private List<CiPolicyActivitiesInsights> insights  = new ArrayList<>();
 
   public CiPolicyInsights() {
     // Do nothing
@@ -35,21 +35,18 @@ public class CiPolicyInsights implements Serializable {
   }
 
   public Date getCiPolicyCreatedDate() {
-    return ciPolicyCreatedDate;
+    return ciPolicyCreatedDate == null ? null : (Date) ciPolicyCreatedDate.clone();
   }
 
   public void setCiPolicyCreatedDate(Date ciPolicyCreatedDate) {
-    this.ciPolicyCreatedDate = ciPolicyCreatedDate;
+    this.ciPolicyCreatedDate = ciPolicyCreatedDate == null ? null : (Date) ciPolicyCreatedDate.clone();
   }
 
   public List<CiPolicyActivitiesInsights> getInsights() {
-    if (insights == null) {
-      insights = new ArrayList<>();
-    }
-    return insights;
+    return insights; // TODO
   }
 
   public void setInsights(List<CiPolicyActivitiesInsights> insights) {
-    this.insights = insights;
+    this.insights = insights; // TODO
   }
 }

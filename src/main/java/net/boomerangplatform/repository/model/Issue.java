@@ -1,6 +1,7 @@
 package net.boomerangplatform.repository.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -30,7 +31,7 @@ public class Issue {
   private String created;
 
   @JsonProperty("impact_path")
-  private List<String> impactPath;
+  private List<String> impactPath = new ArrayList<>();
 
   public Issue() {
     // Do nothing
@@ -77,11 +78,11 @@ public class Issue {
   }
 
   public List<Cfe> getCves() {
-    return cves;
+    return cves == null ? null : Collections.unmodifiableList(cves);
   }
 
   public void setCves(List<Cfe> cves) {
-    this.cves = cves;
+    this.cves = cves == null ? null : new ArrayList<>(cves);
   }
 
   public String getCreated() {
@@ -93,13 +94,10 @@ public class Issue {
   }
 
   public List<String> getImpactPath() {
-    return impactPath;
+    return Collections.unmodifiableList(impactPath);
   }
 
   public void setImpactPath(List<String> impactPath) {
-    if (impactPath == null) {
-      impactPath = new ArrayList<>();
-    }
-    this.impactPath = impactPath;
+    this.impactPath = impactPath == null ? new ArrayList<>() : new ArrayList<>(impactPath);
   }
 }

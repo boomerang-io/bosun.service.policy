@@ -2,6 +2,7 @@ package net.boomerangplatform.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import net.boomerangplatform.mongo.model.CiPolicyConfig;
@@ -20,7 +21,7 @@ public class CiPolicy implements Serializable {
 
   private List<CiPolicyConfig> definitions = new ArrayList<>();
 
-  private List<String> stages;
+  private List<String> stages = new ArrayList<>();
 
   public String getId() {
     return id;
@@ -47,34 +48,27 @@ public class CiPolicy implements Serializable {
   }
 
   public Date getCreatedDate() {
-    return createdDate;
+    return createdDate == null ? null : (Date) createdDate.clone();
   }
 
   public void setCreatedDate(Date createdDate) {
-    this.createdDate = createdDate;
+    this.createdDate = createdDate == null ? null : (Date) createdDate.clone();
   }
 
   public List<CiPolicyConfig> getDefinitions() {
-    return definitions;
+    return Collections.unmodifiableList(definitions);
   }
 
   public void setDefinitions(List<CiPolicyConfig> definitions) {
-    this.definitions = definitions;
-  }
-
-  public void addDefinition(CiPolicyConfig definition) {
-    definitions.add(definition);
-
+    this.definitions =
+        definitions == null ? new ArrayList<>() : new ArrayList<>(definitions);
   }
 
   public List<String> getStages() {
-    if (stages == null) {
-      stages = new ArrayList<>();
-    }
-    return stages;
+    return Collections.unmodifiableList(stages);
   }
 
   public void setStages(List<String> stages) {
-    this.stages = stages;
+    this.stages = stages == null ? new ArrayList<>() : new ArrayList<>(stages);
   }
 }

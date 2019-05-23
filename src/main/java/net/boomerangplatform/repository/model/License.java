@@ -1,6 +1,7 @@
 package net.boomerangplatform.repository.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,10 +16,10 @@ public class License {
   private String fullName;
 
   @JsonProperty("components")
-  private List<String> components;
+  private List<String> components = new ArrayList<>();
 
   @JsonProperty("more_info_url")
-  private List<String> moreInfoUrl;
+  private List<String> moreInfoUrl = new ArrayList<>();
 
   public License() {
     // Do nothing
@@ -41,24 +42,18 @@ public class License {
   }
 
   public List<String> getComponents() {
-    if (components == null) {
-      components = new ArrayList<>();
-    }
-    return components;
+    return Collections.unmodifiableList(components);
   }
 
   public void setComponents(List<String> components) {
-    this.components = components;
+    this.components = components == null ? new ArrayList<>() : new ArrayList<>(components);
   }
 
   public List<String> getMoreInfoUrl() {
-    if (moreInfoUrl == null) {
-      moreInfoUrl = new ArrayList<>();
-    }
-    return moreInfoUrl;
+    return Collections.unmodifiableList(moreInfoUrl);
   }
 
   public void setMoreInfoUrl(List<String> moreInfoUrl) {
-    this.moreInfoUrl = moreInfoUrl;
+    this.moreInfoUrl = moreInfoUrl == null ? new ArrayList<>() : new ArrayList<>(moreInfoUrl);
   }
 }

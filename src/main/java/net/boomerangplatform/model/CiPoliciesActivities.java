@@ -1,6 +1,7 @@
 package net.boomerangplatform.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class CiPoliciesActivities {
@@ -10,7 +11,7 @@ public class CiPoliciesActivities {
   private String ciVersionId;
   private String ciPolicyId;
   private String ciActivityId;
-  private List<Result> results;
+  private List<Result> results = new ArrayList<>();
   private boolean valid;
 
   public CiPoliciesActivities() {
@@ -58,14 +59,11 @@ public class CiPoliciesActivities {
   }
 
   public List<Result> getResults() {
-    if (results == null) {
-      results = new ArrayList<>();
-    }
-    return results;
+    return Collections.unmodifiableList(results);
   }
 
   public void setResults(List<Result> results) {
-    this.results = results;
+    this.results = results == null ? new ArrayList<>() : new ArrayList<>(results);
   }
 
   public boolean isValid() {

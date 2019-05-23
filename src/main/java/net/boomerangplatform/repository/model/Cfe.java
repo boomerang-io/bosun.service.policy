@@ -1,6 +1,7 @@
 package net.boomerangplatform.repository.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,7 +13,7 @@ public class Cfe {
   private String cve;
 
   @JsonProperty("cwe")
-  private List<String> cwe;
+  private List<String> cwe = new ArrayList<>();
 
   @JsonProperty("cvss_v2")
   private String cvssV2;
@@ -33,14 +34,11 @@ public class Cfe {
   }
 
   public List<String> getCwe() {
-    if (cwe == null) {
-      cwe = new ArrayList<>();
-    }
-    return cwe;
+    return Collections.unmodifiableList(cwe);
   }
 
   public void setCwe(List<String> cwe) {
-    this.cwe = cwe;
+    this.cwe = cwe == null ? new ArrayList<>() : new ArrayList<>(cwe);
   }
 
   public String getCvssV2() {

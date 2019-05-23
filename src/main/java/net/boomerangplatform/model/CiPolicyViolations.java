@@ -96,10 +96,11 @@ public class CiPolicyViolations implements Serializable {
   }
 
   public Date getCiPolicyActivityCreatedDate() {
-    return ciPolicyActivityCreatedDate;
+    return ciPolicyActivityCreatedDate == null ? null : (Date) ciPolicyActivityCreatedDate.clone();
   }
 
   public void setCiPolicyActivityCreatedDate(Date ciPolicyActivityCreatedDate) {
-    this.ciPolicyActivityCreatedDate = ciPolicyActivityCreatedDate;
+    this.ciPolicyActivityCreatedDate =
+        ciPolicyActivityCreatedDate == null ? null : (Date) ciPolicyActivityCreatedDate.clone();
   }
 }
