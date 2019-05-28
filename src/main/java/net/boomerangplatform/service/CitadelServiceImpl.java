@@ -1,5 +1,6 @@
 package net.boomerangplatform.service;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -7,19 +8,18 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import net.boomerangplatform.model.CiPolicy;
 import net.boomerangplatform.model.CiPolicyActivitiesInsights;
 import net.boomerangplatform.model.CiPolicyDefinition;
@@ -58,453 +58,460 @@ import net.boomerangplatform.repository.service.RepositoryService;
 @Service
 public class CitadelServiceImpl implements CitadelService {
 
-	@Value("${insights.period.months}")
-	private String insightsPeriodMonths;
-	
-	@Autowired
-	private CiComponentActivityService ciComponentActivityService;
+  @Value("${insights.period.months}")
+  private String insightsPeriodMonths;
 
-	@Autowired
-	private CiComponentService ciComponentService;
+  @Autowired
+  private CiComponentActivityService ciComponentActivityService;
 
-	@Autowired
-	private CiComponentVersionService ciComponentVersionService;
-	
-	@Autowired
-	private CiPipelineService ciPipelineService;
-	
-	@Autowired
-	private CiStagesService ciStagesService;
+  @Autowired
+  private CiComponentService ciComponentService;
 
-	@Autowired
-	private CiPolicyService ciPolicyService;
+  @Autowired
+  private CiComponentVersionService ciComponentVersionService;
 
-	@Autowired
-	private CiPolicyDefinitionService ciPolicyDefinitionService;
+  @Autowired
+  private CiPipelineService ciPipelineService;
 
-	@Autowired
-	private CiPolicyActivityService ciPolicyActivityService;
+  @Autowired
+  private CiStagesService ciStagesService;
 
-	@Autowired
-	private RepositoryService repositoryService;
+  @Autowired
+  private CiPolicyService ciPolicyService;
 
-	@Autowired
-	private OpenPolicyAgentClient openPolicyAgentClient;
+  @Autowired
+  private CiPolicyDefinitionService ciPolicyDefinitionService;
 
-	private static final Logger LOGGER = LogManager.getLogger();
+  @Autowired
+  private CiPolicyActivityService ciPolicyActivityService;
 
-	@Override
-	public List<CiPolicyDefinition> getAllDefinitions() {
-		List<CiPolicyDefinitionEntity> entitis = ciPolicyService.findAllDefinitions();
-		List<CiPolicyDefinition> descriptions = new ArrayList<>();
+  @Autowired
+  private RepositoryService repositoryService;
 
-		entitis.forEach(entity -> {
-			CiPolicyDefinition description = new CiPolicyDefinition();
-			BeanUtils.copyProperties(entity, description);
-			descriptions.add(description);
-		});
+  @Autowired
+  private OpenPolicyAgentClient openPolicyAgentClient;
+  
+  @Autowired
+  private Clock clock;
 
-		return descriptions;
-	}
+  private static final Logger LOGGER = LogManager.getLogger();
+  
+  @Bean
+  public Clock clock() {
+      return Clock.systemDefaultZone();
+  }
 
-	@Override
-	public Map<String, String> getAllOperators() {
-		Map<String, String> operators = new LinkedHashMap<>();
-		for (OperatorType type : OperatorType.values()) {
-			operators.put(type.name(), type.getOperator());
-		}
+  @Override
+  public List<CiPolicyDefinition> getAllDefinitions() {
+    List<CiPolicyDefinitionEntity> entitis = ciPolicyService.findAllDefinitions();
+    List<CiPolicyDefinition> descriptions = new ArrayList<>();
 
-		return operators;
-	}
+    entitis.forEach(entity -> {
+      CiPolicyDefinition description = new CiPolicyDefinition();
+      BeanUtils.copyProperties(entity, description);
+      descriptions.add(description);
+    });
 
-	@Override
-	public List<CiPolicy> getPoliciesByTeamId(String ciTeamId) {
-		List<CiPolicyEntity> entities = ciPolicyService.findByTeamId(ciTeamId);
-		List<CiPolicy> policies = new ArrayList<>();
+    return descriptions;
+  }
 
-		entities.forEach(entity -> {
-			CiPolicy policy = new CiPolicy();			
-			BeanUtils.copyProperties(entity, policy);
-			policy.setStages(getStagesForPolicy(ciTeamId, entity.getId()));
-			policies.add(policy);
-		});
+  @Override
+  public Map<String, String> getAllOperators() {
+    Map<String, String> operators = new LinkedHashMap<>();
+    for (OperatorType type : OperatorType.values()) {
+      operators.put(type.name(), type.getOperator());
+    }
 
-		return policies;
-	}
+    return operators;
+  }
 
-	@Override
-	public CiPolicy getPolicyById(String ciPolicyId) {
-		CiPolicyEntity entity = ciPolicyService.findById(ciPolicyId);
+  @Override
+  public List<CiPolicy> getPoliciesByTeamId(String ciTeamId) {
+    List<CiPolicyEntity> entities = ciPolicyService.findByTeamId(ciTeamId);
+    List<CiPolicy> policies = new ArrayList<>();
 
-		CiPolicy policy = new CiPolicy();
-		BeanUtils.copyProperties(entity, policy);
+    entities.forEach(entity -> {
+      CiPolicy policy = new CiPolicy();
+      BeanUtils.copyProperties(entity, policy);
+      policy.setStages(getStagesForPolicy(ciTeamId, entity.getId()));
+      policies.add(policy);
+    });
 
-		return policy;
-	}
+    return policies;
+  }
 
-	@Override
-	public CiPolicy addPolicy(CiPolicy policy) {
-		policy.setCreatedDate(new Date());
-		CiPolicyEntity entity = new CiPolicyEntity();
-		BeanUtils.copyProperties(policy, entity);
-		entity = ciPolicyService.add(entity);
-		policy.setId(entity.getId());
+  @Override
+  public CiPolicy getPolicyById(String ciPolicyId) {
+    CiPolicyEntity entity = ciPolicyService.findById(ciPolicyId);
 
-		return policy;
-	}
+    CiPolicy policy = new CiPolicy();
+    BeanUtils.copyProperties(entity, policy);
 
-	@Override
-	public CiPolicy updatePolicy(CiPolicy policy) {
-		CiPolicyEntity entity = ciPolicyService.findById(policy.getId());
-		BeanUtils.copyProperties(policy, entity);
-		ciPolicyService.update(entity);
+    return policy;
+  }
 
-		return policy;
-	}
+  @Override
+  public CiPolicy addPolicy(CiPolicy policy) {
+    policy.setCreatedDate(fromLocalDate(LocalDate.now(clock)));
+    CiPolicyEntity entity = new CiPolicyEntity();
+    BeanUtils.copyProperties(policy, entity);
+    entity = ciPolicyService.add(entity);
+    policy.setId(entity.getId());
 
-	@Override
-	public CiPolicyActivityEntity validatePolicy(String ciComponentActivityId, String ciPolicyId) {
-		
-		CiComponentActivityEntity ciComponentActivityEntity = ciComponentActivityService.findById(ciComponentActivityId);		
-		CiComponentEntity ciComponentEntity = ciComponentService.findById(ciComponentActivityEntity.getCiComponentId());
-		CiComponentVersionEntity ciComponentVersionEntity = ciComponentVersionService.findVersionWithId(ciComponentActivityEntity.getCiComponentVersionId());		
+    return policy;
+  }
 
-		CiPolicyActivityEntity policiesActivities = new CiPolicyActivityEntity();
-		policiesActivities.setCiTeamId(ciComponentEntity.getCiTeamId());
-		policiesActivities.setCiComponentActivityId(ciComponentActivityEntity.getId());
-		policiesActivities.setCiPolicyId(ciPolicyId);
-		policiesActivities.setCreatedDate(new Date());
-		policiesActivities.setValid(false);
+  @Override
+  public CiPolicy updatePolicy(CiPolicy policy) {
+    CiPolicyEntity entity = ciPolicyService.findById(policy.getId());
+    BeanUtils.copyProperties(policy, entity);
+    ciPolicyService.update(entity);
 
-		policiesActivities = ciPolicyActivityService.save(policiesActivities);
+    return policy;
+  }
 
-		List<Results> results = new ArrayList<>();
+  @Override
+  public CiPolicyActivityEntity validatePolicy(String ciComponentActivityId, String ciPolicyId) {
 
-		boolean overallResult = true;
+    CiComponentActivityEntity ciComponentActivityEntity =
+        ciComponentActivityService.findById(ciComponentActivityId);
+    CiComponentEntity ciComponentEntity =
+        ciComponentService.findById(ciComponentActivityEntity.getCiComponentId());
+    CiComponentVersionEntity ciComponentVersionEntity = ciComponentVersionService
+        .findVersionWithId(ciComponentActivityEntity.getCiComponentVersionId());
 
-		CiPolicyEntity policyEntity = ciPolicyService.findById(ciPolicyId);
-		for (CiPolicyConfig policyConfig : policyEntity.getDefinitions()) {
-			
-			if (!policyConfig.getRules().isEmpty()) {
-				CiPolicyDefinitionEntity policyDefinitionEntity = ciPolicyDefinitionService
-						.findById(policyConfig.getCiPolicyDefinitionId());
-	
-				if ("static_code_analysis".equalsIgnoreCase(policyDefinitionEntity.getKey())) {
-					SonarQubeReport sonarQubeReport = repositoryService.getSonarQubeReport(ciComponentEntity.getId(),
-							ciComponentVersionEntity.getName());
-	
-					ObjectMapper mapper = new ObjectMapper();
-					JsonNode data = mapper.convertValue(sonarQubeReport, JsonNode.class);
-	
-					LOGGER.info("static_code_analysis=" + getJsonNodeText(data));
-	
-					DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(),
-							policyDefinitionEntity.getKey(), policyConfig.getRules(), data);
-	
-					Results result = new Results();
-					result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
-					result.setDetail(getJsonNodeText(dataResponse.getResult().getDetail()));
-					result.setValid(dataResponse.getResult().getValid());
-	
-					if (!dataResponse.getResult().getValid()) {
-						overallResult = false;
-					}
-	
-					results.add(result);
-					
-				} else if ("package_safelist".equalsIgnoreCase(policyDefinitionEntity.getKey())) {
-					DependencyGraph dependencyGraph = repositoryService.getDependencyGraph(ciComponentEntity.getId(),
-							ciComponentVersionEntity.getName());
-	
-					ObjectMapper mapper = new ObjectMapper();
-					JsonNode data = mapper.convertValue(dependencyGraph, JsonNode.class);
-	
-					LOGGER.info("package_safelist=" + getJsonNodeText(data));
-	
-					DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(),
-							policyDefinitionEntity.getKey(), policyConfig.getRules(), data);
-	
-					Results result = new Results();
-					result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
-					result.setDetail(getJsonNodeText(dataResponse.getResult().getDetail()));
-					result.setValid(dataResponse.getResult().getValid());
-	
-					if (!dataResponse.getResult().getValid()) {
-						overallResult = false;
-					}
-	
-					results.add(result);
-					
-				} else if ("cve_safelist".equalsIgnoreCase(policyDefinitionEntity.getKey())) {
-					ArtifactSummary artifactSummary = repositoryService.getArtifactSummary(ciComponentEntity.getId(),
-							ciComponentVersionEntity.getName());
-	
-					if (!artifactSummary.getArtifacts().isEmpty()) {
-						ObjectMapper mapper = new ObjectMapper();
-						JsonNode data = mapper.convertValue(artifactSummary.getArtifacts().get(0).getIssues(), JsonNode.class);
-	
-						LOGGER.info("cve_safelist=" + getJsonNodeText(data));
-	
-						DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(),
-								policyDefinitionEntity.getKey(), policyConfig.getRules(), data);
-	
-						Results result = new Results();
-						result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
-						result.setDetail(getJsonNodeText(dataResponse.getResult().getDetail()));
-						result.setValid(dataResponse.getResult().getValid());
-	
-						if (!dataResponse.getResult().getValid()) {
-							overallResult = false;
-						}
-						
-						results.add(result);					
-					}
-					else {
-						
-						Results result = new Results();
-						result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
-						result.setDetail(null);
-						result.setValid(false);
-	
-						overallResult = false;
-						
-						results.add(result);
-					}				
-				} else if ("security_issue_analysis".equalsIgnoreCase(policyDefinitionEntity.getKey())) {
-					ArtifactSummary artifactSummary = repositoryService.getArtifactSummary(ciComponentEntity.getId(),
-							ciComponentVersionEntity.getName());
-	
-					if (!artifactSummary.getArtifacts().isEmpty()) {
-						ObjectMapper mapper = new ObjectMapper();
-						JsonNode data = mapper.convertValue(artifactSummary.getArtifacts().get(0).getIssues(), JsonNode.class);
-	
-						LOGGER.info("security_issue_analysis=" + getJsonNodeText(data));
-	
-						DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(),
-								policyDefinitionEntity.getKey(), policyConfig.getRules(), data);
-	
-						Results result = new Results();
-						result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
-						result.setDetail(getJsonNodeText(dataResponse.getResult().getDetail()));
-						result.setValid(dataResponse.getResult().getValid());
-	
-						if (!dataResponse.getResult().getValid()) {
-							overallResult = false;
-						}
-						
-						results.add(result);
-					}
-					else {
-						
-						Results result = new Results();
-						result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
-						result.setDetail(null);
-						result.setValid(false);
-	
-						overallResult = false;
-						
-						results.add(result);
-					}	
-				}
-			}
-		}
+    final CiPolicyActivityEntity policiesActivities = new CiPolicyActivityEntity();
+    policiesActivities.setCiTeamId(ciComponentEntity.getCiTeamId());
+    policiesActivities.setCiComponentActivityId(ciComponentActivityEntity.getId());
+    policiesActivities.setCiPolicyId(ciPolicyId);
+    policiesActivities.setCreatedDate(fromLocalDate(LocalDate.now(clock)));
+    policiesActivities.setValid(false);
 
-		policiesActivities.setValid(overallResult);
-		policiesActivities.setResults(results);
+    List<Results> results = new ArrayList<>();
 
-		policiesActivities = ciPolicyActivityService.save(policiesActivities);
 
-		return policiesActivities;
-	}
+    CiPolicyEntity policyEntity = ciPolicyService.findById(ciPolicyId);
 
-	@Override
-	public List<CiPolicyInsights> getInsights(String ciTeamId) {
-		Map<String, CiPolicyInsights> insights = new HashMap<>();
-		LocalDate date = LocalDate.now().minusMonths(Integer.valueOf(insightsPeriodMonths));
+    if (policyEntity != null) {
+      policyEntity.getDefinitions().stream()
+          .filter(policyConfig -> !policyConfig.getRules().isEmpty()).forEach(policyConfig -> {
+            CiPolicyDefinitionEntity policyDefinitionEntity =
+                ciPolicyDefinitionService.findById(policyConfig.getCiPolicyDefinitionId());
 
-		List<CiPolicyActivityEntity> activities = ciPolicyActivityService
-				.findByCiTeamIdAndValidAndCreatedDateAfter(ciTeamId, false, fromLocalDate(date));
-		
-		for (CiPolicyActivityEntity activity : activities) {
-			String ciPolicyId = activity.getCiPolicyId();
-			
-			CiPolicyInsights ciPolicyInsights = insights.get(ciPolicyId);
-			if (ciPolicyInsights == null) {
-				CiPolicy ciPolicy = getPolicyById(ciPolicyId);
-				
-				ciPolicyInsights = new CiPolicyInsights();
-				ciPolicyInsights.setCiPolicyId(ciPolicy.getId());
-				ciPolicyInsights.setCiPolicyName(ciPolicy.getName());
-				ciPolicyInsights.setCiPolicyCreatedDate(ciPolicy.getCreatedDate());			
-			}
-			
-			Integer failCount = 0;
-			for (Results results : activity.getResults()) {
-				if (!results.getValid()) {
-					failCount++;
-				}
-			}
-			
-			CiPolicyActivitiesInsights ciPolicyActivitiesInsights = null;
-			
-			for (CiPolicyActivitiesInsights activites : ciPolicyInsights.getInsights()) {
-				if (activites.getCiPolicyActivityId().equalsIgnoreCase(activity.getId())) {
-					ciPolicyActivitiesInsights = activites;
-					ciPolicyInsights.getInsights().remove(activites);
-					break;
-				}
-			}
-			
-			if (ciPolicyActivitiesInsights == null) {
-				ciPolicyActivitiesInsights = new CiPolicyActivitiesInsights();
-				ciPolicyActivitiesInsights.setCiPolicyActivityId(activity.getId());
-				ciPolicyActivitiesInsights.setCiPolicyActivityCreatedDate(activity.getCreatedDate());
-				ciPolicyActivitiesInsights.setViolations(failCount);
-			}
-			else {
-				ciPolicyActivitiesInsights.setViolations(ciPolicyActivitiesInsights.getViolations() + failCount);
-			}				
-			
-			ciPolicyInsights.getInsights().add(ciPolicyActivitiesInsights);			
-			insights.put(ciPolicyId, ciPolicyInsights);
-		}
-		
-		return new ArrayList<CiPolicyInsights>(insights.values());
-	}
-	
-	@Override
-	public List<CiPolicyViolations> getViolations(String ciTeamId) {
+            Results result = getResult(ciComponentEntity.getId(),
+                ciComponentVersionEntity.getName(), policyConfig, policyDefinitionEntity);
 
-		List<CiStageEntity> stagesWithGates = new ArrayList<CiStageEntity>();		
-		List<CiPipelineEntity> pipelines = ciPipelineService.findByCiTeamId(ciTeamId);
-		for (CiPipelineEntity pipeline : pipelines) {
-			List<CiStageEntity> stages = ciStagesService.findByPipelineId(pipeline.getId());
-			for (CiStageEntity stage : stages) {
-				if (stage.getGates() != null && stage.getGates().getEnabled()) {
-					stagesWithGates.add(stage);
-				}
-			}
-		}
-		
-		LOGGER.info("stagesWithGates.count=" + stagesWithGates.size());
-		
-		Map<String, CiPolicyViolations> violationsMap = new HashMap<String, CiPolicyViolations>();
-		
-		List<CiComponentEntity> components = ciComponentService.findByCiTeamId(ciTeamId);
-		for (CiComponentEntity component : components) {
-			if (component.getIsActive()) {
-				
-				LOGGER.info("component.name=" + component.getName());
-				
-				for (CiStageEntity stage : stagesWithGates) {
-					CiComponentActivityEntity componentActivity = ciComponentActivityService.findTopByCiComponentIdAndTypeAndCiStageIdOrderByCreationDateDesc(component.getId(), CiComponentActivityType.BUILD, stage.getId());
-					if (componentActivity != null) {	
-						
-						LOGGER.info("componentActivity.id=" + componentActivity.getId());
-						
-						List<CiPolicyActivityEntity> policyActivities = ciPolicyActivityService.findByCiComponentActivityId(componentActivity.getId());
-						
-						LOGGER.info("policyActivities.size=" + policyActivities.size());
-						
-						for (CiPolicyActivityEntity policyActivity : policyActivities) {
-							if (!policyActivity.getValid()) {																
-								
-								CiPolicyEntity policy = ciPolicyService.findById(policyActivity.getCiPolicyId());
-								
-								LOGGER.info("policy.name=" + policy.getName());
-								
-								CiComponentVersionEntity componentVersion = ciComponentVersionService.findVersionWithId(componentActivity.getCiComponentVersionId());
-								
-								LOGGER.info("componentVersion.name=" + componentVersion.getName());
-																
-								StringBuffer key = new StringBuffer();
-								key.append(policy.getId()).append(component.getId()).append(componentVersion.getId()).append(stage.getId());
-								
-								LOGGER.info("key=" + key.toString());
-								
-								CiPolicyViolations violation = violationsMap.get(key.toString());								
-								if (violation == null) {
-									violation = new CiPolicyViolations();
-									violation.setCiComponentId(component.getId());
-									violation.setCiComponentName(component.getName());
-									violation.setCiComponentVersionId(componentVersion.getId());
-									violation.setCiComponentVersionName(componentVersion.getName());
-									violation.setCiPolicyId(policy.getId());
-									violation.setCiPolicyName(policy.getName());
-									violation.setCiStageId(stage.getId());
-									violation.setCiStageName(stage.getName());
-									violation.setViolations(0);				
-									violation.setCiPolicyActivityCreatedDate(policyActivity.getCreatedDate());
-								}
-								else if (policyActivity.getCreatedDate().after(violation.getCiPolicyActivityCreatedDate())) {
-									violation.setViolations(0);				
-									violation.setCiPolicyActivityCreatedDate(policyActivity.getCreatedDate());
-								}
-								
-								Integer violationsTotal = 0;								
-								for (Results result : policyActivity.getResults()) {
-									if (!result.getValid()) {										
-										violationsTotal++;
-									}
-								}							
-								violation.setViolations(violation.getViolations() + violationsTotal);
-								
-								violationsMap.put(key.toString(), violation);
-							}
-						}					
-					}
-				}						
-			}
-		}		
-		
-		return new ArrayList<CiPolicyViolations>(violationsMap.values());
-	}
+            if (result != null) {
+              if (!result.getValid()) {
+                policiesActivities.setValid(false);
+              }
 
-	private DataResponse callOpenPolicyAgentClient(String policyDefinitionId, String policyDefinitionKey,
-			List<Map<String, String>> rules, JsonNode data) {
+              results.add(result);
+            }
+          });
+    }
 
-		DataRequestPolicy dataRequestPolicy = new DataRequestPolicy();
-		dataRequestPolicy.setId(policyDefinitionId);
-		dataRequestPolicy.setKey(policyDefinitionKey);
-		dataRequestPolicy.setRules(rules);
+    policiesActivities.setResults(results);
+    return ciPolicyActivityService.save(policiesActivities);
 
-		DataRequestInput dataRequestInput = new DataRequestInput();
-		dataRequestInput.setPolicy(dataRequestPolicy);
-		dataRequestInput.setData(data);
+  }
 
-		DataRequest dataRequest = new DataRequest();
-		dataRequest.setInput(dataRequestInput);
+  @Override
+  public List<CiPolicyInsights> getInsights(String ciTeamId) {
+    Map<String, CiPolicyInsights> insights = new HashMap<>();
+    LocalDate date = LocalDate.now(clock).minusMonths(Integer.valueOf(insightsPeriodMonths));
 
-		return openPolicyAgentClient.validateData(dataRequest);
-	}
+    List<CiPolicyActivityEntity> activities = ciPolicyActivityService
+        .findByCiTeamIdAndValidAndCreatedDateAfter(ciTeamId, false, fromLocalDate(date));
 
-	private static String getJsonNodeText(JsonNode node) {
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			return mapper.writeValueAsString(node);
-		} catch (JsonProcessingException e) {
-			LOGGER.info(e);
-		}
-		return null;
-	}
+    for (CiPolicyActivityEntity activity : activities) {
+      String ciPolicyId = activity.getCiPolicyId();
 
-	private static Date fromLocalDate(LocalDate date) {
-		return Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
-	}
-	
-	private List<String> getStagesForPolicy(String ciTeamId, String ciPolicyId) {
-		List<String> stagesForPolicy = new ArrayList<String>();
-		
-		List<CiPipelineEntity> pipelines = ciPipelineService.findByCiTeamId(ciTeamId);
-		for (CiPipelineEntity pipeline : pipelines) {
-			List<CiStageEntity> stages = ciStagesService.findByPipelineId(pipeline.getId());
-			for (CiStageEntity stage : stages) {
-				if (stage.getGates() != null && stage.getGates().getEnabled() && stage.getGates().getPolicies().contains(ciPolicyId)) {
-					stagesForPolicy.add(stage.getName());
-				}
-			}
-		}
-		
-		return stagesForPolicy;
-	}
+      CiPolicyInsights ciPolicyInsights = insights.get(ciPolicyId);
+      if (ciPolicyInsights == null) {
+        CiPolicy ciPolicy = getPolicyById(ciPolicyId);
+
+        ciPolicyInsights = new CiPolicyInsights();
+        ciPolicyInsights.setCiPolicyId(ciPolicy.getId());
+        ciPolicyInsights.setCiPolicyName(ciPolicy.getName());
+        ciPolicyInsights.setCiPolicyCreatedDate(ciPolicy.getCreatedDate());
+      }
+
+      CiPolicyActivitiesInsights ciPolicyActivitiesInsights =
+          getCiPolicyActivitiesInsights(activity, ciPolicyInsights);
+
+      ciPolicyInsights.addInsights(ciPolicyActivitiesInsights);
+      insights.put(ciPolicyId, ciPolicyInsights);
+    }
+
+    return new ArrayList<>(insights.values());
+  }
+
+  private CiPolicyActivitiesInsights getCiPolicyActivitiesInsights(CiPolicyActivityEntity activity,
+      CiPolicyInsights ciPolicyInsights) {
+    Integer failCount = getFaildedCount(activity);
+
+    CiPolicyActivitiesInsights ciPolicyActivitiesInsights = null;
+
+    for (CiPolicyActivitiesInsights activites : ciPolicyInsights.getInsights()) {
+      if (activites.getCiPolicyActivityId().equalsIgnoreCase(activity.getCiComponentActivityId())) {
+        ciPolicyActivitiesInsights = activites;
+        ciPolicyInsights.removeInsights(activites);
+        break;
+      }
+    }
+
+    if (ciPolicyActivitiesInsights == null) {
+      ciPolicyActivitiesInsights = new CiPolicyActivitiesInsights();
+      ciPolicyActivitiesInsights.setCiPolicyActivityId(activity.getCiComponentActivityId());
+      ciPolicyActivitiesInsights.setCiPolicyActivityCreatedDate(activity.getCreatedDate());
+      ciPolicyActivitiesInsights.setViolations(failCount);
+    } else {
+      ciPolicyActivitiesInsights
+          .setViolations(ciPolicyActivitiesInsights.getViolations() + failCount);
+    }
+    return ciPolicyActivitiesInsights;
+  }
+
+  @Override
+  public List<CiPolicyViolations> getViolations(String ciTeamId) {
+
+    List<CiPipelineEntity> pipelines = ciPipelineService.findByCiTeamId(ciTeamId);
+    List<CiStageEntity> stagesWithGates = getStagesWithGates(pipelines);
+
+    LOGGER.info("stagesWithGates.count=" + stagesWithGates.size());
+
+    Map<String, CiPolicyViolations> violationsMap = new HashMap<>();
+
+    List<CiComponentEntity> components = ciComponentService.findByCiTeamId(ciTeamId);
+
+    for (CiComponentEntity component : components) {
+
+      LOGGER.info("component.name=" + component.getName());
+
+      for (CiStageEntity stage : stagesWithGates) {
+        CiComponentActivityEntity componentActivity = ciComponentActivityService
+            .findTopByCiComponentIdAndTypeAndCiStageIdOrderByCreationDateDesc(component.getId(),
+                CiComponentActivityType.BUILD, stage.getId());
+        if (componentActivity == null) {
+          continue;
+        }
+
+        LOGGER.info("componentActivity.id=" + componentActivity.getId());
+
+        List<CiPolicyActivityEntity> policyActivities =
+            ciPolicyActivityService.findByCiComponentActivityId(componentActivity.getId());
+
+        LOGGER.info("policyActivities.size=" + policyActivities.size());
+
+        setViolations(violationsMap, component, stage, componentActivity, policyActivities);
+      }
+    }
+
+    return new ArrayList<>(violationsMap.values());
+  }
+
+  private void setViolations(Map<String, CiPolicyViolations> violationsMap,
+      CiComponentEntity component, CiStageEntity stage, CiComponentActivityEntity componentActivity,
+      List<CiPolicyActivityEntity> policyActivities) {
+    for (CiPolicyActivityEntity policyActivity : policyActivities) {
+      CiPolicyEntity policy = ciPolicyService.findById(policyActivity.getCiPolicyId());
+
+      if (policy == null) {
+        continue;
+      }
+
+      LOGGER.info("policy.name=" + policy.getName());
+
+      CiComponentVersionEntity componentVersion =
+          ciComponentVersionService.findVersionWithId(componentActivity.getCiComponentVersionId());
+
+      LOGGER.info("componentVersion.name=" + componentVersion.getName());
+
+      StringBuilder key = new StringBuilder();
+      key.append(policy.getId()).append(component.getId()).append(componentVersion.getId())
+          .append(stage.getId());
+
+      LOGGER.info("key=" + key.toString());
+
+      CiPolicyViolations violation = getViolation(component, stage, policyActivity, policy,
+          componentVersion, violationsMap.get(key.toString()));
+
+      violationsMap.put(key.toString(), violation);
+    }
+  }
+
+  private CiPolicyViolations getViolation(CiComponentEntity component, CiStageEntity stage,
+      CiPolicyActivityEntity policyActivity, CiPolicyEntity policy,
+      CiComponentVersionEntity componentVersion, CiPolicyViolations violation) {
+
+    if (violation == null) {
+      violation = new CiPolicyViolations();
+      violation.setCiComponentId(component.getId());
+      violation.setCiComponentName(component.getName());
+      violation.setCiComponentVersionId(componentVersion.getId());
+      violation.setCiComponentVersionName(componentVersion.getName());
+      violation.setCiPolicyId(policy.getId());
+      violation.setCiPolicyName(policy.getName());
+      violation.setCiStageId(stage.getId());
+      violation.setCiStageName(stage.getName());
+      violation.setViolations(0);
+      violation.setCiPolicyActivityCreatedDate(policyActivity.getCreatedDate());
+    } else if (policyActivity.getCreatedDate().after(violation.getCiPolicyActivityCreatedDate())) {
+      violation.setViolations(0);
+      violation.setCiPolicyActivityCreatedDate(policyActivity.getCreatedDate());
+    }
+
+    violation.setViolations(violation.getViolations() + getViolationsTotal(policyActivity));
+
+    return violation;
+  }
+
+  private Integer getViolationsTotal(CiPolicyActivityEntity policyActivity) {
+    Integer violationsTotal = 0;
+    for (Results result : policyActivity.getResults()) {
+      if (!result.getValid()) {
+        violationsTotal++;
+      }
+    }
+    return violationsTotal;
+  }
+
+  private List<CiStageEntity> getStagesWithGates(List<CiPipelineEntity> pipelines) {
+    List<CiStageEntity> stagesWithGates = new ArrayList<>();
+    for (CiPipelineEntity pipeline : pipelines) {
+      List<CiStageEntity> stages = ciStagesService.findByPipelineId(pipeline.getId());
+      for (CiStageEntity stage : stages) {
+        if (stage.getGates() != null && stage.getGates().getEnabled()) {
+          stagesWithGates.add(stage);
+        }
+      }
+    }
+    return stagesWithGates;
+  }
+
+  private Results getResult(String componentId, String versionName, CiPolicyConfig policyConfig,
+      CiPolicyDefinitionEntity policyDefinition) {
+
+    if (policyDefinition == null) {
+      return null;
+    }
+
+    Results result = getDefaultResult(policyDefinition.getId());
+    String key = policyDefinition.getKey().toLowerCase(Locale.US);
+    switch (key) {
+      case "static_code_analysis":
+        SonarQubeReport sonarQubeReport =
+            repositoryService.getSonarQubeReport(componentId, versionName);
+        result = getResults(policyDefinition, policyConfig, getJsonNode(sonarQubeReport, key));
+        break;
+      case "package_safelist":
+        DependencyGraph dependencyGraph =
+            repositoryService.getDependencyGraph(componentId, versionName);
+        result = getResults(policyDefinition, policyConfig, getJsonNode(dependencyGraph, key));
+        break;
+      case "cve_safelist":
+      case "security_issue_analysis":
+        ArtifactSummary summary = repositoryService.getArtifactSummary(componentId, versionName);
+        if (!summary.getArtifacts().isEmpty()) {
+          result = getResults(policyDefinition, policyConfig,
+              getJsonNode(summary.getArtifacts().get(0).getIssues(), key));
+        }
+        break;
+      default:
+        result = null;
+        break;
+    }
+    return result;
+  }
+
+  private Results getDefaultResult(String policyDefinitionId) {
+    Results result = new Results();
+    result.setCiPolicyDefinitionId(policyDefinitionId);
+    result.setDetail(null);
+    result.setValid(false);
+
+    return result;
+  }
+
+  private Results getResults(CiPolicyDefinitionEntity policyDefinitionEntity,
+      CiPolicyConfig policyConfig, JsonNode data) {
+
+    DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(),
+        policyDefinitionEntity.getKey(), policyConfig.getRules(), data);
+
+    Results result = new Results();
+    result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
+    result.setDetail(getJsonNodeText(dataResponse.getResult().getDetail()));
+    result.setValid(dataResponse.getResult().getValid());
+
+    return result;
+  }
+
+  private DataResponse callOpenPolicyAgentClient(String policyDefinitionId,
+      String policyDefinitionKey, List<Map<String, String>> rules, JsonNode data) {
+
+    DataRequestPolicy dataRequestPolicy = new DataRequestPolicy();
+    dataRequestPolicy.setId(policyDefinitionId);
+    dataRequestPolicy.setKey(policyDefinitionKey);
+    dataRequestPolicy.setRules(rules);
+
+    DataRequestInput dataRequestInput = new DataRequestInput();
+    dataRequestInput.setPolicy(dataRequestPolicy);
+    dataRequestInput.setData(data);
+
+    DataRequest dataRequest = new DataRequest();
+    dataRequest.setInput(dataRequestInput);
+
+    return openPolicyAgentClient.validateData(dataRequest);
+  }
+
+  private static Integer getFaildedCount(CiPolicyActivityEntity activity) {
+    Integer failCount = 0;
+    for (Results results : activity.getResults()) {
+      if (!results.getValid()) {
+        failCount++;
+      }
+    }
+    return failCount;
+  }
+
+  private static JsonNode getJsonNode(Object obj, String key) {
+    ObjectMapper mapper = new ObjectMapper();
+    JsonNode data = mapper.convertValue(obj, JsonNode.class);
+    LOGGER.info("{}={}", key, getJsonNodeText(data));
+
+    return data;
+  }
+
+  private static String getJsonNodeText(JsonNode node) {
+    try {
+      ObjectMapper mapper = new ObjectMapper();
+      return mapper.writeValueAsString(node);
+    } catch (JsonProcessingException e) {
+      LOGGER.info(e);
+    }
+    return null;
+  }
+
+  private static Date fromLocalDate(LocalDate date) {
+    return Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+  }
+
+  private List<String> getStagesForPolicy(String ciTeamId, String ciPolicyId) {
+    List<String> stagesForPolicy = new ArrayList<>();
+
+    List<CiPipelineEntity> pipelines = ciPipelineService.findByCiTeamId(ciTeamId);
+    for (CiPipelineEntity pipeline : pipelines) {
+      List<CiStageEntity> stages = ciStagesService.findByPipelineId(pipeline.getId());
+      for (CiStageEntity stage : stages) {
+        if (stage.getGates() != null && stage.getGates().getEnabled()
+            && stage.getGates().getPolicies().contains(ciPolicyId)) {
+          stagesForPolicy.add(stage.getName());
+        }
+      }
+    }
+
+    return stagesForPolicy;
+  }
 }

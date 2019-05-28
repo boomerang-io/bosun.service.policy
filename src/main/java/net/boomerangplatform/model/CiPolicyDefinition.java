@@ -1,6 +1,8 @@
 package net.boomerangplatform.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import net.boomerangplatform.mongo.model.CiPolicyDefinitionConfig;
 
@@ -61,12 +63,12 @@ public class CiPolicyDefinition implements Serializable {
   }
 
   public List<CiPolicyDefinitionConfig> getConfig() {
-    return config;
+    return config == null ? null : Collections.unmodifiableList(config);
   }
 
   public void setConfig(List<CiPolicyDefinitionConfig> config) {
-    this.config = config;
+    this.config = config == null ? null : new ArrayList<>(config);
   }
 
-  
+
 }

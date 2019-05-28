@@ -1,73 +1,71 @@
 package net.boomerangplatform.repository.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Component {
 
-	@JsonProperty("component_name")
-	private String componentName;
-	
-	@JsonProperty("component_id")
-	private String componentId;
-	
-	@JsonProperty("package_type")
-	private String packageType;
-	
-	@JsonProperty("created")
-	private String created;
-	
-	@JsonProperty("components")
-	private List<Component> components = null;
-	
-	public Component() {
-		
-	}
+  @JsonProperty("component_name")
+  private String componentName;
 
-	public String getComponentName() {
-		return componentName;
-	}
+  @JsonProperty("component_id")
+  private String componentId;
 
-	public void setComponentName(String componentName) {
-		this.componentName = componentName;
-	}
+  @JsonProperty("package_type")
+  private String packageType;
 
-	public String getComponentId() {
-		return componentId;
-	}
+  @JsonProperty("created")
+  private String created;
 
-	public void setComponentId(String componentId) {
-		this.componentId = componentId;
-	}
+  @JsonProperty("components")
+  private List<Component> components = new ArrayList<>();
 
-	public String getPackageType() {
-		return packageType;
-	}
+  public Component() {
+    // Do nothing
+  }
 
-	public void setPackageType(String packageType) {
-		this.packageType = packageType;
-	}
+  public String getComponentName() {
+    return componentName;
+  }
 
-	public String getCreated() {
-		return created;
-	}
+  public void setComponentName(String componentName) {
+    this.componentName = componentName;
+  }
 
-	public void setCreated(String created) {
-		this.created = created;
-	}
+  public String getComponentId() {
+    return componentId;
+  }
 
-	public List<Component> getComponents() {
-		if (components == null) {
-			components = new ArrayList<Component>();
-		}
-		return components;
-	}
+  public void setComponentId(String componentId) {
+    this.componentId = componentId;
+  }
 
-	public void setComponents(List<Component> components) {
-		this.components = components;
-	}
+  public String getPackageType() {
+    return packageType;
+  }
+
+  public void setPackageType(String packageType) {
+    this.packageType = packageType;
+  }
+
+  public String getCreated() {
+    return created;
+  }
+
+  public void setCreated(String created) {
+    this.created = created;
+  }
+
+  public List<Component> getComponents() {
+    return Collections.unmodifiableList(components);
+  }
+
+  public void setComponents(List<Component> components) {
+    this.components =
+        components == null ? new ArrayList<>() : new ArrayList<>(components);
+  }
 }

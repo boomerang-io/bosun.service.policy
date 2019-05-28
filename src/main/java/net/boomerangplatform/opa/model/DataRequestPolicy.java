@@ -1,9 +1,9 @@
 package net.boomerangplatform.opa.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -26,7 +26,7 @@ public class DataRequestPolicy {
   private String order;
 
   @JsonProperty("rules")
-  private List<Map<String, String>> rules;
+  private List<Map<String, String>> rules = new ArrayList<>();
 
   public String getId() {
     return id;
@@ -69,13 +69,10 @@ public class DataRequestPolicy {
   }
 
   public List<Map<String, String>> getRules() {
-	if (rules == null) {
-		rules = new ArrayList<Map<String, String>>();
-	}
-    return rules;
+    return Collections.unmodifiableList(rules);
   }
 
   public void setRules(List<Map<String, String>> rules) {
-    this.rules = rules;
+    this.rules = rules == null ? new ArrayList<>() : new ArrayList<>(rules);
   }
 }

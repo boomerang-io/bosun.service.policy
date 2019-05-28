@@ -5,30 +5,30 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SonarQubeReport {
-	
-	@JsonProperty("issues")
-	private Issues issues;
 
-	@JsonProperty("measures")
-	private Measures measures;
+  @JsonProperty("issues")
+  private Issues issues;
 
-	public SonarQubeReport() {
-		
-	}
+  @JsonProperty("measures")
+  private Measures measures;
 
-	public Issues getIssues() {
-		return issues;
-	}
+  public SonarQubeReport() {
+    // Do nothing
+  }
 
-	public void setIssues(Issues issues) {
-		this.issues = issues;
-	}
+  public Issues getIssues() {
+    return issues;
+  }
 
-	public Measures getMeasures() {
-		return measures;
-	}
+  public void setIssues(Issues issues) {
+    this.issues = issues;
+  }
 
-	public void setMeasures(Measures measures) {
-		this.measures = measures;
-	}
+  public Measures getMeasures() {
+    return measures;
+  }
+
+  public void setMeasures(Measures measures) {
+    this.measures = measures;
+  }
 }
