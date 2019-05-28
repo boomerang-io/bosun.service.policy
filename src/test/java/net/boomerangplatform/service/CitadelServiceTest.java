@@ -1,23 +1,25 @@
 package net.boomerangplatform.service;
 
+import static org.mockito.Mockito.when;
 import java.io.IOException;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import net.boomerangplatform.AbstractBoomerangTest;
 import net.boomerangplatform.Application;
 import net.boomerangplatform.model.CiPolicy;
@@ -32,8 +34,25 @@ import net.boomerangplatform.mongo.model.CiPolicyConfig;
 @ContextConfiguration(classes = {Application.class})
 public class CitadelServiceTest extends AbstractBoomerangTest {
 
+  private final static LocalDate LOCAL_DATE = LocalDate.of(2019, 05, 15);
+
   @Autowired
   private CitadelService citadelService;
+
+  @Mock
+  private Clock clock;
+
+  private Clock fixedClock;
+
+  @Override
+  public void setUp() {
+    super.setUp();
+    fixedClock = Clock.fixed(LOCAL_DATE.atStartOfDay(ZoneId.systemDefault()).toInstant(),
+        ZoneId.systemDefault());
+    when(clock.instant()).thenReturn(fixedClock.instant());
+    when(clock.getZone()).thenReturn(fixedClock.getZone());
+  }
+
 
   @Override
   protected String[] getCollections() {
@@ -49,7 +68,8 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
     data.put("ci_policies_activities",
         Arrays.asList("db/ci_policies_activities/CiPolicyActivityEntity.json",
             "db/ci_policies_activities/CiPolicyActivityEntity2.json",
-            "db/ci_policies_activities/CiPolicyActivityEntity3.json"));
+            "db/ci_policies_activities/CiPolicyActivityEntity3.json",
+            "db/ci_policies_activities/CiPolicyActivityEntity4.json"));
 
 
     return data;
@@ -154,19 +174,19 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
     Assert.assertEquals("Code Low Validation", policyFound.getName());
   }
 
-	@Test
-	public void testGetInsights() throws IOException {
-		List<CiPolicyInsights> insights = citadelService.getInsights("9999");
+  @Test
+  public void testGetInsights() throws IOException {
+    List<CiPolicyInsights> insights = citadelService.getInsights("9999");
 
-		Assert.assertEquals(1, insights.size());
-		CiPolicyInsights entry = insights.get(0);
-		CiPolicy policy = citadelService.getPolicyById(entry.getCiPolicyId());
-		Assert.assertEquals("Code Medium Validation", policy.getName());
-		Assert.assertEquals("5c5b5a0b352b1b614143b7c3", policy.getId());
-		Integer failCount = 0;
-		for (CiPolicyActivitiesInsights ciPolicyActivitiesInsights : entry.getInsights()) {
-			failCount += ciPolicyActivitiesInsights.getViolations();
-		}
-		Assert.assertEquals(Integer.valueOf(1), failCount);
-	}
+    Assert.assertEquals(1, insights.size());
+    CiPolicyInsights entry = insights.get(0);
+    CiPolicy policy = citadelService.getPolicyById(entry.getCiPolicyId());
+    Assert.assertEquals("Code Medium Validation", policy.getName());
+    Assert.assertEquals("5c5b5a0b352b1b614143b7c3", policy.getId());
+    Integer failCount = 0;
+    for (CiPolicyActivitiesInsights ciPolicyActivitiesInsights : entry.getInsights()) {
+      failCount += ciPolicyActivitiesInsights.getViolations();
+    }
+    Assert.assertEquals(Integer.valueOf(3), failCount);
+  }
 }

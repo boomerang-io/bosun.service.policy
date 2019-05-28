@@ -1,13 +1,18 @@
 {
-    "_id" : ObjectId("5cdb0ce8f6ea74a9bb9af704"),
+    "_id" : ObjectId("5cdb0ce8f6ea74a9bb9af706"),
     "ciTeamId" : "9999",
     "ciPolicyId" : "5c5b5a0b352b1b614143b7c3",
-    "ciComponentActivityId" : "123456789",
+    "ciComponentActivityId" : "",
     "createdDate": ISODate("2019-04-14T05:15:41.229Z"),
     "results" : [ 
         {
-            "ciPolicyDefinitionId" : "",
+            "ciPolicyDefinitionId" : "1",
             "valid" : false,
+            "detail" : null
+        },
+        {
+            "ciPolicyDefinitionId" : "2",
+            "valid" : true,
             "detail" : null
         }
     ],
