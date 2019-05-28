@@ -2,6 +2,7 @@ package net.boomerangplatform.controller;
 
 import java.util.List;
 import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,9 +13,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import net.boomerangplatform.citadel.model.CiPoliciesActivities;
-import net.boomerangplatform.citadel.model.CiPolicy;
-import net.boomerangplatform.citadel.model.CiPolicyDefinition;
+
+import net.boomerangplatform.model.CiPolicy;
+import net.boomerangplatform.model.CiPolicyDefinition;
+import net.boomerangplatform.model.CiPolicyInsights;
+import net.boomerangplatform.model.CiPolicyViolations;
+import net.boomerangplatform.mongo.entity.CiPolicyActivityEntity;
 import net.boomerangplatform.service.CitadelService;
 import net.boomerangplatform.service.TeamService;
 import net.boomerangplatform.team.model.CiTeam;
@@ -34,7 +38,7 @@ public class CitadelController {
     return ResponseEntity.ok().body(teamService.getTeams());
   }
 
-  @GetMapping(value = "/policies/definitions")
+  @GetMapping(value = "/definitions")
   public ResponseEntity<List<CiPolicyDefinition>> getAllDefinitions() {
     return ResponseEntity.ok().body(citadelService.getAllDefinitions());
   }
@@ -49,40 +53,41 @@ public class CitadelController {
       @RequestParam(value = "ciTeamId", required = true) String ciTeamId) {
     return ResponseEntity.ok().body(citadelService.getPoliciesByTeamId(ciTeamId));
   }
-  
+
   @GetMapping(value = "/policies/{ciPolicyId}")
   public ResponseEntity<CiPolicy> getPolicy(@PathVariable String ciPolicyId) {
     return ResponseEntity.ok().body(citadelService.getPolicyById(ciPolicyId));
   }
 
-  @PostMapping(value = "/policies/policies")
-  public ResponseEntity<CiPolicy> addPolicy(@RequestBody CiPolicy ciPolicy) {
-    return ResponseEntity.ok().body(citadelService.addPolicy(ciPolicy));
+  @PostMapping(value = "/policies")
+  public ResponseEntity<CiPolicy> addPolicy(@RequestBody CiPolicy policy) {
+    return ResponseEntity.ok().body(citadelService.addPolicy(policy));
   }
 
-  @PatchMapping(value = "/policies/policies")
-  public ResponseEntity<CiPolicy> updatePolicy(@RequestBody CiPolicy ciPolicy) {
-    return ResponseEntity.ok().body(citadelService.updatePolicy(ciPolicy));
-  }
-
-  @GetMapping(value = "/policies/policies/violations")
-  public ResponseEntity<?> getViolations(
-      @RequestParam(value = "ciTeamId", required = true) String ciTeamId) { // TODO:
-    return ResponseEntity.ok().build();
-  }
-
-  @GetMapping(value = "/policies/policies/insights")
-  public ResponseEntity<?> getInsights(
-      @RequestParam(value = "ciTeamId", required = true) String ciTeamId) { // TODO:
-    return ResponseEntity.ok().build();
+  @PatchMapping(value = "/policies/{ciPolicyId}")
+  public ResponseEntity<CiPolicy> updatePolicy(@PathVariable String ciPolicyId,
+      @RequestBody CiPolicy policy) {
+    return ResponseEntity.ok().body(citadelService.updatePolicy(policy));
   }
   
-  
-  @GetMapping(value = "/citadel/policies/validate")
-  public ResponseEntity<CiPoliciesActivities> validatePolicy(
-		  @RequestParam(value = "ciComponentId", required = true) String ciComponentId,
-		  @RequestParam(value = "ciVersionId", required = true) String ciVersionId,
-		  @RequestParam(value = "ciPolicyId", required = true) String ciPolicyId) {
-	    return ResponseEntity.ok().body(citadelService.validatePolicy(ciComponentId, ciVersionId, ciPolicyId));
-	  }
+  @GetMapping(value = "/policies/violations")
+  public ResponseEntity<List<CiPolicyViolations>> getViolations(
+      @RequestParam(value = "ciTeamId", required = true) String ciTeamId) {
+    return ResponseEntity.ok().body(citadelService.getViolations(ciTeamId));
+  }
+
+  @GetMapping(value = "/policies/insights")
+  public ResponseEntity<List<CiPolicyInsights>> getInsights(
+      @RequestParam(value = "ciTeamId", required = true) String ciTeamId) {
+    return ResponseEntity.ok().body(citadelService.getInsights(ciTeamId));
+  }
+
+
+  @GetMapping(value = "/policies/validate")
+  public ResponseEntity<CiPolicyActivityEntity> validatePolicy(
+      @RequestParam(value = "ciComponentActivityId", required = true) String ciComponentActivityId,
+      @RequestParam(value = "ciPolicyId", required = true) String ciPolicyId) {
+    return ResponseEntity.ok()
+        .body(citadelService.validatePolicy(ciComponentActivityId, ciPolicyId));
+  }
 }

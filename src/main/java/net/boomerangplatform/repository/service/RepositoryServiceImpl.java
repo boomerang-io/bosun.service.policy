@@ -9,12 +9,14 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import net.boomerangplatform.repository.model.ArtifactSummary;
 import net.boomerangplatform.repository.model.DependencyGraph;
 import net.boomerangplatform.repository.model.SonarQubeReport;
 
+@Service
 public class RepositoryServiceImpl implements RepositoryService {
 
 	private final Logger logger = LogManager.getLogger();

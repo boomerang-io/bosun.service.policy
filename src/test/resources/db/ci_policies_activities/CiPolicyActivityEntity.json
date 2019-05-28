@@ -1,0 +1,15 @@
+{
+    "_id" : ObjectId("5cdb0ce8f6ea74a9bb9af703"),
+    "ciTeamId" : "9999",
+    "ciPolicyId" : "5c5b5a0b352b1b614143b7c3",
+    "ciActivityId" : "",
+    "createdDate": ISODate("2019-04-15T05:15:41.229Z"),
+    "results" : [ 
+        {
+            "ciPolicyDefinitionId" : "",
+            "valid" : false,
+            "detail" : null
+        }
+    ],
+    "valid" : false
+}

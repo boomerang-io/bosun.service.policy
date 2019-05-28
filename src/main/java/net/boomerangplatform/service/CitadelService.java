@@ -3,9 +3,11 @@ package net.boomerangplatform.service;
 import java.util.List;
 import java.util.Map;
 
-import net.boomerangplatform.citadel.model.CiPoliciesActivities;
-import net.boomerangplatform.citadel.model.CiPolicy;
-import net.boomerangplatform.citadel.model.CiPolicyDefinition;
+import net.boomerangplatform.model.CiPolicy;
+import net.boomerangplatform.model.CiPolicyDefinition;
+import net.boomerangplatform.model.CiPolicyInsights;
+import net.boomerangplatform.model.CiPolicyViolations;
+import net.boomerangplatform.mongo.entity.CiPolicyActivityEntity;
 
 public interface CitadelService {
 
@@ -13,7 +15,7 @@ public interface CitadelService {
 
   Map<String, String> getAllOperators();
 
-  List<CiPolicy> getPoliciesByTeamId(String teamId);
+  List<CiPolicy> getPoliciesByTeamId(String ciTeamId);
 
   CiPolicy addPolicy(CiPolicy policy);
 
@@ -21,5 +23,9 @@ public interface CitadelService {
 
   CiPolicy getPolicyById(String ciPolicyId);
   
-  CiPoliciesActivities validatePolicy(String ciComponentId, String ciVersionId, String ciPolicyId);
+  CiPolicyActivityEntity validatePolicy(String ciComponentActivityId, String ciPolicyId);
+  
+  List<CiPolicyInsights> getInsights(String ciTeamId);
+  
+  List<CiPolicyViolations> getViolations(String ciTeamId);
 }

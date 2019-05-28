@@ -1,4 +1,4 @@
-package net.boomerangplatform.citadel.model;
+package net.boomerangplatform.model;
 
 public class Result {
 	
