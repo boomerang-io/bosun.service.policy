@@ -158,13 +158,13 @@ public class CitadelServiceImpl implements CitadelService {
   public CiPolicy addPolicy(CiPolicy policy) {
     policy.setCreatedDate(fromLocalDate(LocalDate.now(clock)));
     
-    Iterator<CiPolicyConfig> iterator = policy.getDefinitions().iterator();
-    while (iterator.hasNext()) {
-    	CiPolicyConfig ciPolicyConfig = iterator.next();
-    	if (ciPolicyConfig.getRules().isEmpty()) {
-    		iterator.remove();
+    List<CiPolicyConfig> filteredDefinitions = new ArrayList<CiPolicyConfig>();
+    for (CiPolicyConfig definition : policy.getDefinitions()) {
+    	if (!definition.getRules().isEmpty()) {
+    		filteredDefinitions.add(definition);
     	}
-    }
+    }    
+    policy.setDefinitions(filteredDefinitions);
     
     CiPolicyEntity entity = new CiPolicyEntity();
     BeanUtils.copyProperties(policy, entity);    
@@ -178,13 +178,13 @@ public class CitadelServiceImpl implements CitadelService {
   public CiPolicy updatePolicy(CiPolicy policy) {
     CiPolicyEntity entity = ciPolicyService.findById(policy.getId());
     
-    Iterator<CiPolicyConfig> iterator = policy.getDefinitions().iterator();
-    while (iterator.hasNext()) {
-    	CiPolicyConfig ciPolicyConfig = iterator.next();
-    	if (ciPolicyConfig.getRules().isEmpty()) {
-    		iterator.remove();
+    List<CiPolicyConfig> filteredDefinitions = new ArrayList<CiPolicyConfig>();
+    for (CiPolicyConfig definition : policy.getDefinitions()) {
+    	if (!definition.getRules().isEmpty()) {
+    		filteredDefinitions.add(definition);
     	}
-    }
+    }    
+    policy.setDefinitions(filteredDefinitions);
     
     BeanUtils.copyProperties(policy, entity);
     ciPolicyService.update(entity);
