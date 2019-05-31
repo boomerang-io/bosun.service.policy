@@ -6,10 +6,12 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -17,9 +19,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import net.boomerangplatform.model.CiPolicy;
 import net.boomerangplatform.model.CiPolicyActivitiesInsights;
 import net.boomerangplatform.model.CiPolicyDefinition;
@@ -153,8 +157,17 @@ public class CitadelServiceImpl implements CitadelService {
   @Override
   public CiPolicy addPolicy(CiPolicy policy) {
     policy.setCreatedDate(fromLocalDate(LocalDate.now(clock)));
+    
+    Iterator<CiPolicyConfig> iterator = policy.getDefinitions().iterator();
+    while (iterator.hasNext()) {
+    	CiPolicyConfig ciPolicyConfig = iterator.next();
+    	if (ciPolicyConfig.getRules().isEmpty()) {
+    		iterator.remove();
+    	}
+    }
+    
     CiPolicyEntity entity = new CiPolicyEntity();
-    BeanUtils.copyProperties(policy, entity);
+    BeanUtils.copyProperties(policy, entity);    
     entity = ciPolicyService.add(entity);
     policy.setId(entity.getId());
 
@@ -164,6 +177,15 @@ public class CitadelServiceImpl implements CitadelService {
   @Override
   public CiPolicy updatePolicy(CiPolicy policy) {
     CiPolicyEntity entity = ciPolicyService.findById(policy.getId());
+    
+    Iterator<CiPolicyConfig> iterator = policy.getDefinitions().iterator();
+    while (iterator.hasNext()) {
+    	CiPolicyConfig ciPolicyConfig = iterator.next();
+    	if (ciPolicyConfig.getRules().isEmpty()) {
+    		iterator.remove();
+    	}
+    }
+    
     BeanUtils.copyProperties(policy, entity);
     ciPolicyService.update(entity);
 
