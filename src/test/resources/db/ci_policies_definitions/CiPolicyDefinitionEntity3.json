@@ -1,0 +1,38 @@
+{
+    "_id" : ObjectId("5cd498f3f6ea74a9bb6ad0f3"),
+    "key" : "package_safelist",
+    "name" : "Package Safe List",
+    "description" : "The following package and artifact validation is validated against scans by JFrog Xray. Artifact and Version are validated through regular expression.",
+    "order" : "4",
+    "config" : [ 
+        {
+            "key" : "type",
+            "label" : "Type",
+            "type" : "select",
+            "defaultValue" : "",
+            "required" : false,
+            "description" : "",
+            "options" : [ 
+                "maven"
+            ]
+        }, 
+        {
+            "key" : "artifact",
+            "label" : "Package",
+            "type" : "text",
+            "defaultValue" : "",
+            "required" : false,
+            "description" : "Regular Expression",
+            "options" : null
+        }, 
+        {
+            "key" : "version",
+            "label" : "Version",
+            "type" : "text",
+            "defaultValue" : "",
+            "required" : false,
+            "description" : "Regular expression",
+            "options" : null
+        }
+    ]
+}

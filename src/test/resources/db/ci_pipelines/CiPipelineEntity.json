@@ -1,0 +1,7 @@
+{
+    "_id" : ObjectId("5cedf57fdd1be20001f3d98a"),
+    "_class" : "net.boomerangplatform.mongo.entity.CiPipelineEntity",
+    "ciTeamId" : "5cedb53fdd1be20001f3d8c2",
+    "name" : "initial",
+    "order" : 0
+}
