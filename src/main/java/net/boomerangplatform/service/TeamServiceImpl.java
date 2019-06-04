@@ -32,8 +32,8 @@ public class TeamServiceImpl implements TeamService {
       final String ciTeamHlgId = ciTeam.getHigherLevelGroupId();
       final HighLevelGroupEntity hlgWithId = hlgEntityService.getHighLevelGroupWithId(ciTeamHlgId);
 
-      if (ciTeam.getIsActive() != null && hlgWithId.getIsActive() != null && ciTeam.getIsActive()
-          && hlgWithId.getIsActive()) {
+      if (Boolean.TRUE.equals(ciTeam.getIsActive())
+          && Boolean.TRUE.equals(hlgWithId.getIsActive())) {
         ciTeams.add(ciTeam);
       }
     }

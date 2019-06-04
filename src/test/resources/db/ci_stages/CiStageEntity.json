@@ -1,0 +1,46 @@
+{
+    "_id" : ObjectId("5cedf589dd1be20001f3d994"),
+    "_class" : "net.boomerangplatform.model.CiStageResponse",
+    "name" : "dev",
+    "order" : 0,
+    "pipelineId" : "5cedf57fdd1be20001f3d98a",
+    "ucdEnvironmentId" : "16b01871-5aa1-a6bb-a5e8-6fea4aaf45c1",
+    "gates" : {
+        "enabled" : true,
+        "policies" : ["5c5b5a0b352b1b614143b7c3"]
+    },
+    "values" : [ 
+        {
+            "key" : "build.enable",
+            "value" : "true"
+        }, 
+        {
+            "key" : "test.enable",
+            "value" : "false"
+        }, 
+        {
+            "key" : "deploy.enable",
+            "value" : "false"
+        }, 
+        {
+            "key" : "deploy.type",
+            "value" : "helm"
+        }, 
+        {
+            "key" : "deploy.kube.version",
+            "value" : "3.1.1"
+        }, 
+        {
+            "key" : "notifications.enable",
+            "value" : "false"
+        }, 
+        {
+            "key" : "notifications.platform.enable",
+            "value" : "false"
+        }, 
+        {
+            "key" : "notifications.slack.enable",
+            "value" : "false"
+        }
+    ]
+}

@@ -6,12 +6,10 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -19,11 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
-
+import org.springframework.util.CollectionUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import net.boomerangplatform.model.CiPolicy;
 import net.boomerangplatform.model.CiPolicyActivitiesInsights;
 import net.boomerangplatform.model.CiPolicyDefinition;
@@ -94,15 +91,15 @@ public class CitadelServiceImpl implements CitadelService {
 
   @Autowired
   private OpenPolicyAgentClient openPolicyAgentClient;
-  
+
   @Autowired
   private Clock clock;
 
   private static final Logger LOGGER = LogManager.getLogger();
-  
+
   @Bean
   public Clock clock() {
-      return Clock.systemDefaultZone();
+    return Clock.systemDefaultZone();
   }
 
   @Override
@@ -157,35 +154,24 @@ public class CitadelServiceImpl implements CitadelService {
   @Override
   public CiPolicy addPolicy(CiPolicy policy) {
     policy.setCreatedDate(fromLocalDate(LocalDate.now(clock)));
-    
-    List<CiPolicyConfig> filteredDefinitions = new ArrayList<CiPolicyConfig>();
-    for (CiPolicyConfig definition : policy.getDefinitions()) {
-    	if (!definition.getRules().isEmpty()) {
-    		filteredDefinitions.add(definition);
-    	}
-    }    
-    policy.setDefinitions(filteredDefinitions);
-    
+
+    policy.setDefinitions(getFilteredDefinition(policy.getDefinitions()));
+
     CiPolicyEntity entity = new CiPolicyEntity();
-    BeanUtils.copyProperties(policy, entity);    
+    BeanUtils.copyProperties(policy, entity);
     entity = ciPolicyService.add(entity);
     policy.setId(entity.getId());
 
     return policy;
   }
 
+
   @Override
   public CiPolicy updatePolicy(CiPolicy policy) {
     CiPolicyEntity entity = ciPolicyService.findById(policy.getId());
-    
-    List<CiPolicyConfig> filteredDefinitions = new ArrayList<CiPolicyConfig>();
-    for (CiPolicyConfig definition : policy.getDefinitions()) {
-    	if (!definition.getRules().isEmpty()) {
-    		filteredDefinitions.add(definition);
-    	}
-    }    
-    policy.setDefinitions(filteredDefinitions);
-    
+
+    policy.setDefinitions(getFilteredDefinition(policy.getDefinitions()));
+
     BeanUtils.copyProperties(policy, entity);
     ciPolicyService.update(entity);
 
@@ -214,9 +200,10 @@ public class CitadelServiceImpl implements CitadelService {
 
     CiPolicyEntity policyEntity = ciPolicyService.findById(ciPolicyId);
 
-    if (policyEntity != null) {
+    if (policyEntity != null && policyEntity.getDefinitions() != null) {
       policyEntity.getDefinitions().stream()
-          .filter(policyConfig -> !policyConfig.getRules().isEmpty()).forEach(policyConfig -> {
+          .filter(policyConfig -> !CollectionUtils.isEmpty(policyConfig.getRules())).forEach(policyConfig -> {
+            
             CiPolicyDefinitionEntity policyDefinitionEntity =
                 ciPolicyDefinitionService.findById(policyConfig.getCiPolicyDefinitionId());
 
@@ -267,6 +254,16 @@ public class CitadelServiceImpl implements CitadelService {
     }
 
     return new ArrayList<>(insights.values());
+  }
+
+  private List<CiPolicyConfig> getFilteredDefinition(List<CiPolicyConfig> policyDefinitions) {
+    List<CiPolicyConfig> filteredDefinitions = new ArrayList<>();
+    for (CiPolicyConfig definition : policyDefinitions) {
+      if (!definition.getRules().isEmpty()) {
+        filteredDefinitions.add(definition);
+      }
+    }
+    return filteredDefinitions;
   }
 
   private CiPolicyActivitiesInsights getCiPolicyActivitiesInsights(CiPolicyActivityEntity activity,

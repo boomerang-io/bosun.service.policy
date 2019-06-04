@@ -1,0 +1,18 @@
+{
+    "_id" : ObjectId("5cf151691417760001c0a675"),
+    "_class" : "net.boomerangplatform.mongo.entity.CiPolicyEntity",
+    "name" : "Glens Zero Defns Test",
+    "teamId" : "8888",
+    "definitions" : [ 
+        {
+            "ciPolicyDefinitionId" : "5cd498f3f6ea74a9bb6ad0f3",
+            "rules" : [ 
+                {
+                    "metric" : "issues-total",
+                    "operator" : "less than",
+                    "value" : "50"
+                }
+            ]
+        }
+    ]
+}

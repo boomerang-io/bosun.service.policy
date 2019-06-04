@@ -1,0 +1,11 @@
+{
+    "_id" : ObjectId("5cee1d76dd1be20001f3d9c5"),
+    "_class" : "net.boomerangplatform.mongo.entity.CiComponentActivityEntity",
+    "ciComponentId" : "5cedbec5dd1be20001f3d942",
+    "ciComponentVersionId" : "5cee1d76dd1be20001f3d9c4",
+    "ciStageId" : "5cedf589dd1be20001f3d994",
+    "creationDate" : ISODate("2019-05-29T05:49:42.836Z"),
+    "duration" : NumberLong(172485),
+    "status" : "FAILED",
+    "type" : "BUILD"
+}
