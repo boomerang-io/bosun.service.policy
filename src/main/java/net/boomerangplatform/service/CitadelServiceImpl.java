@@ -192,8 +192,8 @@ public class CitadelServiceImpl implements CitadelService {
     policiesActivities.setCiTeamId(ciComponentEntity.getCiTeamId());
     policiesActivities.setCiComponentActivityId(ciComponentActivityEntity.getId());
     policiesActivities.setCiPolicyId(ciPolicyId);
-    policiesActivities.setCreatedDate(fromLocalDate(LocalDate.now(clock)));
-    policiesActivities.setValid(false);
+    policiesActivities.setCreatedDate(new Date());
+    policiesActivities.setValid(true);
 
     List<Results> results = new ArrayList<>();
 
