@@ -311,7 +311,7 @@ public class CitadelServiceImpl implements CitadelService {
       for (CiStageEntity stage : stagesWithGates) {
         CiComponentActivityEntity componentActivity = ciComponentActivityService
             .findTopByCiComponentIdAndTypeAndCiStageIdOrderByCreationDateDesc(component.getId(),
-                CiComponentActivityType.BUILD, stage.getId());
+                CiComponentActivityType.GATES, stage.getId());
         if (componentActivity == null) {
           continue;
         }
