@@ -481,6 +481,8 @@ public class CitadelServiceImpl implements CitadelService {
 
     DataRequest dataRequest = new DataRequest();
     dataRequest.setInput(dataRequestInput);
+    
+    getJsonNode(dataRequest, "dataRequest");
 
     return openPolicyAgentClient.validateData(dataRequest);
   }
