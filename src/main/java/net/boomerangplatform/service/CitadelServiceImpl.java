@@ -353,19 +353,20 @@ public class CitadelServiceImpl implements CitadelService {
 
       LOGGER.info("key=" + key.toString());
 
-      CiPolicyViolations violation = getViolation(component, stage, policyActivity, policy,
+      CiPolicyViolations violation = getViolation(key.toString(), component, stage, policyActivity, policy,
           componentVersion, violationsMap.get(key.toString()));
 
       violationsMap.put(key.toString(), violation);
     }
   }
 
-  private CiPolicyViolations getViolation(CiComponentEntity component, CiStageEntity stage,
+  private CiPolicyViolations getViolation(String key, CiComponentEntity component, CiStageEntity stage,
       CiPolicyActivityEntity policyActivity, CiPolicyEntity policy,
       CiComponentVersionEntity componentVersion, CiPolicyViolations violation) {
 
     if (violation == null) {
       violation = new CiPolicyViolations();
+      violation.setId(key);
       violation.setCiComponentId(component.getId());
       violation.setCiComponentName(component.getName());
       violation.setCiComponentVersionId(componentVersion.getId());

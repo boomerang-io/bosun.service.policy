@@ -5,102 +5,111 @@ import java.util.Date;
 
 public class CiPolicyViolations implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  private String ciPolicyId;
-  private String ciPolicyName;
-  private String ciStageId;
-  private String ciStageName;
-  private String ciComponentId;
-  private String ciComponentName;
-  private String ciComponentVersionId;
-  private String ciComponentVersionName;
-  private Date ciPolicyActivityCreatedDate;
+	private String id;
+	private String ciPolicyId;
+	private String ciPolicyName;
+	private String ciStageId;
+	private String ciStageName;
+	private String ciComponentId;
+	private String ciComponentName;
+	private String ciComponentVersionId;
+	private String ciComponentVersionName;
+	private Date ciPolicyActivityCreatedDate;
 
-  private Integer violations;
+	private Integer violations;
 
-  public CiPolicyViolations() {
-    // Do nothing
-  }
+	public CiPolicyViolations() {
+		// Do nothing
+	}
 
-  public String getCiPolicyId() {
-    return ciPolicyId;
-  }
+	public String getId() {
+		return id;
+	}
 
-  public void setCiPolicyId(String ciPolicyId) {
-    this.ciPolicyId = ciPolicyId;
-  }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-  public String getCiPolicyName() {
-    return ciPolicyName;
-  }
+	public String getCiPolicyId() {
+		return ciPolicyId;
+	}
 
-  public void setCiPolicyName(String ciPolicyName) {
-    this.ciPolicyName = ciPolicyName;
-  }
+	public void setCiPolicyId(String ciPolicyId) {
+		this.ciPolicyId = ciPolicyId;
+	}
 
-  public String getCiStageId() {
-    return ciStageId;
-  }
+	public String getCiPolicyName() {
+		return ciPolicyName;
+	}
 
-  public void setCiStageId(String ciStageId) {
-    this.ciStageId = ciStageId;
-  }
+	public void setCiPolicyName(String ciPolicyName) {
+		this.ciPolicyName = ciPolicyName;
+	}
 
-  public String getCiStageName() {
-    return ciStageName;
-  }
+	public String getCiStageId() {
+		return ciStageId;
+	}
 
-  public void setCiStageName(String ciStageName) {
-    this.ciStageName = ciStageName;
-  }
+	public void setCiStageId(String ciStageId) {
+		this.ciStageId = ciStageId;
+	}
 
-  public String getCiComponentId() {
-    return ciComponentId;
-  }
+	public String getCiStageName() {
+		return ciStageName;
+	}
 
-  public void setCiComponentId(String ciComponentId) {
-    this.ciComponentId = ciComponentId;
-  }
+	public void setCiStageName(String ciStageName) {
+		this.ciStageName = ciStageName;
+	}
 
-  public String getCiComponentName() {
-    return ciComponentName;
-  }
+	public String getCiComponentId() {
+		return ciComponentId;
+	}
 
-  public void setCiComponentName(String ciComponentName) {
-    this.ciComponentName = ciComponentName;
-  }
+	public void setCiComponentId(String ciComponentId) {
+		this.ciComponentId = ciComponentId;
+	}
 
-  public String getCiComponentVersionId() {
-    return ciComponentVersionId;
-  }
+	public String getCiComponentName() {
+		return ciComponentName;
+	}
 
-  public void setCiComponentVersionId(String ciComponentVersionId) {
-    this.ciComponentVersionId = ciComponentVersionId;
-  }
+	public void setCiComponentName(String ciComponentName) {
+		this.ciComponentName = ciComponentName;
+	}
 
-  public String getCiComponentVersionName() {
-    return ciComponentVersionName;
-  }
+	public String getCiComponentVersionId() {
+		return ciComponentVersionId;
+	}
 
-  public void setCiComponentVersionName(String ciComponentVersionName) {
-    this.ciComponentVersionName = ciComponentVersionName;
-  }
+	public void setCiComponentVersionId(String ciComponentVersionId) {
+		this.ciComponentVersionId = ciComponentVersionId;
+	}
 
-  public Integer getViolations() {
-    return violations;
-  }
+	public String getCiComponentVersionName() {
+		return ciComponentVersionName;
+	}
 
-  public void setViolations(Integer violations) {
-    this.violations = violations;
-  }
+	public void setCiComponentVersionName(String ciComponentVersionName) {
+		this.ciComponentVersionName = ciComponentVersionName;
+	}
 
-  public Date getCiPolicyActivityCreatedDate() {
-    return ciPolicyActivityCreatedDate == null ? null : (Date) ciPolicyActivityCreatedDate.clone();
-  }
+	public Integer getViolations() {
+		return violations;
+	}
 
-  public void setCiPolicyActivityCreatedDate(Date ciPolicyActivityCreatedDate) {
-    this.ciPolicyActivityCreatedDate =
-        ciPolicyActivityCreatedDate == null ? null : (Date) ciPolicyActivityCreatedDate.clone();
-  }
+	public void setViolations(Integer violations) {
+		this.violations = violations;
+	}
+
+	public Date getCiPolicyActivityCreatedDate() {
+		return ciPolicyActivityCreatedDate == null ? null : (Date) ciPolicyActivityCreatedDate.clone();
+	}
+
+	public void setCiPolicyActivityCreatedDate(Date ciPolicyActivityCreatedDate) {
+		this.ciPolicyActivityCreatedDate = ciPolicyActivityCreatedDate == null ? null
+				: (Date) ciPolicyActivityCreatedDate.clone();
+	}
 }
