@@ -485,7 +485,11 @@ public class CitadelServiceImpl implements CitadelService {
     
     getJsonNode(dataRequest, "dataRequest");
 
-    return openPolicyAgentClient.validateData(dataRequest);
+    DataResponse dataResponse = openPolicyAgentClient.validateData(dataRequest);
+    
+    getJsonNode(dataResponse, "dataResponse");
+    
+    return dataResponse;
   }
 
   private static Integer getFaildedCount(CiPolicyActivityEntity activity) {
