@@ -10,4 +10,6 @@ public interface RepositoryService {
   ArtifactSummary getArtifactSummary(String ciComponentId, String version);
 
   SonarQubeReport getSonarQubeReport(String ciComponentId, String version);
+  
+  SonarQubeReport getSonarQubeTestCoverage(String ciComponentId, String version);
 }

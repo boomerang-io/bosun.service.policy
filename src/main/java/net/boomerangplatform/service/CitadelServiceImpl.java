@@ -425,6 +425,11 @@ public class CitadelServiceImpl implements CitadelService {
             repositoryService.getSonarQubeReport(componentId, versionName);
         result = getResults(policyDefinition, policyConfig, getJsonNode(sonarQubeReport, key));
         break;
+      case "unit_tests":
+          SonarQubeReport sonarQubeTestCoverage =
+              repositoryService.getSonarQubeTestCoverage(componentId, versionName);
+          result = getResults(policyDefinition, policyConfig, getJsonNode(sonarQubeTestCoverage, key));
+          break;
       case "package_safelist":
         DependencyGraph dependencyGraph =
             repositoryService.getDependencyGraph(componentId, versionName);

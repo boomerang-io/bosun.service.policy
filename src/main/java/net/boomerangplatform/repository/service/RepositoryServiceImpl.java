@@ -36,6 +36,9 @@ public class RepositoryServiceImpl implements RepositoryService {
 
   @Value("${repository.rest.url.sonarqubereport}")
   private String repositoryRestUrlSonarqubereport;
+  
+  @Value("${repository.rest.url.sonarqubetestcoverage}")
+  private String repositoryRestUrlSonarqubetestcoverage;
 
   @Autowired
   @Qualifier("internalRestTemplate")
@@ -109,4 +112,27 @@ public class RepositoryServiceImpl implements RepositoryService {
 
     return result;
   }
+  
+  @Override
+  public SonarQubeReport getSonarQubeTestCoverage(String ciComponentId, String version) {
+
+    final HttpHeaders headers = new HttpHeaders();
+    final HttpEntity<String> request = new HttpEntity<>(headers);
+
+    String url = repositoryRestUrlBase + repositoryRestUrlSonarqubetestcoverage
+        .replace(PARAM_COMPONENT_ID, ciComponentId).replace(PARAM_VERSION, version);
+
+    LOGGER.info("getSonarQubeTestCoverage() - url: " + url);
+
+    SonarQubeReport result = new SonarQubeReport();
+    try {
+      final ResponseEntity<SonarQubeReport> response =
+          restTemplate.exchange(url, HttpMethod.GET, request, SonarQubeReport.class);
+      result = response.getBody();
+    } catch (final RestClientException e) {
+      LOGGER.error(e.getMessage(), e);
+    }
+
+    return result;
+  }  
 }
