@@ -7,6 +7,7 @@ import net.boomerangplatform.model.CiPolicy;
 import net.boomerangplatform.model.CiPolicyDefinition;
 import net.boomerangplatform.model.CiPolicyInsights;
 import net.boomerangplatform.model.CiPolicyViolations;
+import net.boomerangplatform.model.EventStatus;
 import net.boomerangplatform.mongo.entity.CiPolicyActivityEntity;
 
 public interface CitadelService {
@@ -28,4 +29,6 @@ public interface CitadelService {
   List<CiPolicyInsights> getInsights(String ciTeamId);
   
   List<CiPolicyViolations> getViolations(String ciTeamId);
+
+  EventStatus deletePolicy(String ciPolicyId);
 }
