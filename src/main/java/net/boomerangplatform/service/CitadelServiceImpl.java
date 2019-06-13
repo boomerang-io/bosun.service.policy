@@ -556,7 +556,7 @@ public class CitadelServiceImpl implements CitadelService {
     eventStatus.setId(ciPolicy.getId());
     eventStatus.setName(ciPolicy.getName());
     
-    if (ciPolicy.getTeamId() == null) {
+    if (getStagesForPolicy(ciPolicy.getTeamId(), ciPolicy.getId()).size() != 0) {
       eventStatus.setStatus(HttpStatus.NOT_ACCEPTABLE);
       eventStatus.setDescription("Unable to delete - Policy associated with team");
       return eventStatus;
