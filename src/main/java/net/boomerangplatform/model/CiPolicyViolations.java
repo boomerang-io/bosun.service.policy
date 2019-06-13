@@ -1,7 +1,9 @@
 package net.boomerangplatform.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class CiPolicyViolations implements Serializable {
 
@@ -17,6 +19,7 @@ public class CiPolicyViolations implements Serializable {
 	private String ciComponentVersionId;
 	private String ciComponentVersionName;
 	private Date ciPolicyActivityCreatedDate;
+	private List<String> ciPolicyDefinitionTypes;
 
 	private Integer violations;
 
@@ -111,5 +114,16 @@ public class CiPolicyViolations implements Serializable {
 	public void setCiPolicyActivityCreatedDate(Date ciPolicyActivityCreatedDate) {
 		this.ciPolicyActivityCreatedDate = ciPolicyActivityCreatedDate == null ? null
 				: (Date) ciPolicyActivityCreatedDate.clone();
+	}
+
+	public List<String> getCiPolicyDefinitionTypes() {
+		if (ciPolicyDefinitionTypes == null) {
+			ciPolicyDefinitionTypes = new ArrayList<String>();
+		}
+		return ciPolicyDefinitionTypes;
+	}
+
+	public void setCiPolicyDefinitionTypes(List<String> ciPolicyDefinitionTypes) {
+		this.ciPolicyDefinitionTypes = ciPolicyDefinitionTypes;
 	}
 }

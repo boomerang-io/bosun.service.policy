@@ -381,10 +381,11 @@ public class CitadelServiceImpl implements CitadelService {
       violation.setCiPolicyActivityCreatedDate(policyActivity.getCreatedDate());
     } else if (policyActivity.getCreatedDate().after(violation.getCiPolicyActivityCreatedDate())) {
       violation.setViolations(0);
-      violation.setCiPolicyActivityCreatedDate(policyActivity.getCreatedDate());
+      violation.setCiPolicyActivityCreatedDate(policyActivity.getCreatedDate());      
     }
 
     violation.setViolations(violation.getViolations() + getViolationsTotal(policyActivity));
+    violation.getCiPolicyDefinitionTypes().addAll(getViolationsDefinitions(policyActivity));
 
     return violation;
   }
@@ -397,6 +398,17 @@ public class CitadelServiceImpl implements CitadelService {
       }
     }
     return violationsTotal;
+  }
+  
+  private List<String> getViolationsDefinitions(CiPolicyActivityEntity policyActivity) {
+	List<String> violationsDefinitions = new ArrayList<String>();
+    for (Results result : policyActivity.getResults()) {
+      if (!result.getValid()) {
+    	CiPolicyDefinitionEntity policyDefinitionEntity = ciPolicyDefinitionService.findById(result.getCiPolicyDefinitionId());
+    	violationsDefinitions.add(policyDefinitionEntity.getName());
+      }
+    }
+	return violationsDefinitions;
   }
 
   private List<CiStageEntity> getStagesWithGates(List<CiPipelineEntity> pipelines) {
