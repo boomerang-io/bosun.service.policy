@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +19,7 @@ import net.boomerangplatform.model.CiPolicy;
 import net.boomerangplatform.model.CiPolicyDefinition;
 import net.boomerangplatform.model.CiPolicyInsights;
 import net.boomerangplatform.model.CiPolicyViolations;
+import net.boomerangplatform.model.EventStatus;
 import net.boomerangplatform.mongo.entity.CiPolicyActivityEntity;
 import net.boomerangplatform.service.CitadelService;
 import net.boomerangplatform.service.TeamService;
@@ -89,5 +91,10 @@ public class CitadelController {
       @RequestParam(value = "ciPolicyId", required = true) String ciPolicyId) {
     return ResponseEntity.ok()
         .body(citadelService.validatePolicy(ciComponentActivityId, ciPolicyId));
+  }
+  
+  @DeleteMapping(value = "/policies/{ciPolicyId}")
+  public ResponseEntity<EventStatus> deletePolicy(@PathVariable String ciPolicyId){
+    return ResponseEntity.ok().body(citadelService.deletePolicy(ciPolicyId));
   }
 }

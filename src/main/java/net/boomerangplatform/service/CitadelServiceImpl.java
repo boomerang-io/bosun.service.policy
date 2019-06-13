@@ -16,6 +16,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,6 +27,7 @@ import net.boomerangplatform.model.CiPolicyActivitiesInsights;
 import net.boomerangplatform.model.CiPolicyDefinition;
 import net.boomerangplatform.model.CiPolicyInsights;
 import net.boomerangplatform.model.CiPolicyViolations;
+import net.boomerangplatform.model.EventStatus;
 import net.boomerangplatform.mongo.entity.CiComponentActivityEntity;
 import net.boomerangplatform.mongo.entity.CiComponentEntity;
 import net.boomerangplatform.mongo.entity.CiComponentVersionEntity;
@@ -544,5 +546,25 @@ public class CitadelServiceImpl implements CitadelService {
     }
 
     return stagesForPolicy;
+  }
+
+  @Override
+  public EventStatus deletePolicy(String ciPolicyId) {
+    CiPolicyEntity ciPolicy = ciPolicyService.findById(ciPolicyId);
+    
+    EventStatus eventStatus = new EventStatus();
+    eventStatus.setId(ciPolicy.getId());
+    eventStatus.setName(ciPolicy.getName());
+    
+    if (ciPolicy.getTeamId() == null) {
+      eventStatus.setStatus(HttpStatus.NOT_ACCEPTABLE);
+      eventStatus.setDescription("Unable to delete - Policy associated with team");
+      return eventStatus;
+    }else {
+      ciPolicyService.delete(ciPolicy);
+      eventStatus.setStatus(HttpStatus.OK);
+      eventStatus.setDescription("Policy deleted");
+      return eventStatus;
+    }
   }
 }
