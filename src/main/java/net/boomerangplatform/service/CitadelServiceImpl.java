@@ -40,6 +40,7 @@ import net.boomerangplatform.mongo.model.CiComponentActivityType;
 import net.boomerangplatform.mongo.model.CiPolicyConfig;
 import net.boomerangplatform.mongo.model.OperatorType;
 import net.boomerangplatform.mongo.model.Results;
+import net.boomerangplatform.mongo.model.Scope;
 import net.boomerangplatform.mongo.service.CiComponentActivityService;
 import net.boomerangplatform.mongo.service.CiComponentService;
 import net.boomerangplatform.mongo.service.CiComponentVersionService;
@@ -159,6 +160,7 @@ public class CitadelServiceImpl implements CitadelService {
 
     policy.setDefinitions(getFilteredDefinition(policy.getDefinitions()));
 
+    policy.setScope(Scope.team);
     CiPolicyEntity entity = new CiPolicyEntity();
     BeanUtils.copyProperties(policy, entity);
     entity = ciPolicyService.add(entity);
@@ -171,7 +173,7 @@ public class CitadelServiceImpl implements CitadelService {
   @Override
   public CiPolicy updatePolicy(CiPolicy policy) {
     CiPolicyEntity entity = ciPolicyService.findById(policy.getId());
-
+    policy.setScope(Scope.team);
     policy.setDefinitions(getFilteredDefinition(policy.getDefinitions()));
 
     BeanUtils.copyProperties(policy, entity);
