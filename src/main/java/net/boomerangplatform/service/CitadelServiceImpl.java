@@ -140,6 +140,14 @@ public class CitadelServiceImpl implements CitadelService {
       policy.setStages(getStagesForPolicy(ciTeamId, entity.getId()));
       policies.add(policy);
     });
+    
+    List<CiPolicyEntity> globalPolicies = ciPolicyService.getGlobalPolicies();
+    globalPolicies.forEach(entity ->{
+      CiPolicy policy = new CiPolicy();
+      BeanUtils.copyProperties(entity, policy);
+      policy.setStages(getStagesForGlobalPolicy(entity.getId()));
+      policies.add(policy);
+    });
 
     return policies;
   }
@@ -560,6 +568,21 @@ public class CitadelServiceImpl implements CitadelService {
     }
 
     return stagesForPolicy;
+  }
+  
+  private List<String> getStagesForGlobalPolicy(String ciPolicyId){
+    List<String> stagesForGlobalPolicy = new ArrayList<>();
+    List<CiPipelineEntity> pipelines = ciPipelineService.getAllPipelines();
+    for(CiPipelineEntity pipeline: pipelines) {
+      List<CiStageEntity> stages = ciStagesService.findByPipelineId(pipeline.getId());
+      for (CiStageEntity stage : stages) {
+        if (stage.getGates() != null && stage.getGates().getEnabled()
+            && stage.getGates().getPolicies().contains(ciPolicyId)) {
+          stagesForGlobalPolicy.add(stage.getName());
+        }
+      }
+    }
+    return stagesForGlobalPolicy;
   }
 
   @Override
