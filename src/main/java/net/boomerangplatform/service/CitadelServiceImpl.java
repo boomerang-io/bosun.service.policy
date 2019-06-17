@@ -384,8 +384,8 @@ public class CitadelServiceImpl implements CitadelService {
       violation.setCiPolicyActivityCreatedDate(policyActivity.getCreatedDate());      
     }
 
-    violation.setViolations(violation.getViolations() + getViolationsTotal(policyActivity));
-    violation.getCiPolicyDefinitionTypes().addAll(getViolationsDefinitions(policyActivity));
+    violation.setViolations(violation.getViolations() + getViolationsTotal(policyActivity)); 
+    violation.getCiPolicyDefinitionTypes().addAll(getViolationsDefinitionTypes(violation.getCiPolicyDefinitionTypes(), getViolationsDefinitions(policyActivity)));
 
     return violation;
   }
@@ -409,6 +409,15 @@ public class CitadelServiceImpl implements CitadelService {
       }
     }
 	return violationsDefinitions;
+  }
+  
+  private List<String> getViolationsDefinitionTypes(List<String> current, List<String> toAdd) {
+    for (String definitionType : toAdd) {
+    	if (!current.contains(definitionType)) {
+    		current.add(definitionType);
+    	}
+    }
+    return current;
   }
 
   private List<CiStageEntity> getStagesWithGates(List<CiPipelineEntity> pipelines) {
