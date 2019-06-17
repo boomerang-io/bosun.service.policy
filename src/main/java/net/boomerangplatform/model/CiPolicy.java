@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import net.boomerangplatform.mongo.model.CiPolicyConfig;
+import net.boomerangplatform.mongo.model.Scope;
 
 public class CiPolicy implements Serializable {
 
@@ -22,6 +23,8 @@ public class CiPolicy implements Serializable {
   private List<CiPolicyConfig> definitions = new ArrayList<>();
 
   private List<String> stages = new ArrayList<>();
+  
+  private Scope scope;
 
   public String getId() {
     return id;
@@ -71,4 +74,14 @@ public class CiPolicy implements Serializable {
   public void setStages(List<String> stages) {
     this.stages = stages == null ? new ArrayList<>() : new ArrayList<>(stages);
   }
+
+  public Scope getScope() {
+    return scope;
+  }
+
+  public void setScope(Scope scope) {
+    this.scope = scope;
+  }
+  
+ 
 }

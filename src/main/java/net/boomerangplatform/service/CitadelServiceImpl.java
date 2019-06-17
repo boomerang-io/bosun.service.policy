@@ -40,6 +40,7 @@ import net.boomerangplatform.mongo.model.CiComponentActivityType;
 import net.boomerangplatform.mongo.model.CiPolicyConfig;
 import net.boomerangplatform.mongo.model.OperatorType;
 import net.boomerangplatform.mongo.model.Results;
+import net.boomerangplatform.mongo.model.Scope;
 import net.boomerangplatform.mongo.service.CiComponentActivityService;
 import net.boomerangplatform.mongo.service.CiComponentService;
 import net.boomerangplatform.mongo.service.CiComponentVersionService;
@@ -139,6 +140,14 @@ public class CitadelServiceImpl implements CitadelService {
       policy.setStages(getStagesForPolicy(ciTeamId, entity.getId()));
       policies.add(policy);
     });
+    
+    List<CiPolicyEntity> globalPolicies = ciPolicyService.getGlobalPolicies();
+    globalPolicies.forEach(entity ->{
+      CiPolicy policy = new CiPolicy();
+      BeanUtils.copyProperties(entity, policy);
+      policy.setStages(getStagesForGlobalPolicy(entity.getId()));
+      policies.add(policy);
+    });
 
     return policies;
   }
@@ -159,6 +168,7 @@ public class CitadelServiceImpl implements CitadelService {
 
     policy.setDefinitions(getFilteredDefinition(policy.getDefinitions()));
 
+    policy.setScope(Scope.team);
     CiPolicyEntity entity = new CiPolicyEntity();
     BeanUtils.copyProperties(policy, entity);
     entity = ciPolicyService.add(entity);
@@ -171,7 +181,7 @@ public class CitadelServiceImpl implements CitadelService {
   @Override
   public CiPolicy updatePolicy(CiPolicy policy) {
     CiPolicyEntity entity = ciPolicyService.findById(policy.getId());
-
+    policy.setScope(Scope.team);
     policy.setDefinitions(getFilteredDefinition(policy.getDefinitions()));
 
     BeanUtils.copyProperties(policy, entity);
@@ -567,6 +577,21 @@ public class CitadelServiceImpl implements CitadelService {
     }
 
     return stagesForPolicy;
+  }
+  
+  private List<String> getStagesForGlobalPolicy(String ciPolicyId){
+    List<String> stagesForGlobalPolicy = new ArrayList<>();
+    List<CiPipelineEntity> pipelines = ciPipelineService.getAllPipelines();
+    for(CiPipelineEntity pipeline: pipelines) {
+      List<CiStageEntity> stages = ciStagesService.findByPipelineId(pipeline.getId());
+      for (CiStageEntity stage : stages) {
+        if (stage.getGates() != null && stage.getGates().getEnabled()
+            && stage.getGates().getPolicies().contains(ciPolicyId)) {
+          stagesForGlobalPolicy.add(stage.getName());
+        }
+      }
+    }
+    return stagesForGlobalPolicy;
   }
 
   @Override
