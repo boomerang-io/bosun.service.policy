@@ -264,8 +264,9 @@ public class CitadelServiceImpl implements CitadelService {
 
       if(ciPolicyInsights != null) {
       ciPolicyInsights.addInsights(ciPolicyActivitiesInsights);
-      }
       insights.put(ciPolicyId, ciPolicyInsights);
+      }
+     
     }
 
     return new ArrayList<>(insights.values());
