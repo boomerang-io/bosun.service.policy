@@ -2,12 +2,11 @@ package net.boomerangplatform.service;
 
 import java.util.List;
 import java.util.Map;
-
 import net.boomerangplatform.model.CiPolicy;
 import net.boomerangplatform.model.CiPolicyDefinition;
 import net.boomerangplatform.model.CiPolicyInsights;
 import net.boomerangplatform.model.CiPolicyViolations;
-import net.boomerangplatform.model.EventStatus;
+import net.boomerangplatform.model.PolicyResponse;
 import net.boomerangplatform.mongo.entity.CiPolicyActivityEntity;
 
 public interface CitadelService {
@@ -30,5 +29,5 @@ public interface CitadelService {
   
   List<CiPolicyViolations> getViolations(String ciTeamId);
 
-  EventStatus deletePolicy(String ciPolicyId);
+  PolicyResponse deletePolicy(String ciPolicyId);
 }
