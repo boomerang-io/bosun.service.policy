@@ -250,18 +250,21 @@ public class CitadelServiceImpl implements CitadelService {
 
       CiPolicyInsights ciPolicyInsights = insights.get(ciPolicyId);
       if (ciPolicyInsights == null) {
+        if(ciPolicyService.findById(ciPolicyId)!=null) {
         CiPolicy ciPolicy = getPolicyById(ciPolicyId);
-
         ciPolicyInsights = new CiPolicyInsights();
         ciPolicyInsights.setCiPolicyId(ciPolicy.getId());
         ciPolicyInsights.setCiPolicyName(ciPolicy.getName());
         ciPolicyInsights.setCiPolicyCreatedDate(ciPolicy.getCreatedDate());
+        } 
       }
 
       CiPolicyActivitiesInsights ciPolicyActivitiesInsights =
           getCiPolicyActivitiesInsights(activity, ciPolicyInsights);
 
+      if(ciPolicyInsights != null) {
       ciPolicyInsights.addInsights(ciPolicyActivitiesInsights);
+      }
       insights.put(ciPolicyId, ciPolicyInsights);
     }
 
@@ -284,12 +287,14 @@ public class CitadelServiceImpl implements CitadelService {
 
     CiPolicyActivitiesInsights ciPolicyActivitiesInsights = null;
 
+    if(ciPolicyInsights != null) {
     for (CiPolicyActivitiesInsights activites : ciPolicyInsights.getInsights()) {
       if (activites.getCiPolicyActivityId().equalsIgnoreCase(activity.getCiComponentActivityId())) {
         ciPolicyActivitiesInsights = activites;
         ciPolicyInsights.removeInsights(activites);
         break;
       }
+    }
     }
 
     if (ciPolicyActivitiesInsights == null) {
