@@ -139,9 +139,9 @@ public class CitadelServiceImpl implements CitadelService {
       policy.setStages(getStagesForPolicy(ciTeamId, entity.getId()));
       policies.add(policy);
     });
-    
+
     List<CiPolicyEntity> globalPolicies = ciPolicyService.getGlobalPolicies();
-    globalPolicies.forEach(entity ->{
+    globalPolicies.forEach(entity -> {
       CiPolicy policy = new CiPolicy();
       BeanUtils.copyProperties(entity, policy);
       policy.setStages(getStagesForGlobalPolicy(entity.getId()));
@@ -213,8 +213,9 @@ public class CitadelServiceImpl implements CitadelService {
 
     if (policyEntity != null && policyEntity.getDefinitions() != null) {
       policyEntity.getDefinitions().stream()
-          .filter(policyConfig -> !CollectionUtils.isEmpty(policyConfig.getRules())).forEach(policyConfig -> {
-            
+          .filter(policyConfig -> !CollectionUtils.isEmpty(policyConfig.getRules()))
+          .forEach(policyConfig -> {
+
             CiPolicyDefinitionEntity policyDefinitionEntity =
                 ciPolicyDefinitionService.findById(policyConfig.getCiPolicyDefinitionId());
 
@@ -364,15 +365,15 @@ public class CitadelServiceImpl implements CitadelService {
 
       LOGGER.info("key=" + key.toString());
 
-      CiPolicyViolations violation = getViolation(key.toString(), component, stage, policyActivity, policy,
-          componentVersion, violationsMap.get(key.toString()));
+      CiPolicyViolations violation = getViolation(key.toString(), component, stage, policyActivity,
+          policy, componentVersion, violationsMap.get(key.toString()));
 
       violationsMap.put(key.toString(), violation);
     }
   }
 
-  private CiPolicyViolations getViolation(String key, CiComponentEntity component, CiStageEntity stage,
-      CiPolicyActivityEntity policyActivity, CiPolicyEntity policy,
+  private CiPolicyViolations getViolation(String key, CiComponentEntity component,
+      CiStageEntity stage, CiPolicyActivityEntity policyActivity, CiPolicyEntity policy,
       CiComponentVersionEntity componentVersion, CiPolicyViolations violation) {
 
     if (violation == null) {
@@ -390,11 +391,12 @@ public class CitadelServiceImpl implements CitadelService {
       violation.setCiPolicyActivityCreatedDate(policyActivity.getCreatedDate());
     } else if (policyActivity.getCreatedDate().after(violation.getCiPolicyActivityCreatedDate())) {
       violation.setViolations(0);
-      violation.setCiPolicyActivityCreatedDate(policyActivity.getCreatedDate());      
+      violation.setCiPolicyActivityCreatedDate(policyActivity.getCreatedDate());
     }
 
-    violation.setViolations(violation.getViolations() + getViolationsTotal(policyActivity)); 
-    violation.getCiPolicyDefinitionTypes().addAll(getViolationsDefinitionTypes(violation.getCiPolicyDefinitionTypes(), getViolationsDefinitions(policyActivity)));
+    violation.setViolations(violation.getViolations() + getViolationsTotal(policyActivity));
+    violation.getCiPolicyDefinitionTypes().addAll(getViolationsDefinitionTypes(
+        violation.getCiPolicyDefinitionTypes(), getViolationsDefinitions(policyActivity)));
 
     return violation;
   }
@@ -408,23 +410,24 @@ public class CitadelServiceImpl implements CitadelService {
     }
     return violationsTotal;
   }
-  
+
   private List<String> getViolationsDefinitions(CiPolicyActivityEntity policyActivity) {
-	List<String> violationsDefinitions = new ArrayList<String>();
+    List<String> violationsDefinitions = new ArrayList<String>();
     for (Results result : policyActivity.getResults()) {
       if (!result.getValid()) {
-    	CiPolicyDefinitionEntity policyDefinitionEntity = ciPolicyDefinitionService.findById(result.getCiPolicyDefinitionId());
-    	violationsDefinitions.add(policyDefinitionEntity.getName());
+        CiPolicyDefinitionEntity policyDefinitionEntity =
+            ciPolicyDefinitionService.findById(result.getCiPolicyDefinitionId());
+        violationsDefinitions.add(policyDefinitionEntity.getName());
       }
     }
-	return violationsDefinitions;
+    return violationsDefinitions;
   }
-  
+
   private List<String> getViolationsDefinitionTypes(List<String> current, List<String> toAdd) {
     for (String definitionType : toAdd) {
-    	if (!current.contains(definitionType)) {
-    		current.add(definitionType);
-    	}
+      if (!current.contains(definitionType)) {
+        current.add(definitionType);
+      }
     }
     return current;
   }
@@ -458,10 +461,11 @@ public class CitadelServiceImpl implements CitadelService {
         result = getResults(policyDefinition, policyConfig, getJsonNode(sonarQubeReport, key));
         break;
       case "unit_tests":
-          SonarQubeReport sonarQubeTestCoverage =
-              repositoryService.getSonarQubeTestCoverage(componentId, versionName);
-          result = getResults(policyDefinition, policyConfig, getJsonNode(sonarQubeTestCoverage, key));
-          break;
+        SonarQubeReport sonarQubeTestCoverage =
+            repositoryService.getSonarQubeTestCoverage(componentId, versionName);
+        result =
+            getResults(policyDefinition, policyConfig, getJsonNode(sonarQubeTestCoverage, key));
+        break;
       case "package_safelist":
         DependencyGraph dependencyGraph =
             repositoryService.getDependencyGraph(componentId, versionName);
@@ -519,13 +523,13 @@ public class CitadelServiceImpl implements CitadelService {
 
     DataRequest dataRequest = new DataRequest();
     dataRequest.setInput(dataRequestInput);
-    
+
     getJsonNode(dataRequest, "dataRequest");
 
     DataResponse dataResponse = openPolicyAgentClient.validateData(dataRequest);
-    
+
     getJsonNode(dataResponse, "dataResponse");
-    
+
     return dataResponse;
   }
 
@@ -577,11 +581,11 @@ public class CitadelServiceImpl implements CitadelService {
 
     return stagesForPolicy;
   }
-  
-  private List<String> getStagesForGlobalPolicy(String ciPolicyId){
+
+  private List<String> getStagesForGlobalPolicy(String ciPolicyId) {
     List<String> stagesForGlobalPolicy = new ArrayList<>();
     List<CiPipelineEntity> pipelines = ciPipelineService.getAllPipelines();
-    for(CiPipelineEntity pipeline: pipelines) {
+    for (CiPipelineEntity pipeline : pipelines) {
       List<CiStageEntity> stages = ciStagesService.findByPipelineId(pipeline.getId());
       for (CiStageEntity stage : stages) {
         if (stage.getGates() != null && stage.getGates().getEnabled()
@@ -596,16 +600,13 @@ public class CitadelServiceImpl implements CitadelService {
   @Override
   public PolicyResponse deletePolicy(String ciPolicyId) {
     CiPolicyEntity ciPolicy = ciPolicyService.findById(ciPolicyId);
-  PolicyResponse response =  new PolicyResponse();
+    PolicyResponse response = new PolicyResponse();
     if (getStagesForPolicy(ciPolicy.getTeamId(), ciPolicy.getId()).size() != 0) {
-    
       response.setStatus(409);
       response.setMessage("Policy associated with gate");
       response.setError("Unable to delete");
-   
-     
-     return response;
-    }else {
+      return response;
+    } else {
       ciPolicyService.delete(ciPolicy);
       response.setStatus(200);
       response.setMessage("Policy deleted");

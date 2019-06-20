@@ -93,7 +93,7 @@ public class CitadelController {
   }
   
   @DeleteMapping(value = "/policies/{ciPolicyId}")
-  public ResponseEntity<PolicyResponse> deletePolicy(@PathVariable String ciPolicyId){
-    return ResponseEntity.ok().body(citadelService.deletePolicy(ciPolicyId));
+  public ResponseEntity<PolicyResponse> deletePolicy(@PathVariable String ciPolicyId){  
+     return ResponseEntity.status(citadelService.deletePolicy(ciPolicyId).getStatus()).body(citadelService.deletePolicy(ciPolicyId));
   }
 }
