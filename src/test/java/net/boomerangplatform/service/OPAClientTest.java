@@ -35,7 +35,7 @@ import net.boomerangplatform.opa.service.OpenPolicyAgentClient;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {Application.class})
 @SpringBootTest
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 public class OPAClientTest {
 
   @Autowired

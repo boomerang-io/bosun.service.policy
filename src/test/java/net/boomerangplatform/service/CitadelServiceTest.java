@@ -15,10 +15,10 @@ import javax.annotation.Resource;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -50,7 +50,7 @@ import net.boomerangplatform.repository.model.Measures;
 import net.boomerangplatform.repository.model.SonarQubeReport;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles(profiles = "local")
+@ActiveProfiles(profiles = "test")
 @SpringBootTest
 @ContextConfiguration(classes = {Application.class})
 public class CitadelServiceTest extends AbstractBoomerangTest {
@@ -67,7 +67,7 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
 
   private MockRestServiceServer server;
 
-  @Mock
+  @MockBean
   private Clock clock;
 
   private Clock fixedClock;

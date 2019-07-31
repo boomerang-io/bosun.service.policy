@@ -18,7 +18,7 @@ import net.boomerangplatform.mongo.model.Audit;
 import net.boomerangplatform.team.model.CiTeam;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles(profiles = "local")
+@ActiveProfiles(profiles = "test")
 @SpringBootTest
 @ContextConfiguration(classes = {Application.class})
 public class TeamServiceTest extends AbstractBoomerangTest {
