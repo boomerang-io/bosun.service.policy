@@ -29,6 +29,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.boomerangplatform.AbstractBoomerangTest;
 import net.boomerangplatform.Application;
+import net.boomerangplatform.MongoConfig;
 import net.boomerangplatform.model.CiPolicy;
 import net.boomerangplatform.model.CiPolicyActivitiesInsights;
 import net.boomerangplatform.model.CiPolicyDefinition;
@@ -52,7 +53,7 @@ import net.boomerangplatform.repository.model.SonarQubeReport;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles(profiles = "test")
 @SpringBootTest
-@ContextConfiguration(classes = {Application.class})
+@ContextConfiguration(classes = {Application.class, MongoConfig.class})
 public class CitadelServiceTest extends AbstractBoomerangTest {
 
   private final static LocalDate LOCAL_DATE = LocalDate.of(2019, 05, 15);
