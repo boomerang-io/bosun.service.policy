@@ -26,6 +26,8 @@
 		<http.proxyHost></http.proxyHost><!-- set from env: proxy.boomerangplatform.net -->
 		<http.proxyPort></http.proxyPort><!-- set from env: 1080 -->
 		<jackson.databind.version>2.9.9.3</jackson.databind.version>
+		<jacoco.out.path>${project.build.directory}</jacoco.out.path>
+		<sonar.jacoco.reportPath>${jacoco.out.path}/jacoco.exec</sonar.jacoco.reportPath>
 		<jacoco.version>0.8.2</jacoco.version>
 	</properties>
 
@@ -132,9 +134,14 @@
 				<version>${jacoco.version}</version>
 				<executions>
 					<execution>
+						 <id>pre-unit-test</id>
 						<goals>
 							<goal>prepare-agent</goal>
 						</goals>
+						<configuration>
+						    <destFile>${sonar.jacoco.reportPath}</destFile>
+			                <propertyName>surefireArgLine</propertyName>
+			              </configuration>
 					</execution>
 					<execution>
 						<id>jacoco-report</id>
@@ -142,27 +149,6 @@
 						<goals>
 							<goal>report</goal>
 						</goals>
-					</execution>
-					<execution>
-						<id>jacoco-check</id>
-						<goals>
-							<goal>check</goal>
-						</goals>
-						<configuration>
-							<haltOnFailure>true</haltOnFailure>
-							<rules>
-								<rule>
-									<element>BUNDLE</element>
-									<limits>
-										<limit>
-											<counter>LINE</counter>
-											<value>COVEREDRATIO</value>
-											<minimum>0.7</minimum>
-										</limit>
-									</limits>
-								</rule>
-							</rules>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
