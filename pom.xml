@@ -27,7 +27,7 @@
 		<http.proxyPort></http.proxyPort><!-- set from env: 1080 -->
 		<jackson.databind.version>2.9.9.3</jackson.databind.version>
 		<jacoco.out.path>${project.build.directory}</jacoco.out.path>
-		<sonar.jacoco.reportPath>${jacoco.out.path}/jacoco.exec</sonar.jacoco.reportPath>
+		<sonar.jacoco.reportPaths>${jacoco.out.path}/jacoco.exec</sonar.jacoco.reportPaths>
 		<jacoco.version>0.8.2</jacoco.version>
 	</properties>
 
@@ -139,7 +139,7 @@
 							<goal>prepare-agent</goal>
 						</goals>
 						<configuration>
-						    <destFile>${sonar.jacoco.reportPath}</destFile>
+						    <destFile>${sonar.jacoco.reportPaths}</destFile>
 			                <propertyName>surefireArgLine</propertyName>
 			              </configuration>
 					</execution>
@@ -168,6 +168,7 @@
 				   		<http.proxyHost>${http.proxyHost}</http.proxyHost>
 				   		<http.proxyPort>${http.proxyPort}</http.proxyPort>
 					</systemPropertyVariables>
+					<argLine>${surefireArgLine}</argLine>
       			</configuration>
 			</plugin>
 			<plugin>
