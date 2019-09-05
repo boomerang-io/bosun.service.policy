@@ -45,7 +45,7 @@ public class TeamServiceImpl implements TeamService {
 
     for (final CiTeamEntity ciTeamEntity : ciTeamEntities) {
       final BoomerangTeamEntity boomerangTeam =
-          boomerangTeamRepository.findById(ciTeamEntity.getHigherLevelGroupId());
+          boomerangTeamRepository.findById(ciTeamEntity.getHigherLevelGroupId()).orElse(null);
 
       CiTeam ciTeam;
 

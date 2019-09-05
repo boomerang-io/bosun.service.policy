@@ -3,10 +3,14 @@
     "_class" : "net.boomerangplatform.mongo.entity.HighLevelGroupEntity",
     "name" : "Test Team",
     "shortName" : "Test Team inactive",
-    "ownerId" : "5cedb45a2ce2340001ca1fc9",
     "purpose" : "CI Test Team",
     "dateCreated" : ISODate("2019-05-28T22:24:50.317Z"),
     "isActive" : false,
-    "ownerEmail" : "mdroy@us.ibm.com",
-    "ownerName" : "Marcus Roy"
+    "owners" : [
+    	{
+    		"ownerId" : "5cedb45a2ce2340001ca1fc9",
+    		"ownerEmail" : "mdroy@us.ibm.com",
+		    "ownerName" : "Marcus Roy"
+    	}
+    ]
 }

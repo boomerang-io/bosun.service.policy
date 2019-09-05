@@ -15,10 +15,10 @@ import javax.annotation.Resource;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -29,6 +29,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.boomerangplatform.AbstractBoomerangTest;
 import net.boomerangplatform.Application;
+import net.boomerangplatform.MongoConfig;
 import net.boomerangplatform.model.CiPolicy;
 import net.boomerangplatform.model.CiPolicyActivitiesInsights;
 import net.boomerangplatform.model.CiPolicyDefinition;
@@ -50,9 +51,9 @@ import net.boomerangplatform.repository.model.Measures;
 import net.boomerangplatform.repository.model.SonarQubeReport;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles(profiles = "local")
+@ActiveProfiles(profiles = "test")
 @SpringBootTest
-@ContextConfiguration(classes = {Application.class})
+@ContextConfiguration(classes = {Application.class, MongoConfig.class})
 public class CitadelServiceTest extends AbstractBoomerangTest {
 
   private final static LocalDate LOCAL_DATE = LocalDate.of(2019, 05, 15);
@@ -67,7 +68,7 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
 
   private MockRestServiceServer server;
 
-  @Mock
+  @MockBean
   private Clock clock;
 
   private Clock fixedClock;

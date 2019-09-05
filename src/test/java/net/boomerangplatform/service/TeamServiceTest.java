@@ -14,13 +14,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import net.boomerangplatform.AbstractBoomerangTest;
 import net.boomerangplatform.Application;
+import net.boomerangplatform.MongoConfig;
 import net.boomerangplatform.mongo.model.Audit;
 import net.boomerangplatform.team.model.CiTeam;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles(profiles = "local")
+@ActiveProfiles(profiles = "test")
 @SpringBootTest
-@ContextConfiguration(classes = {Application.class})
+@ContextConfiguration(classes = {Application.class, MongoConfig.class})
 public class TeamServiceTest extends AbstractBoomerangTest {
 
   @Autowired

@@ -7,5 +7,5 @@
     "creationDate" : ISODate("2019-05-29T05:49:42.836Z"),
     "duration" : NumberLong(172485),
     "status" : "FAILED",
-    "type" : "BUILD"
+    "type" : "GATES"
 }

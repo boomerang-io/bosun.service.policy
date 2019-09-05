@@ -163,7 +163,7 @@ public class CitadelServiceImpl implements CitadelService {
 
   @Override
   public CiPolicy addPolicy(CiPolicy policy) {
-    policy.setCreatedDate(fromLocalDate(LocalDate.now(clock)));
+    policy.setCreatedDate(fromLocalDate(LocalDate.now(clock())));
 
     policy.setDefinitions(getFilteredDefinition(policy.getDefinitions()));
 
@@ -203,7 +203,7 @@ public class CitadelServiceImpl implements CitadelService {
     policiesActivities.setCiTeamId(ciComponentEntity.getCiTeamId());
     policiesActivities.setCiComponentActivityId(ciComponentActivityEntity.getId());
     policiesActivities.setCiPolicyId(ciPolicyId);
-    policiesActivities.setCreatedDate(new Date());
+    policiesActivities.setCreatedDate(fromLocalDate(LocalDate.now(clock)));
     policiesActivities.setValid(true);
 
     List<Results> results = new ArrayList<>();
@@ -418,7 +418,7 @@ public class CitadelServiceImpl implements CitadelService {
   }
 
   private List<String> getViolationsDefinitions(CiPolicyActivityEntity policyActivity) {
-    List<String> violationsDefinitions = new ArrayList<String>();
+    List<String> violationsDefinitions = new ArrayList<>();
     for (Results result : policyActivity.getResults()) {
       if (!result.getValid()) {
         CiPolicyDefinitionEntity policyDefinitionEntity =
