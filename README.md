@@ -22,8 +22,11 @@ The Citadel service works with the Citadel UI and the CI service. It controls th
 
 `docker run -p 8181:8181 openpolicyagent/opa run --server --log-level debug`
 
-## General Dependencies:
+**Postman**
 
-1. github.client.secret and github.client.id are hard coded in the application.properties file
-2. urbancode.rest.user and urbancode.rest.password are hard coded in the application.properties file
+Included is a Postman collection that can be used to submit policies and test data into OPA
+
+##OPA Policies
+
+The policy rego documents are stored in the CICD Helm chart
 
