@@ -31,4 +31,12 @@ public class DataResponseResult {
   public void setValid(Boolean valid) {
     this.valid = valid;
   }
+
+  public ArrayList<DataResponseResultViolation> getViolations() {
+    return violations;
+  }
+
+  public void setViolations(ArrayList<DataResponseResultViolation> violations) {
+    this.violations = violations;
+  }
 }

@@ -509,7 +509,7 @@ public class CitadelServiceImpl implements CitadelService {
 
     Results result = new Results();
     result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
-    result.setDetail(getJsonNodeText(dataResponse.getResult().getDetail()));
+    result.setDetail(dataResponse.getResult().getViolations());
     result.setValid(dataResponse.getResult().getValid());
 
     return result;
