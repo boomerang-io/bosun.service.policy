@@ -26,7 +26,7 @@ The Citadel service works with the Citadel UI and the CI service. It controls th
 
 Included is a Postman collection that can be used to submit policies and test data into OPA
 
-##OPA Policies
+## OPA Policies
 
 The policy rego documents are stored in the CICD Helm chart
 
