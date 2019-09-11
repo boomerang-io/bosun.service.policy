@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -18,9 +19,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import net.boomerangplatform.model.CiPolicy;
 import net.boomerangplatform.model.CiPolicyActivitiesInsights;
 import net.boomerangplatform.model.CiPolicyDefinition;
@@ -39,6 +42,7 @@ import net.boomerangplatform.mongo.model.CiComponentActivityType;
 import net.boomerangplatform.mongo.model.CiPolicyConfig;
 import net.boomerangplatform.mongo.model.OperatorType;
 import net.boomerangplatform.mongo.model.Results;
+import net.boomerangplatform.mongo.model.ResultsViolation;
 import net.boomerangplatform.mongo.model.Scope;
 import net.boomerangplatform.mongo.service.CiComponentActivityService;
 import net.boomerangplatform.mongo.service.CiComponentService;
@@ -52,6 +56,7 @@ import net.boomerangplatform.opa.model.DataRequest;
 import net.boomerangplatform.opa.model.DataRequestInput;
 import net.boomerangplatform.opa.model.DataRequestPolicy;
 import net.boomerangplatform.opa.model.DataResponse;
+import net.boomerangplatform.opa.model.DataResponseResultViolation;
 import net.boomerangplatform.opa.service.OpenPolicyAgentClient;
 import net.boomerangplatform.repository.model.ArtifactSummary;
 import net.boomerangplatform.repository.model.DependencyGraph;
@@ -393,14 +398,15 @@ public class CitadelServiceImpl implements CitadelService {
       violation.setCiPolicyName(policy.getName());
       violation.setCiStageId(stage.getId());
       violation.setCiStageName(stage.getName());
-      violation.setViolations(0);
+      violation.setNbrViolations(0);
       violation.setCiPolicyActivityCreatedDate(policyActivity.getCreatedDate());
     } else if (policyActivity.getCreatedDate().after(violation.getCiPolicyActivityCreatedDate())) {
-      violation.setViolations(0);
+      violation.setViolations(null);
       violation.setCiPolicyActivityCreatedDate(policyActivity.getCreatedDate());
     }
 
-    violation.setViolations(violation.getViolations() + getViolationsTotal(policyActivity));
+    violation.setNbrViolations(violation.getNbrViolations() + getViolationsTotal(policyActivity));
+    violation.getViolations().addAll(violation.getViolations());
     violation.getCiPolicyDefinitionTypes().addAll(getViolationsDefinitionTypes(
         violation.getCiPolicyDefinitionTypes(), getViolationsDefinitions(policyActivity)));
 
@@ -495,7 +501,7 @@ public class CitadelServiceImpl implements CitadelService {
   private Results getDefaultResult(String policyDefinitionId) {
     Results result = new Results();
     result.setCiPolicyDefinitionId(policyDefinitionId);
-    result.setDetail(null);
+    result.setViolations(new ArrayList<ResultsViolation>());
     result.setValid(false);
 
     return result;
@@ -508,11 +514,23 @@ public class CitadelServiceImpl implements CitadelService {
         policyDefinitionEntity.getKey(), policyConfig.getRules(), data);
 
     Results result = new Results();
-    result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());
-    result.setDetail(dataResponse.getResult().getViolations());
+    result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());    
+    result.setViolations(getResultsViolation(dataResponse.getResult().getViolations()));
     result.setValid(dataResponse.getResult().getValid());
 
     return result;
+  }
+  
+  private List<ResultsViolation> getResultsViolation(List<DataResponseResultViolation> dataResponseResultViolations) {
+	  List<ResultsViolation> resultsViolations = new ArrayList<ResultsViolation>();
+	  for (DataResponseResultViolation dataResponseResultViolation : dataResponseResultViolations) {
+		  ResultsViolation resultsViolation = new ResultsViolation();
+		  resultsViolation.setMessage(dataResponseResultViolation.getMessage());
+		  resultsViolation.setMetric(dataResponseResultViolation.getMetric());
+		  resultsViolation.setValid(dataResponseResultViolation.getValid());
+		  resultsViolations.add(resultsViolation);		  
+	  }
+	  return resultsViolations;
   }
 
   private DataResponse callOpenPolicyAgentClient(String policyDefinitionId,

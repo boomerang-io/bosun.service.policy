@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import net.boomerangplatform.mongo.model.ResultsViolation;
+
 public class CiPolicyViolations implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -20,8 +22,8 @@ public class CiPolicyViolations implements Serializable {
 	private String ciComponentVersionName;
 	private Date ciPolicyActivityCreatedDate;
 	private List<String> ciPolicyDefinitionTypes;
-
-	private Integer violations;
+	private Integer nbrViolations;
+	private List<ResultsViolation> violations;
 
 	public CiPolicyViolations() {
 		// Do nothing
@@ -99,11 +101,22 @@ public class CiPolicyViolations implements Serializable {
 		this.ciComponentVersionName = ciComponentVersionName;
 	}
 
-	public Integer getViolations() {
+	public Integer getNbrViolations() {
+		return nbrViolations;
+	}
+
+	public void setNbrViolations(Integer nbrViolations) {
+		this.nbrViolations = nbrViolations;
+	}
+
+	public List<ResultsViolation> getViolations() {
+		if (violations == null) {
+			violations = new ArrayList<ResultsViolation>();
+		}
 		return violations;
 	}
 
-	public void setViolations(Integer violations) {
+	public void setViolations(List<ResultsViolation> violations) {
 		this.violations = violations;
 	}
 

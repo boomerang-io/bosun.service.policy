@@ -261,7 +261,7 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
     Assert.assertEquals(Boolean.FALSE, savedEntity.getValid());
     Assert.assertEquals(1, savedEntity.getResults().size());
     Assert.assertEquals(Boolean.FALSE, savedEntity.getResults().get(0).getValid());
-    Assert.assertEquals("{}", savedEntity.getResults().get(0).getDetail());
+//    Assert.assertEquals("[]", savedEntity.getResults().get(0).getViolations());
     Assert.assertEquals("5cd328ae1e9bbbb710590d9d",
         savedEntity.getResults().get(0).getCiPolicyDefinitionId());
 
@@ -297,7 +297,7 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
     Assert.assertEquals(Boolean.FALSE, savedEntity.getValid());
     Assert.assertEquals(1, savedEntity.getResults().size());
     Assert.assertEquals(Boolean.FALSE, savedEntity.getResults().get(0).getValid());
-    Assert.assertEquals("{}", savedEntity.getResults().get(0).getDetail());
+//    Assert.assertEquals("[]", savedEntity.getResults().get(0).getViolations());
     Assert.assertEquals("5cdd8425f6ea74a9bbaf2fe6",
         savedEntity.getResults().get(0).getCiPolicyDefinitionId());
 
@@ -333,7 +333,7 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
     Assert.assertEquals(Boolean.FALSE, savedEntity.getValid());
     Assert.assertEquals(1, savedEntity.getResults().size());
     Assert.assertEquals(Boolean.FALSE, savedEntity.getResults().get(0).getValid());
-    Assert.assertEquals("{}", savedEntity.getResults().get(0).getDetail());
+//    Assert.assertEquals("[]", savedEntity.getResults().get(0).getViolations());
     Assert.assertEquals("5cd498f3f6ea74a9bb6ad0f3",
         savedEntity.getResults().get(0).getCiPolicyDefinitionId());
 
@@ -356,7 +356,7 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
     Assert.assertEquals("Glens Zero Defns Test", violation.getCiPolicyName());
     Assert.assertEquals("5cedf589dd1be20001f3d994", violation.getCiStageId());
     Assert.assertEquals("dev", violation.getCiStageName());
-    Assert.assertEquals(2, violation.getViolations().intValue());
+    Assert.assertEquals(2, violation.getNbrViolations().intValue());
   }
 
   private SonarQubeReport getSonarQubeReport() {
