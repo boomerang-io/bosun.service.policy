@@ -1,9 +1,12 @@
 package net.boomerangplatform.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Result {
+public class Result implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 
 	private String ciPolicyDefinitionId;
 	private boolean valid;

@@ -2,18 +2,18 @@ package net.boomerangplatform.model;
 
 import java.io.Serializable;
 
-public class ResultViolation implements Serializable {
+public class CiPolicyViolation implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	private String metric;
 	private String message;
 	private Boolean valid;
-
-	public ResultViolation() {
+	
+	public CiPolicyViolation() {
 		// Do nothing
 	}
-
+	
 	public String getMetric() {
 		return metric;
 	}

@@ -28,6 +28,7 @@ import net.boomerangplatform.model.CiPolicy;
 import net.boomerangplatform.model.CiPolicyActivitiesInsights;
 import net.boomerangplatform.model.CiPolicyDefinition;
 import net.boomerangplatform.model.CiPolicyInsights;
+import net.boomerangplatform.model.CiPolicyViolation;
 import net.boomerangplatform.model.CiPolicyViolations;
 import net.boomerangplatform.model.PolicyResponse;
 import net.boomerangplatform.mongo.entity.CiComponentActivityEntity;
@@ -415,12 +416,24 @@ public class CitadelServiceImpl implements CitadelService {
     return violation;
   }
   
-  private List<ResultsViolation> getViolationsResults(CiPolicyActivityEntity policyActivity) {
-	  List<ResultsViolation> resultsViolations = new ArrayList<ResultsViolation>();
+  private List<CiPolicyViolation> getViolationsResults(CiPolicyActivityEntity policyActivity) {
+	  List<CiPolicyViolation> resultsViolations = new ArrayList<CiPolicyViolation>();
 	  for (Results results : policyActivity.getResults()) {
-		  resultsViolations.addAll(results.getViolations());
+		  resultsViolations.addAll(getCiPolicyViolations(results.getViolations()));
 	  }	  
 	  return resultsViolations;
+  }
+  
+  private List<CiPolicyViolation> getCiPolicyViolations(List<ResultsViolation> violations) {
+	  List<CiPolicyViolation> policyViolations = new ArrayList<CiPolicyViolation>();
+	  for (ResultsViolation resultsViolation : violations) {
+		  CiPolicyViolation policyViolation = new CiPolicyViolation();
+		  policyViolation.setMetric(resultsViolation.getMetric());
+		  policyViolation.setMessage(resultsViolation.getMessage());
+		  policyViolation.setValid(resultsViolation.getValid());
+		  policyViolations.add(policyViolation);
+	  }
+	  return policyViolations;
   }
 
   private Integer getViolationsTotal(CiPolicyActivityEntity policyActivity) {
