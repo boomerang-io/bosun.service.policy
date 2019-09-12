@@ -2,7 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.1.8.RELEASE</version>
+		<relativePath/>
+	</parent>
+	
 	<groupId>net.boomerangplatform</groupId>
 	<artifactId>service-citadel</artifactId>
 	<version>${version.name}</version>
@@ -11,13 +17,6 @@
 	<name>service-citadel</name>
 	<description>Service for Citadel</description>
 
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.1.7.RELEASE</version>
-		<relativePath/>
-	</parent>
-
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>11</java.version>
@@ -25,7 +24,6 @@
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<http.proxyHost></http.proxyHost><!-- set from env: proxy.boomerangplatform.net -->
 		<http.proxyPort></http.proxyPort><!-- set from env: 1080 -->
-		<jackson.databind.version>2.9.9.3</jackson.databind.version>
 		<jacoco.out.path>${project.build.directory}</jacoco.out.path>
 		<sonar.jacoco.reportPaths>${jacoco.out.path}/jacoco.exec</sonar.jacoco.reportPaths>
 		<jacoco.version>0.8.2</jacoco.version>
@@ -40,19 +38,9 @@
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-starter-logging</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
-					<artifactId>jackson-databind</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
-		
-		<!-- Force version of databind -->
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>${jackson.databind.version}</version>
-		</dependency>
+
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
@@ -125,6 +113,13 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	
+	<repositories>
+		<repository>
+			<id>boomeranglib-maven</id>
+			<url>https://tools.boomerangplatform.net/artifactory/boomeranglib-maven</url>
+		</repository>
+	</repositories>
 
 	<build>
 		<plugins>
@@ -183,12 +178,4 @@
 			</resource>
 		</resources>
 	</build>
-	
-	 <repositories>
-		<repository>
-			<id>boomeranglib-maven</id>
-			<url>https://tools.boomerangplatform.net/artifactory/boomeranglib-maven</url>
-		</repository>
-	</repositories>
-
 </project>
