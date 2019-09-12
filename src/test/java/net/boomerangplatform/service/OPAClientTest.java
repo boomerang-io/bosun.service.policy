@@ -94,10 +94,8 @@ public class OPAClientTest {
     DataResponse dataResponse = new DataResponse();
     DataResponseResult result = new DataResponseResult();
 
-    final ObjectMapper mapper = new ObjectMapper();
-    JsonNode node = mapper.createObjectNode();
-    result.setDetail(node);
     result.setValid(true);
+    result.setViolations(null);
 
     dataResponse.setResult(result);
 

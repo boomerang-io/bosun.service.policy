@@ -20,8 +20,8 @@ public class CiPolicyViolations implements Serializable {
 	private String ciComponentVersionName;
 	private Date ciPolicyActivityCreatedDate;
 	private List<String> ciPolicyDefinitionTypes;
-
-	private Integer violations;
+	private Integer nbrViolations;
+	private List<CiPolicyViolation> violations;
 
 	public CiPolicyViolations() {
 		// Do nothing
@@ -99,11 +99,22 @@ public class CiPolicyViolations implements Serializable {
 		this.ciComponentVersionName = ciComponentVersionName;
 	}
 
-	public Integer getViolations() {
+	public Integer getNbrViolations() {
+		return nbrViolations;
+	}
+
+	public void setNbrViolations(Integer nbrViolations) {
+		this.nbrViolations = nbrViolations;
+	}
+
+	public List<CiPolicyViolation> getViolations() {
+		if (violations == null) {
+			violations = new ArrayList<CiPolicyViolation>();
+		}
 		return violations;
 	}
 
-	public void setViolations(Integer violations) {
+	public void setViolations(List<CiPolicyViolation> violations) {
 		this.violations = violations;
 	}
 
