@@ -410,8 +410,7 @@ public class CitadelServiceImpl implements CitadelService {
 
     violation.setNbrViolations(violation.getNbrViolations() + getViolationsTotal(policyActivity));
     violation.getViolations().addAll(getViolationsResults(policyActivity));
-    violation.getCiPolicyDefinitionTypes().addAll(getViolationsDefinitionTypes(
-        violation.getCiPolicyDefinitionTypes(), getViolationsDefinitions(policyActivity)));
+    violation.getCiPolicyDefinitionTypes().addAll(getViolationsDefinitionTypes(violation.getCiPolicyDefinitionTypes(), policyActivity));
 
     return violation;
   }
@@ -445,27 +444,19 @@ public class CitadelServiceImpl implements CitadelService {
     }
     return violationsTotal;
   }
-
-  private List<String> getViolationsDefinitions(CiPolicyActivityEntity policyActivity) {
-    List<String> violationsDefinitions = new ArrayList<>();
-    for (Results result : policyActivity.getResults()) {
-      if (!result.getValid()) {
-        CiPolicyDefinitionEntity policyDefinitionEntity =
-            ciPolicyDefinitionService.findById(result.getCiPolicyDefinitionId());
-        violationsDefinitions.add(policyDefinitionEntity.getName());
-      }
-    }
-    return violationsDefinitions;
-  }
-
-  private List<String> getViolationsDefinitionTypes(List<String> current, List<String> toAdd) {
-    for (String definitionType : toAdd) {
-      if (!current.contains(definitionType)) {
-        current.add(definitionType);
-      }
-    }
-    return current;
-  }
+  
+	private List<String> getViolationsDefinitionTypes(List<String> current, CiPolicyActivityEntity policyActivity) {
+		List<String> violationsDefinitionTypes = new ArrayList<String>();
+		for (Results result : policyActivity.getResults()) {
+			if (!result.getValid()) {
+				CiPolicyDefinitionEntity policyDefinitionEntity = ciPolicyDefinitionService.findById(result.getCiPolicyDefinitionId());
+				if (!current.contains(policyDefinitionEntity.getName())) {
+					violationsDefinitionTypes.add(policyDefinitionEntity.getName());
+				}
+			}
+		}		
+		return violationsDefinitionTypes;
+	}
 
   private List<CiStageEntity> getStagesWithGates(List<CiPipelineEntity> pipelines) {
     List<CiStageEntity> stagesWithGates = new ArrayList<>();
