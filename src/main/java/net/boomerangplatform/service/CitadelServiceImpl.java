@@ -339,6 +339,10 @@ public class CitadelServiceImpl implements CitadelService {
 				CiComponentActivityEntity componentActivity = ciComponentActivityService
 						.findTopByCiComponentIdAndTypeAndCiStageIdOrderByCreationDateDesc(component.getId(),
 								CiComponentActivityType.GATES, stage.getId());
+				
+				if (componentActivity == null) {
+					continue;
+				}
 
 				LOGGER.info("componentActivity.id=" + componentActivity.getId());
 
@@ -359,6 +363,10 @@ public class CitadelServiceImpl implements CitadelService {
 			List<CiPolicyActivityEntity> policyActivities) {
 		for (CiPolicyActivityEntity policyActivity : policyActivities) {
 			CiPolicyEntity policy = ciPolicyService.findById(policyActivity.getCiPolicyId());
+			
+			if (policy == null) {
+				continue;
+			}
 
 			LOGGER.info("policy.name=" + policy.getName());
 
