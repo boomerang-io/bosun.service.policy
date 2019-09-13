@@ -228,13 +228,13 @@ public class CitadelServiceImpl implements CitadelService {
 						if (result != null) {
 							if (!result.getValid()) {
 								policiesActivities.setValid(false);
-							}
-							if (result.getViolations().isEmpty()) {
-								ResultsViolation resultsViolation = new ResultsViolation();
-								resultsViolation.setMetric(policyDefinitionEntity.getName());
-								resultsViolation.setMessage("No data exists for component/version");
-								resultsViolation.setValid(false);
-								result.getViolations().add(resultsViolation);
+								if (result.getViolations().isEmpty()) {
+									ResultsViolation resultsViolation = new ResultsViolation();
+									resultsViolation.setMetric(policyDefinitionEntity.getName());
+									resultsViolation.setMessage("No data exists for component/version");
+									resultsViolation.setValid(false);
+									result.getViolations().add(resultsViolation);
+								}
 							}
 							results.add(result);
 						}
