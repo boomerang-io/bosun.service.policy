@@ -6,10 +6,10 @@ The Citadel service works with the Citadel UI and the CI service. It controls th
 
 **Prerequisites**
 
-1. Java 1.8 
-2. Springboot 
+1. Java 1.11 
+2. Springboot 2.1.8 
 3. Maven
-4. OpenPolicyAgent 
+4. OpenPolicyAgent
 
 ## How to Run:
 
