@@ -1,15 +1,14 @@
-package net.boomerangplatform.model;
+package net.boomerangplatform.entity;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import net.boomerangplatform.model.CiPolicyDefinitionConfig;
 
-public class CiPolicyDefinition implements Serializable {
+@Document(collection = "ci_policies_definitions")
+public class CiPolicyDefinitionEntity {
 
-  private static final long serialVersionUID = 1L;
-
+  @Id
   private String id;
 
   private String key;
@@ -63,12 +62,11 @@ public class CiPolicyDefinition implements Serializable {
   }
 
   public List<CiPolicyDefinitionConfig> getConfig() {
-    return config == null ? null : Collections.unmodifiableList(config);
+    return config;
   }
 
   public void setConfig(List<CiPolicyDefinitionConfig> config) {
-    this.config = config == null ? null : new ArrayList<>(config);
+    this.config = config;
   }
-
 
 }

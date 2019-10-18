@@ -17,6 +17,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -24,6 +25,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import net.boomerangplatform.entity.CiPolicyActivityEntity;
+import net.boomerangplatform.entity.CiPolicyDefinitionEntity;
+import net.boomerangplatform.entity.CiPolicyEntity;
 import net.boomerangplatform.model.CiPolicy;
 import net.boomerangplatform.model.CiPolicyActivitiesInsights;
 import net.boomerangplatform.model.CiPolicyDefinition;
@@ -31,27 +35,21 @@ import net.boomerangplatform.model.CiPolicyInsights;
 import net.boomerangplatform.model.CiPolicyViolation;
 import net.boomerangplatform.model.CiPolicyViolations;
 import net.boomerangplatform.model.PolicyResponse;
+import net.boomerangplatform.model.Results;
+import net.boomerangplatform.model.ResultsViolation;
 import net.boomerangplatform.mongo.entity.CiComponentActivityEntity;
 import net.boomerangplatform.mongo.entity.CiComponentEntity;
 import net.boomerangplatform.mongo.entity.CiComponentVersionEntity;
 import net.boomerangplatform.mongo.entity.CiPipelineEntity;
-import net.boomerangplatform.mongo.entity.CiPolicyActivityEntity;
-import net.boomerangplatform.mongo.entity.CiPolicyDefinitionEntity;
-import net.boomerangplatform.mongo.entity.CiPolicyEntity;
 import net.boomerangplatform.mongo.entity.CiStageEntity;
 import net.boomerangplatform.mongo.model.CiComponentActivityType;
-import net.boomerangplatform.mongo.model.CiPolicyConfig;
+import net.boomerangplatform.model.CiPolicyConfig;
 import net.boomerangplatform.mongo.model.OperatorType;
-import net.boomerangplatform.mongo.model.Results;
-import net.boomerangplatform.mongo.model.ResultsViolation;
 import net.boomerangplatform.mongo.model.Scope;
 import net.boomerangplatform.mongo.service.CiComponentActivityService;
 import net.boomerangplatform.mongo.service.CiComponentService;
 import net.boomerangplatform.mongo.service.CiComponentVersionService;
 import net.boomerangplatform.mongo.service.CiPipelineService;
-import net.boomerangplatform.mongo.service.CiPolicyActivityService;
-import net.boomerangplatform.mongo.service.CiPolicyDefinitionService;
-import net.boomerangplatform.mongo.service.CiPolicyService;
 import net.boomerangplatform.mongo.service.CiStagesService;
 import net.boomerangplatform.opa.model.DataRequest;
 import net.boomerangplatform.opa.model.DataRequestInput;
@@ -65,7 +63,7 @@ import net.boomerangplatform.repository.model.SonarQubeReport;
 import net.boomerangplatform.repository.service.RepositoryService;
 
 @Service
-public class CitadelServiceImpl implements CitadelService {
+public class BosunServiceImpl implements BosunService {
 
   @Value("${insights.period.months}")
   private String insightsPeriodMonths;
@@ -86,13 +84,13 @@ public class CitadelServiceImpl implements CitadelService {
   private CiStagesService ciStagesService;
 
   @Autowired
-  private CiPolicyService ciPolicyService;
+  private CiPolicyRepository ciPolicyRepository;
 
   @Autowired
-  private CiPolicyDefinitionService ciPolicyDefinitionService;
+  private CiPolicyDefinitionRepository ciPolicyDefinitionRepository;
 
   @Autowired
-  private CiPolicyActivityService ciPolicyActivityService;
+  private CiPolicyActivityRepository ciPolicyActivityRepository;
 
   @Autowired
   private RepositoryService repositoryService;
@@ -112,10 +110,10 @@ public class CitadelServiceImpl implements CitadelService {
 
   @Override
   public List<CiPolicyDefinition> getAllDefinitions() {
-    List<CiPolicyDefinitionEntity> entitis = ciPolicyService.findAllDefinitions();
+    List<CiPolicyDefinitionEntity> entities = ciPolicyDefinitionRepository.findAll(new Sort(Sort.Direction.ASC, "order"));
     List<CiPolicyDefinition> descriptions = new ArrayList<>();
 
-    entitis.forEach(entity -> {
+    entities.forEach(entity -> {
       CiPolicyDefinition description = new CiPolicyDefinition();
       BeanUtils.copyProperties(entity, description);
       descriptions.add(description);
@@ -136,7 +134,7 @@ public class CitadelServiceImpl implements CitadelService {
 
   @Override
   public List<CiPolicy> getPoliciesByTeamId(String ciTeamId) {
-    List<CiPolicyEntity> entities = ciPolicyService.findByTeamId(ciTeamId);
+    List<CiPolicyEntity> entities = ciPolicyRepository.findByTeamId(ciTeamId);
     List<CiPolicy> policies = new ArrayList<>();
 
     entities.forEach(entity -> {
@@ -146,7 +144,7 @@ public class CitadelServiceImpl implements CitadelService {
       policies.add(policy);
     });
 
-    List<CiPolicyEntity> globalPolicies = ciPolicyService.getGlobalPolicies();
+    List<CiPolicyEntity> globalPolicies = ciPolicyRepository.findByScope(Scope.global);
     globalPolicies.forEach(entity -> {
       CiPolicy policy = new CiPolicy();
       BeanUtils.copyProperties(entity, policy);
@@ -159,7 +157,7 @@ public class CitadelServiceImpl implements CitadelService {
 
   @Override
   public CiPolicy getPolicyById(String ciPolicyId) {
-    CiPolicyEntity entity = ciPolicyService.findById(ciPolicyId);
+    CiPolicyEntity entity = ciPolicyRepository.findById(ciPolicyId).orElse(null);
 
     CiPolicy policy = new CiPolicy();
     BeanUtils.copyProperties(entity, policy);
@@ -176,7 +174,7 @@ public class CitadelServiceImpl implements CitadelService {
     policy.setScope(Scope.team);
     CiPolicyEntity entity = new CiPolicyEntity();
     BeanUtils.copyProperties(policy, entity);
-    entity = ciPolicyService.add(entity);
+    entity = ciPolicyRepository.insert(entity);
     policy.setId(entity.getId());
 
     return policy;
@@ -185,44 +183,38 @@ public class CitadelServiceImpl implements CitadelService {
 
   @Override
   public CiPolicy updatePolicy(CiPolicy policy) {
-    CiPolicyEntity entity = ciPolicyService.findById(policy.getId());
+    CiPolicyEntity entity = ciPolicyRepository.findById(policy.getId()).orElse(null);
     policy.setScope(Scope.team);
     policy.setDefinitions(getFilteredDefinition(policy.getDefinitions()));
 
     BeanUtils.copyProperties(policy, entity);
-    ciPolicyService.update(entity);
+    ciPolicyRepository.save(entity);
 
     return policy;
   }
 
 	@Override
-	public CiPolicyActivityEntity validatePolicy(String ciComponentActivityId, String ciPolicyId) {
+	public CiPolicyActivityEntity validatePolicy(String ciPolicyId, String ciComponentActivityId, String ciComponentId, String ciComponentVersion) {
 
-		CiComponentActivityEntity ciComponentActivityEntity = ciComponentActivityService
-				.findById(ciComponentActivityId);
-		CiComponentEntity ciComponentEntity = ciComponentService.findById(ciComponentActivityEntity.getCiComponentId());
-		CiComponentVersionEntity ciComponentVersionEntity = ciComponentVersionService
-				.findVersionWithId(ciComponentActivityEntity.getCiComponentVersionId());
+		CiPolicyEntity policyEntity = ciPolicyRepository.findById(ciPolicyId).orElse(null);
 
 		final CiPolicyActivityEntity policiesActivities = new CiPolicyActivityEntity();
-		policiesActivities.setCiTeamId(ciComponentEntity.getCiTeamId());
-		policiesActivities.setCiComponentActivityId(ciComponentActivityEntity.getId());
+		policiesActivities.setCiTeamId(policyEntity.getTeamId());
+		policiesActivities.setCiComponentActivityId(ciComponentActivityId);
 		policiesActivities.setCiPolicyId(ciPolicyId);
 		policiesActivities.setCreatedDate(fromLocalDate(LocalDate.now(clock)));
 		policiesActivities.setValid(true);
 
 		List<Results> results = new ArrayList<>();
 
-		CiPolicyEntity policyEntity = ciPolicyService.findById(ciPolicyId);
-
 		if (policyEntity != null && policyEntity.getDefinitions() != null) {
 			policyEntity.getDefinitions().stream()
 					.filter(policyConfig -> !CollectionUtils.isEmpty(policyConfig.getRules())).forEach(policyConfig -> {
 
-						CiPolicyDefinitionEntity policyDefinitionEntity = ciPolicyDefinitionService
-								.findById(policyConfig.getCiPolicyDefinitionId());
+						CiPolicyDefinitionEntity policyDefinitionEntity = ciPolicyDefinitionRepository
+								.findById(policyConfig.getCiPolicyDefinitionId()).orElse(null);
 
-						Results result = getResult(ciComponentEntity.getId(), ciComponentVersionEntity.getName(),
+						Results result = getResult(ciComponentId, ciComponentVersion,
 								policyConfig, policyDefinitionEntity);
 
 						if (result != null) {
@@ -242,7 +234,7 @@ public class CitadelServiceImpl implements CitadelService {
 		}
 
 		policiesActivities.setResults(results);
-		return ciPolicyActivityService.save(policiesActivities);
+		return ciPolicyActivityRepository.save(policiesActivities);
 
 	}
 
@@ -251,21 +243,19 @@ public class CitadelServiceImpl implements CitadelService {
     Map<String, CiPolicyInsights> insights = new HashMap<>();
     LocalDate date = LocalDate.now(clock).minusMonths(Integer.valueOf(insightsPeriodMonths));
 
-    List<CiPolicyActivityEntity> activities = ciPolicyActivityService
+    List<CiPolicyActivityEntity> activities = ciPolicyActivityRepository
         .findByCiTeamIdAndValidAndCreatedDateAfter(ciTeamId, false, fromLocalDate(date));
 
     for (CiPolicyActivityEntity activity : activities) {
       String ciPolicyId = activity.getCiPolicyId();
 
       CiPolicyInsights ciPolicyInsights = insights.get(ciPolicyId);
-      if (ciPolicyInsights == null) {
-        if(ciPolicyService.findById(ciPolicyId)!=null) {
+      if (ciPolicyInsights == null && ciPolicyRepository.findById(ciPolicyId).isPresent()) {
         CiPolicy ciPolicy = getPolicyById(ciPolicyId);
         ciPolicyInsights = new CiPolicyInsights();
         ciPolicyInsights.setCiPolicyId(ciPolicy.getId());
         ciPolicyInsights.setCiPolicyName(ciPolicy.getName());
         ciPolicyInsights.setCiPolicyCreatedDate(ciPolicy.getCreatedDate());
-        } 
       }
 
       CiPolicyActivitiesInsights ciPolicyActivitiesInsights =
@@ -346,8 +336,8 @@ public class CitadelServiceImpl implements CitadelService {
 
 				LOGGER.info("componentActivity.id=" + componentActivity.getId());
 
-				List<CiPolicyActivityEntity> policyActivities = ciPolicyActivityService
-						.findByCiComponentActivityId(componentActivity.getId());
+				List<CiPolicyActivityEntity> policyActivities = ciPolicyActivityRepository
+						.findByCiComponentActivityIdAndValid(componentActivity.getId(), false);
 
 				LOGGER.info("policyActivities.size=" + policyActivities.size());
 
@@ -362,7 +352,7 @@ public class CitadelServiceImpl implements CitadelService {
 			CiStageEntity stage, CiComponentActivityEntity componentActivity,
 			List<CiPolicyActivityEntity> policyActivities) {
 		for (CiPolicyActivityEntity policyActivity : policyActivities) {
-			CiPolicyEntity policy = ciPolicyService.findById(policyActivity.getCiPolicyId());
+			CiPolicyEntity policy = ciPolicyRepository.findById(policyActivity.getCiPolicyId()).orElse(null);
 			
 			if (policy == null) {
 				continue;
@@ -457,7 +447,7 @@ public class CitadelServiceImpl implements CitadelService {
 		List<String> violationsDefinitionTypes = new ArrayList<String>();
 		for (Results result : policyActivity.getResults()) {
 			if (!result.getValid()) {
-				CiPolicyDefinitionEntity policyDefinitionEntity = ciPolicyDefinitionService.findById(result.getCiPolicyDefinitionId());
+				CiPolicyDefinitionEntity policyDefinitionEntity = ciPolicyDefinitionRepository.findById(result.getCiPolicyDefinitionId()).orElse(null);
 				if (!current.contains(policyDefinitionEntity.getName())) {
 					violationsDefinitionTypes.add(policyDefinitionEntity.getName());
 				}
@@ -645,7 +635,7 @@ public class CitadelServiceImpl implements CitadelService {
 
   @Override
   public PolicyResponse deletePolicy(String ciPolicyId) {
-    CiPolicyEntity ciPolicy = ciPolicyService.findById(ciPolicyId);
+    CiPolicyEntity ciPolicy = ciPolicyRepository.findById(ciPolicyId).orElse(null);
     PolicyResponse response = new PolicyResponse();
     if (getStagesForPolicy(ciPolicy.getTeamId(), ciPolicy.getId()).size() != 0) {
       response.setStatus(409);
@@ -653,7 +643,7 @@ public class CitadelServiceImpl implements CitadelService {
       response.setError("Unable to delete");
       return response;
     } else {
-      ciPolicyService.delete(ciPolicy);
+      ciPolicyRepository.delete(ciPolicy);
       response.setStatus(200);
       response.setMessage("Policy deleted");
       response.setError("Policy deleted");

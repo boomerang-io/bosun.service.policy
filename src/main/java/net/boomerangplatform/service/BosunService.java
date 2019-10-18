@@ -7,9 +7,9 @@ import net.boomerangplatform.model.CiPolicyDefinition;
 import net.boomerangplatform.model.CiPolicyInsights;
 import net.boomerangplatform.model.CiPolicyViolations;
 import net.boomerangplatform.model.PolicyResponse;
-import net.boomerangplatform.mongo.entity.CiPolicyActivityEntity;
+import net.boomerangplatform.entity.CiPolicyActivityEntity;
 
-public interface CitadelService {
+public interface BosunService {
 
   List<CiPolicyDefinition> getAllDefinitions();
 
@@ -23,11 +23,11 @@ public interface CitadelService {
 
   CiPolicy getPolicyById(String ciPolicyId);
   
-  CiPolicyActivityEntity validatePolicy(String ciComponentActivityId, String ciPolicyId);
-  
   List<CiPolicyInsights> getInsights(String ciTeamId);
   
   List<CiPolicyViolations> getViolations(String ciTeamId);
 
   PolicyResponse deletePolicy(String ciPolicyId);
+
+CiPolicyActivityEntity validatePolicy(String ciPolicyId,String ciComponentActivityId,String ciComponentId,String ciComponentVersion);
 }

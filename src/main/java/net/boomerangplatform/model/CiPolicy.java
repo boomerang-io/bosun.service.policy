@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import net.boomerangplatform.mongo.model.CiPolicyConfig;
+import net.boomerangplatform.model.CiPolicyConfig;
 import net.boomerangplatform.mongo.model.Scope;
 
 public class CiPolicy implements Serializable {

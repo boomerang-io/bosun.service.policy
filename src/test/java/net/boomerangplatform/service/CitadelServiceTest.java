@@ -59,7 +59,7 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
   private final static LocalDate LOCAL_DATE = LocalDate.of(2019, 05, 15);
 
   @Autowired
-  private CitadelService citadelService;
+  private BosunService citadelService;
 
   @Autowired
   @Qualifier("internalRestTemplate")

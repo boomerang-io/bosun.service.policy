@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CiPoliciesActivities {
+public class PolicyActivities {
 
   private String id;
   private String ciComponentId;
@@ -14,7 +14,7 @@ public class CiPoliciesActivities {
   private List<Result> results = new ArrayList<>();
   private boolean valid;
 
-  public CiPoliciesActivities() {
+  public PolicyActivities() {
     // Do nothing
   }
 
