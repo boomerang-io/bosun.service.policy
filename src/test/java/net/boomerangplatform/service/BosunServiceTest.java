@@ -35,8 +35,8 @@ import net.boomerangplatform.model.CiPolicyActivitiesInsights;
 import net.boomerangplatform.model.CiPolicyDefinition;
 import net.boomerangplatform.model.CiPolicyInsights;
 import net.boomerangplatform.model.CiPolicyViolations;
-import net.boomerangplatform.mongo.entity.CiPolicyActivityEntity;
-import net.boomerangplatform.mongo.model.CiPolicyConfig;
+import net.boomerangplatform.entity.CiPolicyActivityEntity;
+import net.boomerangplatform.model.CiPolicyConfig;
 import net.boomerangplatform.repository.model.Artifact;
 import net.boomerangplatform.repository.model.ArtifactPackage;
 import net.boomerangplatform.repository.model.ArtifactSummary;
@@ -54,12 +54,12 @@ import net.boomerangplatform.repository.model.SonarQubeReport;
 @ActiveProfiles(profiles = "test")
 @SpringBootTest
 @ContextConfiguration(classes = {Application.class, MongoConfig.class})
-public class CitadelServiceTest extends AbstractBoomerangTest {
+public class BosunServiceTest extends AbstractBoomerangTest {
 
   private final static LocalDate LOCAL_DATE = LocalDate.of(2019, 05, 15);
 
   @Autowired
-  private BosunService citadelService;
+  private BosunService bosunService;
 
   @Autowired
   @Qualifier("internalRestTemplate")
@@ -120,7 +120,7 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
 
   @Test
   public void testGetAllDefinitions() {
-    List<CiPolicyDefinition> definitions = citadelService.getAllDefinitions();
+    List<CiPolicyDefinition> definitions = bosunService.getAllDefinitions();
 
     Assert.assertEquals(3, definitions.size());
     CiPolicyDefinition definition = definitions.get(0);
@@ -135,7 +135,7 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
 
   @Test
   public void testGetAllOperators() throws JsonProcessingException {
-    Map<String, String> operators = citadelService.getAllOperators();
+    Map<String, String> operators = bosunService.getAllOperators();
 
     Assert.assertEquals(5, operators.size());
     Assert.assertEquals("Equals", operators.get("EQUALS"));
@@ -145,7 +145,7 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
   public void testGetPoliciesByTeamId() throws JsonProcessingException {
     String teamId = "5cedb53fdd1be20001f3d8c2";
 
-    List<CiPolicy> policies = citadelService.getPoliciesByTeamId(teamId);
+    List<CiPolicy> policies = bosunService.getPoliciesByTeamId(teamId);
 
     Assert.assertEquals(1, policies.size());
 
@@ -172,7 +172,7 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
   public void testAddPolicy() throws IOException {
     CiPolicy policy = new ObjectMapper().readValue(loadResourceAsString("addCiPolicyEntity.json"),
         CiPolicy.class);
-    CiPolicy policyReturn = citadelService.addPolicy(policy);
+    CiPolicy policyReturn = bosunService.addPolicy(policy);
 
     System.out.println(parseToJson(policyReturn));
 
@@ -186,7 +186,7 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
     Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definitionId);
 
 
-    List<CiPolicy> policies = citadelService.getPoliciesByTeamId("5cedb53fdd1be20001f3d8c2");
+    List<CiPolicy> policies = bosunService.getPoliciesByTeamId("5cedb53fdd1be20001f3d8c2");
     Assert.assertEquals(1, policies.size());
 
     CiPolicy policyFound = policies.get(0);
@@ -199,7 +199,7 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
   public void testUpdatePolicy() throws IOException {
     CiPolicy policy = new ObjectMapper()
         .readValue(loadResourceAsString("updateCiPolicyEntity.json"), CiPolicy.class);
-    CiPolicy policyReturn = citadelService.updatePolicy(policy);
+    CiPolicy policyReturn = bosunService.updatePolicy(policy);
 
     System.out.println(parseToJson(policyReturn));
 
@@ -210,7 +210,7 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
     Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definitionId);
 
 
-    List<CiPolicy> policies = citadelService.getPoliciesByTeamId("9999");
+    List<CiPolicy> policies = bosunService.getPoliciesByTeamId("9999");
     Assert.assertEquals(1, policies.size());
 
     CiPolicy policyFound = policies.get(0);
@@ -219,11 +219,11 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
 
   @Test
   public void testGetInsights() throws IOException {
-    List<CiPolicyInsights> insights = citadelService.getInsights("9999");
+    List<CiPolicyInsights> insights = bosunService.getInsights("9999");
 
     Assert.assertEquals(1, insights.size());
     CiPolicyInsights entry = insights.get(0);
-    CiPolicy policy = citadelService.getPolicyById(entry.getCiPolicyId());
+    CiPolicy policy = bosunService.getPolicyById(entry.getCiPolicyId());
     Assert.assertEquals("Code Medium Validation", policy.getName());
     Assert.assertEquals("5c5b5a0b352b1b614143b7c3", policy.getId());
     Integer failCount = 0;
@@ -251,9 +251,11 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
 
     String componentActivityId = "5cee1d76dd1be20001f3d9c5";
     String ciPolicyId = "5c5b5a0b352b1b614143b7c3";
+    String componentId = "";
+    String version = "";
 
     CiPolicyActivityEntity savedEntity =
-        citadelService.validatePolicy(componentActivityId, ciPolicyId);
+        bosunService.validatePolicy(ciPolicyId, componentActivityId, componentId, version);
 
     Assert.assertEquals("5c5b5a0b352b1b614143b7c3", savedEntity.getCiPolicyId());
     Assert.assertEquals(componentActivityId, savedEntity.getCiComponentActivityId());
@@ -287,9 +289,11 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
 
     String componentActivityId = "5cee1d76dd1be20001f3d9c5";
     String ciPolicyId = "5cf151691417760001c0a679";
+    String componentId = "";
+    String version = "";
 
     CiPolicyActivityEntity savedEntity =
-        citadelService.validatePolicy(componentActivityId, ciPolicyId);
+        bosunService.validatePolicy(ciPolicyId, componentActivityId, componentId, version);
 
     Assert.assertEquals("5cf151691417760001c0a679", savedEntity.getCiPolicyId());
     Assert.assertEquals(componentActivityId, savedEntity.getCiComponentActivityId());
@@ -323,9 +327,11 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
 
     String componentActivityId = "5cee1d76dd1be20001f3d9c5";
     String ciPolicyId = "5cf151691417760001c0a675";
+    String componentId = "";
+    String version = "";
 
     CiPolicyActivityEntity savedEntity =
-        citadelService.validatePolicy(componentActivityId, ciPolicyId);
+        bosunService.validatePolicy(ciPolicyId, componentActivityId, componentId, version);
 
     Assert.assertEquals("5cf151691417760001c0a675", savedEntity.getCiPolicyId());
     Assert.assertEquals(componentActivityId, savedEntity.getCiComponentActivityId());
@@ -345,7 +351,7 @@ public class CitadelServiceTest extends AbstractBoomerangTest {
   public void testGetViolations() throws JsonProcessingException {
     String teamId = "5cedb53fdd1be20001f3d8c2";
     
-    List<CiPolicyViolations> violations = citadelService.getViolations(teamId);
+    List<CiPolicyViolations> violations = bosunService.getViolations(teamId);
     Assert.assertEquals(1, violations.size());
     CiPolicyViolations violation = violations.get(0);
     Assert.assertEquals("5cedbec5dd1be20001f3d942", violation.getCiComponentId());
