@@ -6,11 +6,11 @@ import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import net.boomerangplatform.model.CiPolicyConfig;
+import net.boomerangplatform.model.PolicyConfig;
 import net.boomerangplatform.mongo.model.Scope;
 
 @Document(collection = "ci_policies")
-public class CiPolicyEntity {
+public class PolicyEntity {
 	@Id
 	private String id;
 
@@ -22,7 +22,7 @@ public class CiPolicyEntity {
 	
 	private Scope scope;
 
-	private List<CiPolicyConfig> definitions;
+	private List<PolicyConfig> definitions;
 
 	public String getId() {
 		return id;
@@ -56,11 +56,11 @@ public class CiPolicyEntity {
 		this.createdDate = createdDate;
 	}
 
-	public List<CiPolicyConfig> getDefinitions() {
+	public List<PolicyConfig> getDefinitions() {
 		return definitions;
 	}
 
-	public void setDefinitions(List<CiPolicyConfig> definitions) {
+	public void setDefinitions(List<PolicyConfig> definitions) {
 		this.definitions = definitions;
 	}
 

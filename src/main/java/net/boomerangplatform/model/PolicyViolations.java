@@ -5,25 +5,25 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class CiPolicyViolations implements Serializable {
+public class PolicyViolations implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	private String id;
-	private String ciPolicyId;
-	private String ciPolicyName;
+	private String policyId;
+	private String policyName;
 	private String ciStageId;
 	private String ciStageName;
 	private String ciComponentId;
 	private String ciComponentName;
 	private String ciComponentVersionId;
 	private String ciComponentVersionName;
-	private Date ciPolicyActivityCreatedDate;
-	private List<String> ciPolicyDefinitionTypes;
+	private Date policyActivityCreatedDate;
+	private List<String> policyDefinitionTypes;
 	private Integer nbrViolations;
-	private List<CiPolicyViolation> violations;
+	private List<PolicyViolation> violations;
 
-	public CiPolicyViolations() {
+	public PolicyViolations() {
 		// Do nothing
 	}
 
@@ -35,20 +35,20 @@ public class CiPolicyViolations implements Serializable {
 		this.id = id;
 	}
 
-	public String getCiPolicyId() {
-		return ciPolicyId;
+	public String getPolicyId() {
+		return policyId;
 	}
 
-	public void setCiPolicyId(String ciPolicyId) {
-		this.ciPolicyId = ciPolicyId;
+	public void setPolicyId(String policyId) {
+		this.policyId = policyId;
 	}
 
-	public String getCiPolicyName() {
-		return ciPolicyName;
+	public String getPolicyName() {
+		return policyName;
 	}
 
-	public void setCiPolicyName(String ciPolicyName) {
-		this.ciPolicyName = ciPolicyName;
+	public void setPolicyName(String ciPolicyName) {
+		this.policyName = ciPolicyName;
 	}
 
 	public String getCiStageId() {
@@ -107,34 +107,34 @@ public class CiPolicyViolations implements Serializable {
 		this.nbrViolations = nbrViolations;
 	}
 
-	public List<CiPolicyViolation> getViolations() {
+	public List<PolicyViolation> getViolations() {
 		if (violations == null) {
-			violations = new ArrayList<CiPolicyViolation>();
+			violations = new ArrayList<PolicyViolation>();
 		}
 		return violations;
 	}
 
-	public void setViolations(List<CiPolicyViolation> violations) {
+	public void setViolations(List<PolicyViolation> violations) {
 		this.violations = violations;
 	}
 
-	public Date getCiPolicyActivityCreatedDate() {
-		return ciPolicyActivityCreatedDate == null ? null : (Date) ciPolicyActivityCreatedDate.clone();
+	public Date getPolicyActivityCreatedDate() {
+		return policyActivityCreatedDate == null ? null : (Date) policyActivityCreatedDate.clone();
 	}
 
-	public void setCiPolicyActivityCreatedDate(Date ciPolicyActivityCreatedDate) {
-		this.ciPolicyActivityCreatedDate = ciPolicyActivityCreatedDate == null ? null
-				: (Date) ciPolicyActivityCreatedDate.clone();
+	public void setPolicyActivityCreatedDate(Date policyActivityCreatedDate) {
+		this.policyActivityCreatedDate = policyActivityCreatedDate == null ? null
+				: (Date) policyActivityCreatedDate.clone();
 	}
 
-	public List<String> getCiPolicyDefinitionTypes() {
-		if (ciPolicyDefinitionTypes == null) {
-			ciPolicyDefinitionTypes = new ArrayList<String>();
+	public List<String> getPolicyDefinitionTypes() {
+		if (policyDefinitionTypes == null) {
+			policyDefinitionTypes = new ArrayList<String>();
 		}
-		return ciPolicyDefinitionTypes;
+		return policyDefinitionTypes;
 	}
 
-	public void setCiPolicyDefinitionTypes(List<String> ciPolicyDefinitionTypes) {
-		this.ciPolicyDefinitionTypes = ciPolicyDefinitionTypes;
+	public void setPolicyDefinitionTypes(List<String> policyDefinitionTypes) {
+		this.policyDefinitionTypes = policyDefinitionTypes;
 	}
 }

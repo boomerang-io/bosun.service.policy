@@ -9,13 +9,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import net.boomerangplatform.model.Results;
 
 @Document(collection = "ci_policies_activities")
-public class CiPolicyActivityEntity {
+public class PolicyActivityEntity {
 
 	@Id
 	private String id;
 	private String ciTeamId;
 	private String ciComponentActivityId;
-	private String ciPolicyId;
+	private String policyId;
 	private Date createdDate;
 	private List<Results> results;
 	private Boolean valid;
@@ -36,12 +36,12 @@ public class CiPolicyActivityEntity {
 		this.ciTeamId = ciTeamId;
 	}
 
-	public String getCiPolicyId() {
-		return ciPolicyId;
+	public String getPolicyId() {
+		return policyId;
 	}
 
-	public void setCiPolicyId(String ciPolicyId) {
-		this.ciPolicyId = ciPolicyId;
+	public void setPolicyId(String policyId) {
+		this.policyId = policyId;
 	}
 
 	public String getCiComponentActivityId() {

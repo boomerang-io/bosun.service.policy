@@ -4,21 +4,21 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class CiPolicyConfig implements Serializable {
+public class PolicyConfig implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  private String ciPolicyDefinitionId;
+  private String policyDefinitionId;
 
   private List<Map<String, String>> rules;
   
 
-  public String getCiPolicyDefinitionId() {
-    return ciPolicyDefinitionId;
+  public String getPolicyDefinitionId() {
+    return policyDefinitionId;
   }
 
-  public void setCiPolicyDefinitionId(String ciPolicyDefinitionId) {
-    this.ciPolicyDefinitionId = ciPolicyDefinitionId;
+  public void setPolicyDefinitionId(String policyDefinitionId) {
+    this.policyDefinitionId = policyDefinitionId;
   }
 
   public List<Map<String, String>> getRules() {

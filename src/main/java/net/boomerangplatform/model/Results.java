@@ -5,16 +5,16 @@ import java.util.ArrayList;
 
 public class Results {
 
-	private String ciPolicyDefinitionId;
+	private String policyDefinitionId;
 	private Boolean valid;
 	private List<ResultsViolation> violations;
 
-	public String getCiPolicyDefinitionId() {
-		return ciPolicyDefinitionId;
+	public String getPolicyDefinitionId() {
+		return policyDefinitionId;
 	}
 
-	public void setCiPolicyDefinitionId(String ciPolicyDefinitionId) {
-		this.ciPolicyDefinitionId = ciPolicyDefinitionId;
+	public void setPolicyDefinitionId(String policyDefinitionId) {
+		this.policyDefinitionId = policyDefinitionId;
 	}
 
 	public Boolean getValid() {

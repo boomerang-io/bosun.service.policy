@@ -25,25 +25,29 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import net.boomerangplatform.entity.CiPolicyActivityEntity;
-import net.boomerangplatform.entity.CiPolicyDefinitionEntity;
-import net.boomerangplatform.entity.CiPolicyEntity;
-import net.boomerangplatform.model.CiPolicy;
-import net.boomerangplatform.model.CiPolicyActivitiesInsights;
-import net.boomerangplatform.model.CiPolicyDefinition;
-import net.boomerangplatform.model.CiPolicyInsights;
-import net.boomerangplatform.model.CiPolicyViolation;
-import net.boomerangplatform.model.CiPolicyViolations;
+import net.boomerangplatform.entity.PolicyActivityEntity;
+import net.boomerangplatform.entity.PolicyDefinitionEntity;
+import net.boomerangplatform.entity.PolicyEntity;
+import net.boomerangplatform.model.Policy;
+import net.boomerangplatform.model.PolicyActivitiesInsights;
+import net.boomerangplatform.model.PolicyConfig;
+import net.boomerangplatform.model.PolicyDefinition;
+import net.boomerangplatform.model.PolicyInsights;
 import net.boomerangplatform.model.PolicyResponse;
+import net.boomerangplatform.model.PolicyViolation;
+import net.boomerangplatform.model.PolicyViolations;
 import net.boomerangplatform.model.Results;
 import net.boomerangplatform.model.ResultsViolation;
 import net.boomerangplatform.mongo.entity.CiComponentActivityEntity;
 import net.boomerangplatform.mongo.entity.CiComponentEntity;
 import net.boomerangplatform.mongo.entity.CiComponentVersionEntity;
 import net.boomerangplatform.mongo.entity.CiPipelineEntity;
+import net.boomerangplatform.mongo.entity.CiPolicyActivityEntity;
+import net.boomerangplatform.mongo.entity.CiPolicyDefinitionEntity;
+import net.boomerangplatform.mongo.entity.CiPolicyEntity;
 import net.boomerangplatform.mongo.entity.CiStageEntity;
 import net.boomerangplatform.mongo.model.CiComponentActivityType;
-import net.boomerangplatform.model.CiPolicyConfig;
+import net.boomerangplatform.mongo.model.CiPolicyConfig;
 import net.boomerangplatform.mongo.model.OperatorType;
 import net.boomerangplatform.mongo.model.Scope;
 import net.boomerangplatform.mongo.service.CiComponentActivityService;
@@ -69,10 +73,10 @@ public class BosunServiceImpl implements BosunService {
   private String insightsPeriodMonths;
 
   @Autowired
-  private CiComponentActivityService ciComponentActivityService;
+  private CiComponentService ciComponentService;
 
   @Autowired
-  private CiComponentService ciComponentService;
+  private CiComponentActivityService ciComponentActivityService;
 
   @Autowired
   private CiComponentVersionService ciComponentVersionService;
@@ -84,13 +88,13 @@ public class BosunServiceImpl implements BosunService {
   private CiStagesService ciStagesService;
 
   @Autowired
-  private CiPolicyRepository ciPolicyRepository;
+  private PolicyRepository policyRepository;
 
   @Autowired
-  private CiPolicyDefinitionRepository ciPolicyDefinitionRepository;
+  private PolicyDefinitionRepository policyDefinitionRepository;
 
   @Autowired
-  private CiPolicyActivityRepository ciPolicyActivityRepository;
+  private PolicyActivityRepository policyActivityRepository;
 
   @Autowired
   private RepositoryService repositoryService;
@@ -109,12 +113,12 @@ public class BosunServiceImpl implements BosunService {
   }
 
   @Override
-  public List<CiPolicyDefinition> getAllDefinitions() {
-    List<CiPolicyDefinitionEntity> entities = ciPolicyDefinitionRepository.findAll(new Sort(Sort.Direction.ASC, "order"));
-    List<CiPolicyDefinition> descriptions = new ArrayList<>();
+  public List<PolicyDefinition> getAllDefinitions() {
+    List<PolicyDefinitionEntity> entities = policyDefinitionRepository.findAll(new Sort(Sort.Direction.ASC, "order"));
+    List<PolicyDefinition> descriptions = new ArrayList<>();
 
     entities.forEach(entity -> {
-      CiPolicyDefinition description = new CiPolicyDefinition();
+      PolicyDefinition description = new PolicyDefinition();
       BeanUtils.copyProperties(entity, description);
       descriptions.add(description);
     });
@@ -133,20 +137,20 @@ public class BosunServiceImpl implements BosunService {
   }
 
   @Override
-  public List<CiPolicy> getPoliciesByTeamId(String ciTeamId) {
-    List<CiPolicyEntity> entities = ciPolicyRepository.findByTeamId(ciTeamId);
-    List<CiPolicy> policies = new ArrayList<>();
+  public List<Policy> getPoliciesByTeamId(String ciTeamId) {
+    List<PolicyEntity> entities = policyRepository.findByTeamId(ciTeamId);
+    List<Policy> policies = new ArrayList<>();
 
     entities.forEach(entity -> {
-      CiPolicy policy = new CiPolicy();
+      Policy policy = new Policy();
       BeanUtils.copyProperties(entity, policy);
       policy.setStages(getStagesForPolicy(ciTeamId, entity.getId()));
       policies.add(policy);
     });
 
-    List<CiPolicyEntity> globalPolicies = ciPolicyRepository.findByScope(Scope.global);
+    List<PolicyEntity> globalPolicies = policyRepository.findByScope(Scope.global);
     globalPolicies.forEach(entity -> {
-      CiPolicy policy = new CiPolicy();
+      Policy policy = new Policy();
       BeanUtils.copyProperties(entity, policy);
       policy.setStages(getStagesForGlobalPolicy(entity.getId()));
       policies.add(policy);
@@ -156,25 +160,25 @@ public class BosunServiceImpl implements BosunService {
   }
 
   @Override
-  public CiPolicy getPolicyById(String ciPolicyId) {
-    CiPolicyEntity entity = ciPolicyRepository.findById(ciPolicyId).orElse(null);
+  public Policy getPolicyById(String ciPolicyId) {
+    PolicyEntity entity = policyRepository.findById(ciPolicyId).orElse(null);
 
-    CiPolicy policy = new CiPolicy();
+    Policy policy = new Policy();
     BeanUtils.copyProperties(entity, policy);
 
     return policy;
   }
 
   @Override
-  public CiPolicy addPolicy(CiPolicy policy) {
+  public Policy addPolicy(Policy policy) {
     policy.setCreatedDate(fromLocalDate(LocalDate.now(clock())));
 
     policy.setDefinitions(getFilteredDefinition(policy.getDefinitions()));
 
     policy.setScope(Scope.team);
-    CiPolicyEntity entity = new CiPolicyEntity();
+    PolicyEntity entity = new PolicyEntity();
     BeanUtils.copyProperties(policy, entity);
-    entity = ciPolicyRepository.insert(entity);
+    entity = policyRepository.insert(entity);
     policy.setId(entity.getId());
 
     return policy;
@@ -182,26 +186,26 @@ public class BosunServiceImpl implements BosunService {
 
 
   @Override
-  public CiPolicy updatePolicy(CiPolicy policy) {
-    CiPolicyEntity entity = ciPolicyRepository.findById(policy.getId()).orElse(null);
+  public Policy updatePolicy(Policy policy) {
+    PolicyEntity entity = policyRepository.findById(policy.getId()).orElse(null);
     policy.setScope(Scope.team);
     policy.setDefinitions(getFilteredDefinition(policy.getDefinitions()));
 
     BeanUtils.copyProperties(policy, entity);
-    ciPolicyRepository.save(entity);
+    policyRepository.save(entity);
 
     return policy;
   }
 
 	@Override
-	public CiPolicyActivityEntity validatePolicy(String ciPolicyId, String ciComponentActivityId, String ciComponentId, String ciComponentVersion) {
+	public PolicyActivityEntity validatePolicy(String policyId, String ciComponentActivityId, String ciComponentId, String ciComponentVersion) {
 
-		CiPolicyEntity policyEntity = ciPolicyRepository.findById(ciPolicyId).orElse(null);
+		PolicyEntity policyEntity = policyRepository.findById(policyId).orElse(null);
 
-		final CiPolicyActivityEntity policiesActivities = new CiPolicyActivityEntity();
+		final PolicyActivityEntity policiesActivities = new PolicyActivityEntity();
 		policiesActivities.setCiTeamId(policyEntity.getTeamId());
 		policiesActivities.setCiComponentActivityId(ciComponentActivityId);
-		policiesActivities.setCiPolicyId(ciPolicyId);
+		policiesActivities.setPolicyId(policyId);
 		policiesActivities.setCreatedDate(fromLocalDate(LocalDate.now(clock)));
 		policiesActivities.setValid(true);
 
@@ -211,8 +215,8 @@ public class BosunServiceImpl implements BosunService {
 			policyEntity.getDefinitions().stream()
 					.filter(policyConfig -> !CollectionUtils.isEmpty(policyConfig.getRules())).forEach(policyConfig -> {
 
-						CiPolicyDefinitionEntity policyDefinitionEntity = ciPolicyDefinitionRepository
-								.findById(policyConfig.getCiPolicyDefinitionId()).orElse(null);
+						PolicyDefinitionEntity policyDefinitionEntity = policyDefinitionRepository
+								.findById(policyConfig.getPolicyDefinitionId()).orElse(null);
 
 						Results result = getResult(ciComponentId, ciComponentVersion,
 								policyConfig, policyDefinitionEntity);
@@ -234,36 +238,36 @@ public class BosunServiceImpl implements BosunService {
 		}
 
 		policiesActivities.setResults(results);
-		return ciPolicyActivityRepository.save(policiesActivities);
+		return policyActivityRepository.save(policiesActivities);
 
 	}
 
   @Override
-  public List<CiPolicyInsights> getInsights(String ciTeamId) {
-    Map<String, CiPolicyInsights> insights = new HashMap<>();
+  public List<PolicyInsights> getInsights(String ciTeamId) {
+    Map<String, PolicyInsights> insights = new HashMap<>();
     LocalDate date = LocalDate.now(clock).minusMonths(Integer.valueOf(insightsPeriodMonths));
 
-    List<CiPolicyActivityEntity> activities = ciPolicyActivityRepository
+    List<PolicyActivityEntity> activities = policyActivityRepository
         .findByCiTeamIdAndValidAndCreatedDateAfter(ciTeamId, false, fromLocalDate(date));
 
-    for (CiPolicyActivityEntity activity : activities) {
-      String ciPolicyId = activity.getCiPolicyId();
+    for (PolicyActivityEntity activity : activities) {
+      String ciPolicyId = activity.getPolicyId();
 
-      CiPolicyInsights ciPolicyInsights = insights.get(ciPolicyId);
-      if (ciPolicyInsights == null && ciPolicyRepository.findById(ciPolicyId).isPresent()) {
-        CiPolicy ciPolicy = getPolicyById(ciPolicyId);
-        ciPolicyInsights = new CiPolicyInsights();
-        ciPolicyInsights.setCiPolicyId(ciPolicy.getId());
-        ciPolicyInsights.setCiPolicyName(ciPolicy.getName());
-        ciPolicyInsights.setCiPolicyCreatedDate(ciPolicy.getCreatedDate());
+      PolicyInsights policyInsights = insights.get(ciPolicyId);
+      if (policyInsights == null && policyRepository.findById(ciPolicyId).isPresent()) {
+        Policy ciPolicy = getPolicyById(ciPolicyId);
+        policyInsights = new PolicyInsights();
+        policyInsights.setCiPolicyId(ciPolicy.getId());
+        policyInsights.setCiPolicyName(ciPolicy.getName());
+        policyInsights.setCiPolicyCreatedDate(ciPolicy.getCreatedDate());
       }
 
-      CiPolicyActivitiesInsights ciPolicyActivitiesInsights =
-          getCiPolicyActivitiesInsights(activity, ciPolicyInsights);
+      PolicyActivitiesInsights policyActivitiesInsights =
+          getPolicyActivitiesInsights(activity, policyInsights);
 
-      if(ciPolicyInsights != null) {
-      ciPolicyInsights.addInsights(ciPolicyActivitiesInsights);
-      insights.put(ciPolicyId, ciPolicyInsights);
+      if(policyInsights != null) {
+      policyInsights.addInsights(policyActivitiesInsights);
+      insights.put(ciPolicyId, policyInsights);
       }
      
     }
@@ -271,9 +275,9 @@ public class BosunServiceImpl implements BosunService {
     return new ArrayList<>(insights.values());
   }
 
-  private List<CiPolicyConfig> getFilteredDefinition(List<CiPolicyConfig> policyDefinitions) {
-    List<CiPolicyConfig> filteredDefinitions = new ArrayList<>();
-    for (CiPolicyConfig definition : policyDefinitions) {
+  private List<PolicyConfig> getFilteredDefinition(List<PolicyConfig> policyDefinitions) {
+    List<PolicyConfig> filteredDefinitions = new ArrayList<>();
+    for (PolicyConfig definition : policyDefinitions) {
       if (!definition.getRules().isEmpty()) {
         filteredDefinitions.add(definition);
       }
@@ -281,43 +285,43 @@ public class BosunServiceImpl implements BosunService {
     return filteredDefinitions;
   }
 
-  private CiPolicyActivitiesInsights getCiPolicyActivitiesInsights(CiPolicyActivityEntity activity,
-      CiPolicyInsights ciPolicyInsights) {
+  private PolicyActivitiesInsights getPolicyActivitiesInsights(PolicyActivityEntity activity,
+      PolicyInsights policyInsights) {
     Integer failCount = getFaildedCount(activity);
 
-    CiPolicyActivitiesInsights ciPolicyActivitiesInsights = null;
+    PolicyActivitiesInsights policyActivitiesInsights = null;
 
-    if(ciPolicyInsights != null) {
-    for (CiPolicyActivitiesInsights activites : ciPolicyInsights.getInsights()) {
-      if (activites.getCiPolicyActivityId().equalsIgnoreCase(activity.getCiComponentActivityId())) {
-        ciPolicyActivitiesInsights = activites;
-        ciPolicyInsights.removeInsights(activites);
+    if(policyInsights != null) {
+    for (PolicyActivitiesInsights activites : policyInsights.getInsights()) {
+      if (activites.getPolicyActivityId().equalsIgnoreCase(activity.getCiComponentActivityId())) {
+        policyActivitiesInsights = activites;
+        policyInsights.removeInsights(activites);
         break;
       }
     }
     }
 
-    if (ciPolicyActivitiesInsights == null) {
-      ciPolicyActivitiesInsights = new CiPolicyActivitiesInsights();
-      ciPolicyActivitiesInsights.setCiPolicyActivityId(activity.getCiComponentActivityId());
-      ciPolicyActivitiesInsights.setCiPolicyActivityCreatedDate(activity.getCreatedDate());
-      ciPolicyActivitiesInsights.setViolations(failCount);
+    if (policyActivitiesInsights == null) {
+    	policyActivitiesInsights = new PolicyActivitiesInsights();
+    	policyActivitiesInsights.setPolicyActivityId(activity.getCiComponentActivityId());
+    	policyActivitiesInsights.setPolicyActivityCreatedDate(activity.getCreatedDate());
+    	policyActivitiesInsights.setViolations(failCount);
     } else {
-      ciPolicyActivitiesInsights
-          .setViolations(ciPolicyActivitiesInsights.getViolations() + failCount);
+      policyActivitiesInsights
+          .setViolations(policyActivitiesInsights.getViolations() + failCount);
     }
-    return ciPolicyActivitiesInsights;
+    return policyActivitiesInsights;
   }
 
 	@Override
-	public List<CiPolicyViolations> getViolations(String ciTeamId) {
+	public List<PolicyViolations> getViolations(String ciTeamId) {
 
 		List<CiPipelineEntity> pipelines = ciPipelineService.findByCiTeamId(ciTeamId);
 		List<CiStageEntity> stagesWithGates = getStagesWithGates(pipelines);
 
 		LOGGER.info("stagesWithGates.count=" + stagesWithGates.size());
 
-		Map<String, CiPolicyViolations> violationsMap = new HashMap<>();
+		Map<String, PolicyViolations> violationsMap = new HashMap<>();
 
 		List<CiComponentEntity> components = ciComponentService.findByCiTeamId(ciTeamId);
 
@@ -336,7 +340,7 @@ public class BosunServiceImpl implements BosunService {
 
 				LOGGER.info("componentActivity.id=" + componentActivity.getId());
 
-				List<CiPolicyActivityEntity> policyActivities = ciPolicyActivityRepository
+				List<PolicyActivityEntity> policyActivities = policyActivityRepository
 						.findByCiComponentActivityIdAndValid(componentActivity.getId(), false);
 
 				LOGGER.info("policyActivities.size=" + policyActivities.size());
@@ -348,11 +352,11 @@ public class BosunServiceImpl implements BosunService {
 		return new ArrayList<>(violationsMap.values());
 	}
 
-	private void setViolations(Map<String, CiPolicyViolations> violationsMap, CiComponentEntity component,
+	private void setViolations(Map<String, PolicyViolations> violationsMap, CiComponentEntity component,
 			CiStageEntity stage, CiComponentActivityEntity componentActivity,
-			List<CiPolicyActivityEntity> policyActivities) {
-		for (CiPolicyActivityEntity policyActivity : policyActivities) {
-			CiPolicyEntity policy = ciPolicyRepository.findById(policyActivity.getCiPolicyId()).orElse(null);
+			List<PolicyActivityEntity> policyActivities) {
+		for (PolicyActivityEntity policyActivity : policyActivities) {
+			PolicyEntity policy = policyRepository.findById(policyActivity.getPolicyId()).orElse(null);
 			
 			if (policy == null) {
 				continue;
@@ -370,61 +374,61 @@ public class BosunServiceImpl implements BosunService {
 
 			LOGGER.info("key=" + key.toString());
 
-			CiPolicyViolations violation = getViolation(key.toString(), component, stage, policyActivity, policy,
+			PolicyViolations violation = getViolation(key.toString(), component, stage, policyActivity, policy,
 					componentVersion, violationsMap.get(key.toString()));
 
 			violationsMap.put(key.toString(), violation);
 		}
 	}
 
-	private CiPolicyViolations getViolation(String key, CiComponentEntity component, CiStageEntity stage,
-			CiPolicyActivityEntity policyActivity, CiPolicyEntity policy, CiComponentVersionEntity componentVersion,
-			CiPolicyViolations violation) {
+	private PolicyViolations getViolation(String key, CiComponentEntity component, CiStageEntity stage,
+			PolicyActivityEntity policyActivity, PolicyEntity policy, CiComponentVersionEntity componentVersion,
+			PolicyViolations violation) {
 
 		if (violation == null) {
-			violation = new CiPolicyViolations();
+			violation = new PolicyViolations();
 			violation.setId(key);
 			violation.setCiComponentId(component.getId());
 			violation.setCiComponentName(component.getName());
 			violation.setCiComponentVersionId(componentVersion.getId());
 			violation.setCiComponentVersionName(componentVersion.getName());
-			violation.setCiPolicyId(policy.getId());
-			violation.setCiPolicyName(policy.getName());
+			violation.setPolicyId(policy.getId());
+			violation.setPolicyName(policy.getName());
 			violation.setCiStageId(stage.getId());
 			violation.setCiStageName(stage.getName());
 			violation.setNbrViolations(0);
 			violation.setViolations(null);
-			violation.setCiPolicyActivityCreatedDate(policyActivity.getCreatedDate());
-		} else if (policyActivity.getCreatedDate().after(violation.getCiPolicyActivityCreatedDate())) {
+			violation.setPolicyActivityCreatedDate(policyActivity.getCreatedDate());
+		} else if (policyActivity.getCreatedDate().after(violation.getPolicyActivityCreatedDate())) {
 			violation.setNbrViolations(0);
 			violation.setViolations(null);
-			violation.setCiPolicyActivityCreatedDate(policyActivity.getCreatedDate());
+			violation.setPolicyActivityCreatedDate(policyActivity.getCreatedDate());
 		}
 
 		violation.setNbrViolations(violation.getNbrViolations() + getViolationsTotal(policyActivity));
 		violation.getViolations().addAll(getViolationsResults(policyActivity));
-		violation.getCiPolicyDefinitionTypes()
-				.addAll(getViolationsDefinitionTypes(violation.getCiPolicyDefinitionTypes(), policyActivity));
+		violation.getPolicyDefinitionTypes()
+				.addAll(getViolationsDefinitionTypes(violation.getPolicyDefinitionTypes(), policyActivity));
 
 		return violation;
 	}
   
-  private List<CiPolicyViolation> getViolationsResults(CiPolicyActivityEntity policyActivity) {
-	  List<CiPolicyViolation> resultsViolations = new ArrayList<CiPolicyViolation>();
+  private List<PolicyViolation> getViolationsResults(PolicyActivityEntity policyActivity) {
+	  List<PolicyViolation> resultsViolations = new ArrayList<PolicyViolation>();
 	  for (Results results : policyActivity.getResults()) {
 		  if (!results.getValid()) {
 			  if (!results.getViolations().isEmpty()) {
-				  resultsViolations.addAll(getCiPolicyViolations(results.getViolations()));	  
+				  resultsViolations.addAll(getPolicyViolations(results.getViolations()));	  
 			  }			  	  
 		  }		  
 	  }	  
 	  return resultsViolations;
   }
   
-  private List<CiPolicyViolation> getCiPolicyViolations(List<ResultsViolation> violations) {
-	  List<CiPolicyViolation> policyViolations = new ArrayList<CiPolicyViolation>();
+  private List<PolicyViolation> getPolicyViolations(List<ResultsViolation> violations) {
+	  List<PolicyViolation> policyViolations = new ArrayList<PolicyViolation>();
 	  for (ResultsViolation resultsViolation : violations) {
-		  CiPolicyViolation policyViolation = new CiPolicyViolation();
+		  PolicyViolation policyViolation = new PolicyViolation();
 		  policyViolation.setMetric(resultsViolation.getMetric());
 		  policyViolation.setMessage(resultsViolation.getMessage());
 		  policyViolation.setValid(resultsViolation.getValid());
@@ -433,7 +437,7 @@ public class BosunServiceImpl implements BosunService {
 	  return policyViolations;
   }
 
-  private Integer getViolationsTotal(CiPolicyActivityEntity policyActivity) {
+  private Integer getViolationsTotal(PolicyActivityEntity policyActivity) {
     Integer violationsTotal = 0;
     for (Results result : policyActivity.getResults()) {
       if (!result.getValid()) {
@@ -443,11 +447,11 @@ public class BosunServiceImpl implements BosunService {
     return violationsTotal;
   }
   
-	private List<String> getViolationsDefinitionTypes(List<String> current, CiPolicyActivityEntity policyActivity) {
+	private List<String> getViolationsDefinitionTypes(List<String> current, PolicyActivityEntity policyActivity) {
 		List<String> violationsDefinitionTypes = new ArrayList<String>();
 		for (Results result : policyActivity.getResults()) {
 			if (!result.getValid()) {
-				CiPolicyDefinitionEntity policyDefinitionEntity = ciPolicyDefinitionRepository.findById(result.getCiPolicyDefinitionId()).orElse(null);
+				PolicyDefinitionEntity policyDefinitionEntity = policyDefinitionRepository.findById(result.getPolicyDefinitionId()).orElse(null);
 				if (!current.contains(policyDefinitionEntity.getName())) {
 					violationsDefinitionTypes.add(policyDefinitionEntity.getName());
 				}
@@ -469,8 +473,8 @@ public class BosunServiceImpl implements BosunService {
     return stagesWithGates;
   }
 
-  private Results getResult(String componentId, String versionName, CiPolicyConfig policyConfig,
-      CiPolicyDefinitionEntity policyDefinition) {
+  private Results getResult(String componentId, String versionName, PolicyConfig policyConfig,
+      PolicyDefinitionEntity policyDefinition) {
 
     if (policyDefinition == null) {
       return null;
@@ -512,21 +516,21 @@ public class BosunServiceImpl implements BosunService {
 
   private Results getDefaultResult(String policyDefinitionId) {
     Results result = new Results();
-    result.setCiPolicyDefinitionId(policyDefinitionId);
+    result.setPolicyDefinitionId(policyDefinitionId);
     result.setViolations(new ArrayList<ResultsViolation>());
     result.setValid(false);
 
     return result;
   }
 
-  private Results getResults(CiPolicyDefinitionEntity policyDefinitionEntity,
-      CiPolicyConfig policyConfig, JsonNode data) {
+  private Results getResults(PolicyDefinitionEntity policyDefinitionEntity,
+      PolicyConfig policyConfig, JsonNode data) {
 
     DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(),
         policyDefinitionEntity.getKey(), policyConfig.getRules(), data);
 
     Results result = new Results();
-    result.setCiPolicyDefinitionId(policyDefinitionEntity.getId());    
+    result.setPolicyDefinitionId(policyDefinitionEntity.getId());    
     result.setViolations(getResultsViolation(dataResponse.getResult().getViolations()));
     result.setValid(dataResponse.getResult().getValid());
 
@@ -569,7 +573,7 @@ public class BosunServiceImpl implements BosunService {
     return dataResponse;
   }
 
-  private static Integer getFaildedCount(CiPolicyActivityEntity activity) {
+  private static Integer getFaildedCount(PolicyActivityEntity activity) {
     Integer failCount = 0;
     for (Results results : activity.getResults()) {
       if (!results.getValid()) {
@@ -634,16 +638,16 @@ public class BosunServiceImpl implements BosunService {
   }
 
   @Override
-  public PolicyResponse deletePolicy(String ciPolicyId) {
-    CiPolicyEntity ciPolicy = ciPolicyRepository.findById(ciPolicyId).orElse(null);
+  public PolicyResponse deletePolicy(String policyId) {
+    PolicyEntity policy = policyRepository.findById(policyId).orElse(null);
     PolicyResponse response = new PolicyResponse();
-    if (getStagesForPolicy(ciPolicy.getTeamId(), ciPolicy.getId()).size() != 0) {
+    if (getStagesForPolicy(policy.getTeamId(), policy.getId()).size() != 0) {
       response.setStatus(409);
       response.setMessage("Policy associated with gate");
       response.setError("Unable to delete");
       return response;
     } else {
-      ciPolicyRepository.delete(ciPolicy);
+      policyRepository.delete(policy);
       response.setStatus(200);
       response.setMessage("Policy deleted");
       response.setError("Policy deleted");

@@ -6,16 +6,16 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-public class CiPolicyInsights implements Serializable {
+public class PolicyInsights implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   private String ciPolicyId;
   private String ciPolicyName;
   private Date ciPolicyCreatedDate;
-  private List<CiPolicyActivitiesInsights> insights = new ArrayList<>();
+  private List<PolicyActivitiesInsights> insights = new ArrayList<>();
 
-  public CiPolicyInsights() {
+  public PolicyInsights() {
     // Do nothing
   }
 
@@ -44,19 +44,19 @@ public class CiPolicyInsights implements Serializable {
         ciPolicyCreatedDate == null ? null : (Date) ciPolicyCreatedDate.clone();
   }
 
-  public List<CiPolicyActivitiesInsights> getInsights() {
+  public List<PolicyActivitiesInsights> getInsights() {
     return Collections.unmodifiableList(insights);
   }
 
-  public void setInsights(List<CiPolicyActivitiesInsights> insights) {
+  public void setInsights(List<PolicyActivitiesInsights> insights) {
     this.insights = insights == null ? new ArrayList<>() : new ArrayList<>(insights);
   }
 
-  public void addInsights(CiPolicyActivitiesInsights insight) {
+  public void addInsights(PolicyActivitiesInsights insight) {
     insights.add(insight);
   }
 
-  public void removeInsights(CiPolicyActivitiesInsights insight) {
+  public void removeInsights(PolicyActivitiesInsights insight) {
     insights.remove(insight); // NOSONAR: it is a small list
   }
 }

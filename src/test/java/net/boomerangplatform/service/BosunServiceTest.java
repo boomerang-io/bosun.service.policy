@@ -30,13 +30,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.boomerangplatform.AbstractBoomerangTest;
 import net.boomerangplatform.Application;
 import net.boomerangplatform.MongoConfig;
-import net.boomerangplatform.model.CiPolicy;
-import net.boomerangplatform.model.CiPolicyActivitiesInsights;
-import net.boomerangplatform.model.CiPolicyDefinition;
-import net.boomerangplatform.model.CiPolicyInsights;
-import net.boomerangplatform.model.CiPolicyViolations;
-import net.boomerangplatform.entity.CiPolicyActivityEntity;
-import net.boomerangplatform.model.CiPolicyConfig;
+import net.boomerangplatform.model.Policy;
+import net.boomerangplatform.model.PolicyActivitiesInsights;
+import net.boomerangplatform.model.PolicyDefinition;
+import net.boomerangplatform.model.PolicyInsights;
+import net.boomerangplatform.model.PolicyViolations;
+import net.boomerangplatform.entity.PolicyActivityEntity;
+import net.boomerangplatform.model.PolicyConfig;
 import net.boomerangplatform.repository.model.Artifact;
 import net.boomerangplatform.repository.model.ArtifactPackage;
 import net.boomerangplatform.repository.model.ArtifactSummary;
@@ -100,7 +100,7 @@ public class BosunServiceTest extends AbstractBoomerangTest {
             "db/ci_policies_definitions/CiPolicyDefinitionEntity2.json",
             "db/ci_policies_definitions/CiPolicyDefinitionEntity3.json"));
     data.put("ci_policies_activities",
-        Arrays.asList("db/ci_policies_activities/CiPolicyActivityEntity.json",
+        Arrays.asList("db/ci_policies_activities/PolicyActivityEntity.json",
             "db/ci_policies_activities/CiPolicyActivityEntity2.json",
             "db/ci_policies_activities/CiPolicyActivityEntity3.json",
             "db/ci_policies_activities/CiPolicyActivityEntity4.json",
@@ -120,10 +120,10 @@ public class BosunServiceTest extends AbstractBoomerangTest {
 
   @Test
   public void testGetAllDefinitions() {
-    List<CiPolicyDefinition> definitions = bosunService.getAllDefinitions();
+    List<PolicyDefinition> definitions = bosunService.getAllDefinitions();
 
     Assert.assertEquals(3, definitions.size());
-    CiPolicyDefinition definition = definitions.get(0);
+    PolicyDefinition definition = definitions.get(0);
     Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definition.getId());
     Assert.assertEquals("Static Code Analysis", definition.getName());
     Assert.assertEquals("The following policy metrics are retrieved from SonarQube",
@@ -145,11 +145,11 @@ public class BosunServiceTest extends AbstractBoomerangTest {
   public void testGetPoliciesByTeamId() throws JsonProcessingException {
     String teamId = "5cedb53fdd1be20001f3d8c2";
 
-    List<CiPolicy> policies = bosunService.getPoliciesByTeamId(teamId);
+    List<Policy> policies = bosunService.getPoliciesByTeamId(teamId);
 
     Assert.assertEquals(1, policies.size());
 
-    CiPolicy policy = policies.get(0);
+    Policy policy = policies.get(0);
 
     Assert.assertEquals("Code Medium Validation", policy.getName());
     Assert.assertEquals("5c5b5a0b352b1b614143b7c3", policy.getId());
@@ -157,8 +157,8 @@ public class BosunServiceTest extends AbstractBoomerangTest {
 
     Assert.assertEquals(1, policy.getDefinitions().size());
 
-    CiPolicyConfig definition = policy.getDefinitions().get(0);
-    Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definition.getCiPolicyDefinitionId());
+    PolicyConfig definition = policy.getDefinitions().get(0);
+    Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definition.getPolicyDefinitionId());
 
     Assert.assertEquals(2, definition.getRules().size());
     Map<String, String> rule = definition.getRules().get(0);
@@ -170,64 +170,64 @@ public class BosunServiceTest extends AbstractBoomerangTest {
 
   @Test
   public void testAddPolicy() throws IOException {
-    CiPolicy policy = new ObjectMapper().readValue(loadResourceAsString("addCiPolicyEntity.json"),
-        CiPolicy.class);
-    CiPolicy policyReturn = bosunService.addPolicy(policy);
+    Policy policy = new ObjectMapper().readValue(loadResourceAsString("addCiPolicyEntity.json"),
+        Policy.class);
+    Policy policyReturn = bosunService.addPolicy(policy);
 
     System.out.println(parseToJson(policyReturn));
 
     Assert.assertEquals("Code High Validation", policyReturn.getName());
     Assert.assertEquals(1, policyReturn.getDefinitions().size());
 
-    CiPolicyConfig definition = policyReturn.getDefinitions().get(0);
+    PolicyConfig definition = policyReturn.getDefinitions().get(0);
 
 
-    String definitionId = definition.getCiPolicyDefinitionId();
+    String definitionId = definition.getPolicyDefinitionId();
     Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definitionId);
 
 
-    List<CiPolicy> policies = bosunService.getPoliciesByTeamId("5cedb53fdd1be20001f3d8c2");
+    List<Policy> policies = bosunService.getPoliciesByTeamId("5cedb53fdd1be20001f3d8c2");
     Assert.assertEquals(1, policies.size());
 
-    CiPolicy policyFound = policies.get(0);
+    Policy policyFound = policies.get(0);
     Assert.assertEquals(definitionId,
-        policyFound.getDefinitions().get(0).getCiPolicyDefinitionId());
+        policyFound.getDefinitions().get(0).getPolicyDefinitionId());
   }
 
 
   @Test
   public void testUpdatePolicy() throws IOException {
-    CiPolicy policy = new ObjectMapper()
-        .readValue(loadResourceAsString("updateCiPolicyEntity.json"), CiPolicy.class);
-    CiPolicy policyReturn = bosunService.updatePolicy(policy);
+    Policy policy = new ObjectMapper()
+        .readValue(loadResourceAsString("updateCiPolicyEntity.json"), Policy.class);
+    Policy policyReturn = bosunService.updatePolicy(policy);
 
     System.out.println(parseToJson(policyReturn));
 
     Assert.assertEquals("Code Low Validation", policyReturn.getName());
 
-    CiPolicyConfig ciPolicyConfig = policyReturn.getDefinitions().get(0);
-    String definitionId = ciPolicyConfig.getCiPolicyDefinitionId();
+    PolicyConfig ciPolicyConfig = policyReturn.getDefinitions().get(0);
+    String definitionId = ciPolicyConfig.getPolicyDefinitionId();
     Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definitionId);
 
 
-    List<CiPolicy> policies = bosunService.getPoliciesByTeamId("9999");
+    List<Policy> policies = bosunService.getPoliciesByTeamId("9999");
     Assert.assertEquals(1, policies.size());
 
-    CiPolicy policyFound = policies.get(0);
+    Policy policyFound = policies.get(0);
     Assert.assertEquals("Code Low Validation", policyFound.getName());
   }
 
   @Test
   public void testGetInsights() throws IOException {
-    List<CiPolicyInsights> insights = bosunService.getInsights("9999");
+    List<PolicyInsights> insights = bosunService.getInsights("9999");
 
     Assert.assertEquals(1, insights.size());
-    CiPolicyInsights entry = insights.get(0);
-    CiPolicy policy = bosunService.getPolicyById(entry.getCiPolicyId());
+    PolicyInsights entry = insights.get(0);
+    Policy policy = bosunService.getPolicyById(entry.getCiPolicyId());
     Assert.assertEquals("Code Medium Validation", policy.getName());
     Assert.assertEquals("5c5b5a0b352b1b614143b7c3", policy.getId());
     Integer failCount = 0;
-    for (CiPolicyActivitiesInsights ciPolicyActivitiesInsights : entry.getInsights()) {
+    for (PolicyActivitiesInsights ciPolicyActivitiesInsights : entry.getInsights()) {
       failCount += ciPolicyActivitiesInsights.getViolations();
     }
     Assert.assertEquals(Integer.valueOf(3), failCount);
@@ -254,10 +254,10 @@ public class BosunServiceTest extends AbstractBoomerangTest {
     String componentId = "";
     String version = "";
 
-    CiPolicyActivityEntity savedEntity =
+    PolicyActivityEntity savedEntity =
         bosunService.validatePolicy(ciPolicyId, componentActivityId, componentId, version);
 
-    Assert.assertEquals("5c5b5a0b352b1b614143b7c3", savedEntity.getCiPolicyId());
+    Assert.assertEquals("5c5b5a0b352b1b614143b7c3", savedEntity.getPolicyId());
     Assert.assertEquals(componentActivityId, savedEntity.getCiComponentActivityId());
     Assert.assertEquals("5cedb53fdd1be20001f3d8c2", savedEntity.getCiTeamId());
     Assert.assertEquals(Boolean.FALSE, savedEntity.getValid());
@@ -265,7 +265,7 @@ public class BosunServiceTest extends AbstractBoomerangTest {
     Assert.assertEquals(Boolean.FALSE, savedEntity.getResults().get(0).getValid());
 //    Assert.assertEquals("[]", savedEntity.getResults().get(0).getViolations());
     Assert.assertEquals("5cd328ae1e9bbbb710590d9d",
-        savedEntity.getResults().get(0).getCiPolicyDefinitionId());
+        savedEntity.getResults().get(0).getPolicyDefinitionId());
 
     server.verify();
 
@@ -292,10 +292,10 @@ public class BosunServiceTest extends AbstractBoomerangTest {
     String componentId = "";
     String version = "";
 
-    CiPolicyActivityEntity savedEntity =
+    PolicyActivityEntity savedEntity =
         bosunService.validatePolicy(ciPolicyId, componentActivityId, componentId, version);
 
-    Assert.assertEquals("5cf151691417760001c0a679", savedEntity.getCiPolicyId());
+    Assert.assertEquals("5cf151691417760001c0a679", savedEntity.getPolicyId());
     Assert.assertEquals(componentActivityId, savedEntity.getCiComponentActivityId());
     Assert.assertEquals("5cedb53fdd1be20001f3d8c2", savedEntity.getCiTeamId());
     Assert.assertEquals(Boolean.FALSE, savedEntity.getValid());
@@ -303,7 +303,7 @@ public class BosunServiceTest extends AbstractBoomerangTest {
     Assert.assertEquals(Boolean.FALSE, savedEntity.getResults().get(0).getValid());
 //    Assert.assertEquals("[]", savedEntity.getResults().get(0).getViolations());
     Assert.assertEquals("5cdd8425f6ea74a9bbaf2fe6",
-        savedEntity.getResults().get(0).getCiPolicyDefinitionId());
+        savedEntity.getResults().get(0).getPolicyDefinitionId());
 
     server.verify();
 
@@ -330,10 +330,10 @@ public class BosunServiceTest extends AbstractBoomerangTest {
     String componentId = "";
     String version = "";
 
-    CiPolicyActivityEntity savedEntity =
+    PolicyActivityEntity savedEntity =
         bosunService.validatePolicy(ciPolicyId, componentActivityId, componentId, version);
 
-    Assert.assertEquals("5cf151691417760001c0a675", savedEntity.getCiPolicyId());
+    Assert.assertEquals("5cf151691417760001c0a675", savedEntity.getPolicyId());
     Assert.assertEquals(componentActivityId, savedEntity.getCiComponentActivityId());
     Assert.assertEquals("5cedb53fdd1be20001f3d8c2", savedEntity.getCiTeamId());
     Assert.assertEquals(Boolean.FALSE, savedEntity.getValid());
@@ -341,7 +341,7 @@ public class BosunServiceTest extends AbstractBoomerangTest {
     Assert.assertEquals(Boolean.FALSE, savedEntity.getResults().get(0).getValid());
 //    Assert.assertEquals("[]", savedEntity.getResults().get(0).getViolations());
     Assert.assertEquals("5cd498f3f6ea74a9bb6ad0f3",
-        savedEntity.getResults().get(0).getCiPolicyDefinitionId());
+        savedEntity.getResults().get(0).getPolicyDefinitionId());
 
     server.verify();
 
@@ -351,15 +351,15 @@ public class BosunServiceTest extends AbstractBoomerangTest {
   public void testGetViolations() throws JsonProcessingException {
     String teamId = "5cedb53fdd1be20001f3d8c2";
     
-    List<CiPolicyViolations> violations = bosunService.getViolations(teamId);
+    List<PolicyViolations> violations = bosunService.getViolations(teamId);
     Assert.assertEquals(1, violations.size());
-    CiPolicyViolations violation = violations.get(0);
+    PolicyViolations violation = violations.get(0);
     Assert.assertEquals("5cedbec5dd1be20001f3d942", violation.getCiComponentId());
     Assert.assertEquals("next-gen-docker", violation.getCiComponentName());
     Assert.assertEquals("5cee1d76dd1be20001f3d9c4", violation.getCiComponentVersionId());
     Assert.assertEquals("nextgen-2", violation.getCiComponentVersionName());
-    Assert.assertEquals("5cf151691417760001c0a679", violation.getCiPolicyId());
-    Assert.assertEquals("Glens Zero Defns Test", violation.getCiPolicyName());
+    Assert.assertEquals("5cf151691417760001c0a679", violation.getPolicyId());
+    Assert.assertEquals("Glens Zero Defns Test", violation.getPolicyName());
     Assert.assertEquals("5cedf589dd1be20001f3d994", violation.getCiStageId());
     Assert.assertEquals("dev", violation.getCiStageName());
     Assert.assertEquals(2, violation.getNbrViolations().intValue());

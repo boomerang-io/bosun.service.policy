@@ -2,7 +2,7 @@ package net.boomerangplatform.model;
 
 import java.io.Serializable;
 
-public class CiPolicyViolation implements Serializable {
+public class PolicyViolation implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -10,7 +10,7 @@ public class CiPolicyViolation implements Serializable {
 	private String message;
 	private Boolean valid;
 	
-	public CiPolicyViolation() {
+	public PolicyViolation() {
 		// Do nothing
 	}
 	

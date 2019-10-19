@@ -2,32 +2,32 @@ package net.boomerangplatform.service;
 
 import java.util.List;
 import java.util.Map;
-import net.boomerangplatform.model.CiPolicy;
-import net.boomerangplatform.model.CiPolicyDefinition;
-import net.boomerangplatform.model.CiPolicyInsights;
-import net.boomerangplatform.model.CiPolicyViolations;
+import net.boomerangplatform.model.Policy;
+import net.boomerangplatform.model.PolicyDefinition;
+import net.boomerangplatform.model.PolicyInsights;
+import net.boomerangplatform.model.PolicyViolations;
 import net.boomerangplatform.model.PolicyResponse;
-import net.boomerangplatform.entity.CiPolicyActivityEntity;
+import net.boomerangplatform.entity.PolicyActivityEntity;
 
 public interface BosunService {
 
-  List<CiPolicyDefinition> getAllDefinitions();
+  List<PolicyDefinition> getAllDefinitions();
 
   Map<String, String> getAllOperators();
 
-  List<CiPolicy> getPoliciesByTeamId(String ciTeamId);
+  List<Policy> getPoliciesByTeamId(String ciTeamId);
 
-  CiPolicy addPolicy(CiPolicy policy);
+  Policy addPolicy(Policy policy);
 
-  CiPolicy updatePolicy(CiPolicy policy);
+  Policy updatePolicy(Policy policy);
 
-  CiPolicy getPolicyById(String ciPolicyId);
+  Policy getPolicyById(String ciPolicyId);
   
-  List<CiPolicyInsights> getInsights(String ciTeamId);
+  List<PolicyInsights> getInsights(String ciTeamId);
   
-  List<CiPolicyViolations> getViolations(String ciTeamId);
+  List<PolicyViolations> getViolations(String ciTeamId);
 
   PolicyResponse deletePolicy(String ciPolicyId);
 
-CiPolicyActivityEntity validatePolicy(String ciPolicyId,String ciComponentActivityId,String ciComponentId,String ciComponentVersion);
+PolicyActivityEntity validatePolicy(String ciPolicyId,String ciComponentActivityId,String ciComponentId,String ciComponentVersion);
 }

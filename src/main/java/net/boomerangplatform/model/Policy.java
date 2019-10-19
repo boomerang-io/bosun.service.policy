@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import net.boomerangplatform.model.CiPolicyConfig;
+import net.boomerangplatform.model.PolicyConfig;
 import net.boomerangplatform.mongo.model.Scope;
 
-public class CiPolicy implements Serializable {
+public class Policy implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
@@ -20,7 +20,7 @@ public class CiPolicy implements Serializable {
 
   private Date createdDate;
 
-  private List<CiPolicyConfig> definitions = new ArrayList<>();
+  private List<PolicyConfig> definitions = new ArrayList<>();
 
   private List<String> stages = new ArrayList<>();
   
@@ -58,11 +58,11 @@ public class CiPolicy implements Serializable {
     this.createdDate = createdDate == null ? null : (Date) createdDate.clone();
   }
 
-  public List<CiPolicyConfig> getDefinitions() {
+  public List<PolicyConfig> getDefinitions() {
     return Collections.unmodifiableList(definitions);
   }
 
-  public void setDefinitions(List<CiPolicyConfig> definitions) {
+  public void setDefinitions(List<PolicyConfig> definitions) {
     this.definitions =
         definitions == null ? new ArrayList<>() : new ArrayList<>(definitions);
   }

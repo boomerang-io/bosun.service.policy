@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import net.boomerangplatform.model.CiPolicy;
-import net.boomerangplatform.model.CiPolicyDefinition;
-import net.boomerangplatform.model.CiPolicyInsights;
-import net.boomerangplatform.model.CiPolicyViolations;
+import net.boomerangplatform.model.Policy;
+import net.boomerangplatform.model.PolicyDefinition;
+import net.boomerangplatform.model.PolicyInsights;
+import net.boomerangplatform.model.PolicyViolations;
 import net.boomerangplatform.model.PolicyResponse;
-import net.boomerangplatform.entity.CiPolicyActivityEntity;
+import net.boomerangplatform.entity.PolicyActivityEntity;
 import net.boomerangplatform.service.BosunService;
 import net.boomerangplatform.service.TeamService;
 import net.boomerangplatform.team.model.CiTeam;
@@ -41,7 +41,7 @@ public class BosunController {
   }
 
   @GetMapping(value = "/definitions")
-  public ResponseEntity<List<CiPolicyDefinition>> getAllDefinitions() {
+  public ResponseEntity<List<PolicyDefinition>> getAllDefinitions() {
     return ResponseEntity.ok().body(bosunService.getAllDefinitions());
   }
 
@@ -51,42 +51,42 @@ public class BosunController {
   }
 
   @GetMapping(value = "/policies")
-  public ResponseEntity<List<CiPolicy>> getPolicies(
+  public ResponseEntity<List<Policy>> getPolicies(
       @RequestParam(value = "ciTeamId", required = true) String ciTeamId) {
     return ResponseEntity.ok().body(bosunService.getPoliciesByTeamId(ciTeamId));
   }
 
   @GetMapping(value = "/policies/{ciPolicyId}")
-  public ResponseEntity<CiPolicy> getPolicy(@PathVariable String ciPolicyId) {
+  public ResponseEntity<Policy> getPolicy(@PathVariable String ciPolicyId) {
     return ResponseEntity.ok().body(bosunService.getPolicyById(ciPolicyId));
   }
 
   @PostMapping(value = "/policies")
-  public ResponseEntity<CiPolicy> addPolicy(@RequestBody CiPolicy policy) {
+  public ResponseEntity<Policy> addPolicy(@RequestBody Policy policy) {
     return ResponseEntity.ok().body(bosunService.addPolicy(policy));
   }
 
   @PatchMapping(value = "/policies/{ciPolicyId}")
-  public ResponseEntity<CiPolicy> updatePolicy(@PathVariable String ciPolicyId,
-      @RequestBody CiPolicy policy) {
+  public ResponseEntity<Policy> updatePolicy(@PathVariable String ciPolicyId,
+      @RequestBody Policy policy) {
     return ResponseEntity.ok().body(bosunService.updatePolicy(policy));
   }
   
   @GetMapping(value = "/policies/violations")
-  public ResponseEntity<List<CiPolicyViolations>> getViolations(
+  public ResponseEntity<List<PolicyViolations>> getViolations(
       @RequestParam(value = "ciTeamId", required = true) String ciTeamId) {
     return ResponseEntity.ok().body(bosunService.getViolations(ciTeamId));
   }
 
   @GetMapping(value = "/policies/insights")
-  public ResponseEntity<List<CiPolicyInsights>> getInsights(
+  public ResponseEntity<List<PolicyInsights>> getInsights(
       @RequestParam(value = "ciTeamId", required = true) String ciTeamId) {
     return ResponseEntity.ok().body(bosunService.getInsights(ciTeamId));
   }
 
 
   @GetMapping(value = "/policies/validate")
-  public ResponseEntity<CiPolicyActivityEntity> validatePolicy(
+  public ResponseEntity<PolicyActivityEntity> validatePolicy(
       @RequestParam(value = "ciComponentActivityId", required = true) String ciComponentActivityId,
       @RequestParam(value = "ciComponentId", required = true) String ciComponentId,
       @RequestParam(value = "ciComponentVersion", required = true) String ciComponentVersion,
