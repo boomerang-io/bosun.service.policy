@@ -1,8 +1,8 @@
-# Boomearng Citadel Service
+# Boomearng Bosun Service
 
 **Description**
 
-The Citadel service works with the Citadel UI and the CI service. It controls the CRUD on ci_policies and the execution and validation of these poilicies as CI Gates.
+The Bosun service works with the Bosun UI and optionally the Repository service. It controls the CRUD on policy objects and the execution and validation of these poilicies as gates in your CICD pipelines.
 
 **Prerequisites**
 
@@ -28,5 +28,5 @@ Included is a Postman collection that can be used to submit policies and test da
 
 ## OPA Policies
 
-The policy rego documents are stored in the CICD Helm chart
+The policy rego documents are stored in the Helm chart
 
