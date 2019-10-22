@@ -34,6 +34,7 @@ import net.boomerangplatform.model.PolicyConfig;
 import net.boomerangplatform.model.PolicyDefinition;
 import net.boomerangplatform.model.PolicyInsights;
 import net.boomerangplatform.model.PolicyResponse;
+import net.boomerangplatform.model.PolicyValidation;
 import net.boomerangplatform.model.PolicyViolation;
 import net.boomerangplatform.model.PolicyViolations;
 import net.boomerangplatform.model.Results;
@@ -42,12 +43,8 @@ import net.boomerangplatform.mongo.entity.CiComponentActivityEntity;
 import net.boomerangplatform.mongo.entity.CiComponentEntity;
 import net.boomerangplatform.mongo.entity.CiComponentVersionEntity;
 import net.boomerangplatform.mongo.entity.CiPipelineEntity;
-import net.boomerangplatform.mongo.entity.CiPolicyActivityEntity;
-import net.boomerangplatform.mongo.entity.CiPolicyDefinitionEntity;
-import net.boomerangplatform.mongo.entity.CiPolicyEntity;
 import net.boomerangplatform.mongo.entity.CiStageEntity;
 import net.boomerangplatform.mongo.model.CiComponentActivityType;
-import net.boomerangplatform.mongo.model.CiPolicyConfig;
 import net.boomerangplatform.mongo.model.OperatorType;
 import net.boomerangplatform.mongo.model.Scope;
 import net.boomerangplatform.mongo.service.CiComponentActivityService;
@@ -198,14 +195,15 @@ public class BosunServiceImpl implements BosunService {
   }
 
 	@Override
-	public PolicyActivityEntity validatePolicy(String policyId, String ciComponentActivityId, String ciComponentId, String ciComponentVersion) {
+	public PolicyActivityEntity validatePolicy(PolicyValidation policyValidation) {
 
-		PolicyEntity policyEntity = policyRepository.findById(policyId).orElse(null);
+		PolicyEntity policyEntity = policyRepository.findById(policyValidation.getPolicyId()).orElse(null);
 
 		final PolicyActivityEntity policiesActivities = new PolicyActivityEntity();
-		policiesActivities.setCiTeamId(policyEntity.getTeamId());
-		policiesActivities.setCiComponentActivityId(ciComponentActivityId);
-		policiesActivities.setPolicyId(policyId);
+		policiesActivities.setTeamId(policyEntity.getTeamId());
+		policiesActivities.setPolicyId(policyEntity.getId());
+		policiesActivities.setLabels(policyValidation.getLabels());
+		policiesActivities.setReferenceId(policyValidation.getReferenceId());
 		policiesActivities.setCreatedDate(fromLocalDate(LocalDate.now(clock)));
 		policiesActivities.setValid(true);
 
@@ -218,7 +216,7 @@ public class BosunServiceImpl implements BosunService {
 						PolicyDefinitionEntity policyDefinitionEntity = policyDefinitionRepository
 								.findById(policyConfig.getPolicyDefinitionId()).orElse(null);
 
-						Results result = getResult(ciComponentId, ciComponentVersion,
+						Results result = getResult(policyValidation.getLabels(),
 								policyConfig, policyDefinitionEntity);
 
 						if (result != null) {
@@ -314,46 +312,27 @@ public class BosunServiceImpl implements BosunService {
   }
 
 	@Override
-	public List<PolicyViolations> getViolations(String ciTeamId) {
-
-		List<CiPipelineEntity> pipelines = ciPipelineService.findByCiTeamId(ciTeamId);
-		List<CiStageEntity> stagesWithGates = getStagesWithGates(pipelines);
-
-		LOGGER.info("stagesWithGates.count=" + stagesWithGates.size());
+	public List<PolicyViolations> getViolations(String teamId) {
 
 		Map<String, PolicyViolations> violationsMap = new HashMap<>();
 
-		List<CiComponentEntity> components = ciComponentService.findByCiTeamId(ciTeamId);
+		List<PolicyEntity> policyEntities = policyRepository.findByTeamId(teamId);
 
-		for (CiComponentEntity component : components) {
+		for (PolicyEntity policyEntity : policyEntities) {
 
-			LOGGER.info("component.name=" + component.getName());
+			LOGGER.info("policy.name=" + policyEntity.getName());
+			
+			List<PolicyActivityEntity> policyActivityEntities = policyActivityRepository.findTopDistinctViolationsByPolicyIdAndReferenceId(policyEntity.getId());
 
-			for (CiStageEntity stage : stagesWithGates) {
-				CiComponentActivityEntity componentActivity = ciComponentActivityService
-						.findTopByCiComponentIdAndTypeAndCiStageIdOrderByCreationDateDesc(component.getId(),
-								CiComponentActivityType.GATES, stage.getId());
-				
-				if (componentActivity == null) {
-					continue;
-				}
+			LOGGER.info("policyActivities.size=" + policyActivityEntities.size());
 
-				LOGGER.info("componentActivity.id=" + componentActivity.getId());
-
-				List<PolicyActivityEntity> policyActivities = policyActivityRepository
-						.findByCiComponentActivityIdAndValid(componentActivity.getId(), false);
-
-				LOGGER.info("policyActivities.size=" + policyActivities.size());
-
-				setViolations(violationsMap, component, stage, componentActivity, policyActivities);
-			}
+			setViolations(violationsMap, policyActivityEntities);
 		}
 
 		return new ArrayList<>(violationsMap.values());
 	}
 
-	private void setViolations(Map<String, PolicyViolations> violationsMap, CiComponentEntity component,
-			CiStageEntity stage, CiComponentActivityEntity componentActivity,
+	private void setViolations(Map<String, PolicyViolations> violationsMap,
 			List<PolicyActivityEntity> policyActivities) {
 		for (PolicyActivityEntity policyActivity : policyActivities) {
 			PolicyEntity policy = policyRepository.findById(policyActivity.getPolicyId()).orElse(null);
@@ -473,7 +452,7 @@ public class BosunServiceImpl implements BosunService {
     return stagesWithGates;
   }
 
-  private Results getResult(String componentId, String versionName, PolicyConfig policyConfig,
+  private Results getResult(Map<String, String> labels, PolicyConfig policyConfig,
       PolicyDefinitionEntity policyDefinition) {
 
     if (policyDefinition == null) {
@@ -485,23 +464,23 @@ public class BosunServiceImpl implements BosunService {
     switch (key) {
       case "static_code_analysis":
         SonarQubeReport sonarQubeReport =
-            repositoryService.getSonarQubeReport(componentId, versionName);
+            repositoryService.getSonarQubeReport(labels.get("sonarqubeId"), labels.get("versionId"));
         result = getResults(policyDefinition, policyConfig, getJsonNode(sonarQubeReport, key));
         break;
       case "unit_tests":
         SonarQubeReport sonarQubeTestCoverage =
-            repositoryService.getSonarQubeTestCoverage(componentId, versionName);
+            repositoryService.getSonarQubeTestCoverage(labels.get("sonarqubeId"), labels.get("versionId"));
         result =
             getResults(policyDefinition, policyConfig, getJsonNode(sonarQubeTestCoverage, key));
         break;
       case "package_safelist":
         DependencyGraph dependencyGraph =
-            repositoryService.getDependencyGraph(componentId, versionName);
+            repositoryService.getDependencyGraph(labels.get("artifactoryId"), labels.get("versionId"));
         result = getResults(policyDefinition, policyConfig, getJsonNode(dependencyGraph, key));
         break;
       case "cve_safelist":
       case "security_issue_analysis":
-        ArtifactSummary summary = repositoryService.getArtifactSummary(componentId, versionName);
+        ArtifactSummary summary = repositoryService.getArtifactSummary(labels.get("artifactoryId"), labels.get("versionId"));
         if (!summary.getArtifacts().isEmpty()) {
           result = getResults(policyDefinition, policyConfig,
               getJsonNode(summary.getArtifacts().get(0).getIssues(), key));

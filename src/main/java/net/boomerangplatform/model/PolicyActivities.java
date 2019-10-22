@@ -3,14 +3,15 @@ package net.boomerangplatform.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class PolicyActivities {
 
   private String id;
-  private String ciComponentId;
-  private String ciVersionId;
-  private String ciPolicyId;
-  private String ciActivityId;
+  private String teamId;
+  private String referenceId;
+  private String policyId;
+  private Map<String, String> labels;
   private List<Result> results = new ArrayList<>();
   private boolean valid;
 
@@ -26,36 +27,36 @@ public class PolicyActivities {
     this.id = id;
   }
 
-  public String getCiComponentId() {
-    return ciComponentId;
+  public String getTeamId() {
+    return teamId;
   }
 
-  public void setCiComponentId(String ciComponentId) {
-    this.ciComponentId = ciComponentId;
+  public void setTeamId(String teamId) {
+    this.teamId = teamId;
   }
 
-  public String getCiVersionId() {
-    return ciVersionId;
+  public String getReferenceId() {
+    return referenceId;
   }
 
-  public void setCiVersionId(String ciVersionId) {
-    this.ciVersionId = ciVersionId;
+  public void setReferenceId(String referenceId) {
+    this.referenceId = referenceId;
   }
 
-  public String getCiPolicyId() {
-    return ciPolicyId;
+  public String getPolicyId() {
+    return policyId;
   }
 
-  public void setCiPolicyId(String ciPolicyId) {
-    this.ciPolicyId = ciPolicyId;
+  public void setPolicyId(String policyId) {
+    this.policyId = policyId;
   }
 
-  public String getCiActivityId() {
-    return ciActivityId;
+  public Map<String, String> getLabels() {
+    return labels;
   }
 
-  public void setCiActivityId(String ciActivityId) {
-    this.ciActivityId = ciActivityId;
+  public void setLabels(Map<String, String> labels) {
+    this.labels = labels;
   }
 
   public List<Result> getResults() {

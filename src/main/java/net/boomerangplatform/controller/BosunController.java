@@ -15,12 +15,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import net.boomerangplatform.entity.PolicyActivityEntity;
 import net.boomerangplatform.model.Policy;
 import net.boomerangplatform.model.PolicyDefinition;
 import net.boomerangplatform.model.PolicyInsights;
-import net.boomerangplatform.model.PolicyViolations;
 import net.boomerangplatform.model.PolicyResponse;
-import net.boomerangplatform.entity.PolicyActivityEntity;
+import net.boomerangplatform.model.PolicyValidation;
+import net.boomerangplatform.model.PolicyViolations;
 import net.boomerangplatform.service.BosunService;
 import net.boomerangplatform.service.TeamService;
 import net.boomerangplatform.team.model.CiTeam;
@@ -85,14 +86,10 @@ public class BosunController {
   }
 
 
-  @GetMapping(value = "/policies/validate")
-  public ResponseEntity<PolicyActivityEntity> validatePolicy(
-      @RequestParam(value = "ciComponentActivityId", required = true) String ciComponentActivityId,
-      @RequestParam(value = "ciComponentId", required = true) String ciComponentId,
-      @RequestParam(value = "ciComponentVersion", required = true) String ciComponentVersion,
-      @RequestParam(value = "ciPolicyId", required = true) String ciPolicyId) {
+  @PostMapping(value = "/policies/validate")
+  public ResponseEntity<PolicyActivityEntity> validatePolicy(@RequestBody PolicyValidation policyValidation) {
     return ResponseEntity.ok()
-        .body(bosunService.validatePolicy(ciPolicyId, ciComponentActivityId, ciComponentId, ciComponentVersion));
+        .body(bosunService.validatePolicy(policyValidation));
   }
   
   @DeleteMapping(value = "/policies/{ciPolicyId}")

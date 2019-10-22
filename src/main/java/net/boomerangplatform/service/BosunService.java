@@ -7,6 +7,7 @@ import net.boomerangplatform.model.PolicyDefinition;
 import net.boomerangplatform.model.PolicyInsights;
 import net.boomerangplatform.model.PolicyViolations;
 import net.boomerangplatform.model.PolicyResponse;
+import net.boomerangplatform.model.PolicyValidation;
 import net.boomerangplatform.entity.PolicyActivityEntity;
 
 public interface BosunService {
@@ -22,12 +23,12 @@ public interface BosunService {
   Policy updatePolicy(Policy policy);
 
   Policy getPolicyById(String ciPolicyId);
-  
+
   List<PolicyInsights> getInsights(String ciTeamId);
-  
+
   List<PolicyViolations> getViolations(String ciTeamId);
 
   PolicyResponse deletePolicy(String ciPolicyId);
 
-PolicyActivityEntity validatePolicy(String ciPolicyId,String ciComponentActivityId,String ciComponentId,String ciComponentVersion);
+  PolicyActivityEntity validatePolicy(PolicyValidation policyValidation);
 }

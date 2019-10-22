@@ -1,4 +1,4 @@
-# Boomearng Bosun Service
+# Boomerang Bosun Service
 
 **Description**
 
@@ -30,3 +30,34 @@ Included is a Postman collection that can be used to submit policies and test da
 
 The policy rego documents are stored in the Helm chart
 
+## Rest API
+
+### Validate API
+
+Validate direct policy with pre-integrated repository data.
+
+```
+POST  /bosun/policies/validate
+```
+
+```
+{
+    "referenceId" : "",
+    "policyId" : "5cf95aefa814cf0001781636",
+    "labels": {
+        "key":"value",
+        "key":"value",
+        "key":"value"
+    }
+}
+```
+
+**Where**
+ - `referenceId` equals a distinct unique identifier that is consistent for all related validations. This could be a combination of git repository plus pipeline id.
+ - `policyId` is the policy you wish to validate against
+ - `labels` are key value pairs of metadata that can help provide descriptive information to guide the user in resolving a violation. This could be version or git commit reference.
+ 
+ **Response**
+ ```
+ 
+ ```
