@@ -7,7 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import net.boomerangplatform.model.PolicyConfig;
-import net.boomerangplatform.mongo.model.Scope;
+import net.boomerangplatform.model.Scope;
 
 @Document(collection = "ci_policies")
 public class PolicyEntity {

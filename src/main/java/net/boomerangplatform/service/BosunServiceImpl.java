@@ -40,17 +40,8 @@ import net.boomerangplatform.model.PolicyViolation;
 import net.boomerangplatform.model.PolicyViolations;
 import net.boomerangplatform.model.Results;
 import net.boomerangplatform.model.ResultsViolation;
-import net.boomerangplatform.mongo.entity.CiComponentEntity;
-import net.boomerangplatform.mongo.entity.CiComponentVersionEntity;
-import net.boomerangplatform.mongo.entity.CiPipelineEntity;
-import net.boomerangplatform.mongo.entity.CiStageEntity;
+import net.boomerangplatform.model.Scope;
 import net.boomerangplatform.mongo.model.OperatorType;
-import net.boomerangplatform.mongo.model.Scope;
-import net.boomerangplatform.mongo.service.CiComponentActivityService;
-import net.boomerangplatform.mongo.service.CiComponentService;
-import net.boomerangplatform.mongo.service.CiComponentVersionService;
-import net.boomerangplatform.mongo.service.CiPipelineService;
-import net.boomerangplatform.mongo.service.CiStagesService;
 import net.boomerangplatform.opa.model.DataRequest;
 import net.boomerangplatform.opa.model.DataRequestInput;
 import net.boomerangplatform.opa.model.DataRequestPolicy;
@@ -67,21 +58,6 @@ public class BosunServiceImpl implements BosunService {
 
   @Value("${insights.period.months}")
   private String insightsPeriodMonths;
-
-  @Autowired
-  private CiComponentService ciComponentService;
-
-  @Autowired
-  private CiComponentActivityService ciComponentActivityService;
-
-  @Autowired
-  private CiComponentVersionService ciComponentVersionService;
-
-  @Autowired
-  private CiPipelineService ciPipelineService;
-
-  @Autowired
-  private CiStagesService ciStagesService;
 
   @Autowired
   private PolicyRepository policyRepository;
@@ -133,14 +109,14 @@ public class BosunServiceImpl implements BosunService {
   }
 
   @Override
-  public List<Policy> getPoliciesByTeamId(String ciTeamId) {
-    List<PolicyEntity> entities = policyRepository.findByTeamId(ciTeamId);
+  public List<Policy> getPoliciesByTeamId(String teamId) {
+    List<PolicyEntity> entities = policyRepository.findByTeamId(teamId);
     List<Policy> policies = new ArrayList<>();
 
     entities.forEach(entity -> {
       Policy policy = new Policy();
       BeanUtils.copyProperties(entity, policy);
-      policy.setStages(getStagesForPolicy(ciTeamId, entity.getId()));
+      policy.setStages(getStagesForPolicy(teamId, entity.getId()));
       policies.add(policy);
     });
 
@@ -383,7 +359,7 @@ public class BosunServiceImpl implements BosunService {
 	}
   
   private List<PolicyViolation> getViolationsResults(PolicyActivityEntity policyActivity) {
-	  List<PolicyViolation> resultsViolations = new ArrayList<PolicyViolation>();
+	  List<PolicyViolation> resultsViolations = new ArrayList<>();
 	  for (Results results : policyActivity.getResults()) {
 		  if (!results.getValid()) {
 			  if (!results.getViolations().isEmpty()) {
@@ -395,7 +371,7 @@ public class BosunServiceImpl implements BosunService {
   }
   
   private List<PolicyViolation> getPolicyViolations(List<ResultsViolation> violations) {
-	  List<PolicyViolation> policyViolations = new ArrayList<PolicyViolation>();
+	  List<PolicyViolation> policyViolations = new ArrayList<>();
 	  for (ResultsViolation resultsViolation : violations) {
 		  PolicyViolation policyViolation = new PolicyViolation();
 		  policyViolation.setMetric(resultsViolation.getMetric());
@@ -420,27 +396,17 @@ public class BosunServiceImpl implements BosunService {
 		List<String> violationsDefinitionTypes = new ArrayList<>();
 		for (Results result : policyActivity.getResults()) {
 			if (!result.getValid()) {
-				PolicyDefinitionEntity policyDefinitionEntity = policyDefinitionRepository.findById(result.getPolicyDefinitionId() != null ? result.getPolicyDefinitionId() : "").orElse(null);
+				String policyDefinitionId = result.getPolicyDefinitionId() != null ? result.getPolicyDefinitionId() : "";
+				LOGGER.info("policyDefinitionId=" + policyDefinitionId);
+				PolicyDefinitionEntity policyDefinitionEntity = policyDefinitionRepository.findById(policyDefinitionId).orElse(null);
 				if (policyDefinitionEntity != null && !current.contains(policyDefinitionEntity.getName())) {
+					LOGGER.info("policyDefinitionName=" + policyDefinitionEntity.getName());
 					violationsDefinitionTypes.add(policyDefinitionEntity.getName());
 				}
 			}
 		}		
 		return violationsDefinitionTypes;
 	}
-
-  private List<CiStageEntity> getStagesWithGates(List<CiPipelineEntity> pipelines) {
-    List<CiStageEntity> stagesWithGates = new ArrayList<>();
-    for (CiPipelineEntity pipeline : pipelines) {
-      List<CiStageEntity> stages = ciStagesService.findByPipelineId(pipeline.getId());
-      for (CiStageEntity stage : stages) {
-        if (stage.getGates() != null && stage.getGates().getEnabled()) {
-          stagesWithGates.add(stage);
-        }
-      }
-    }
-    return stagesWithGates;
-  }
 
   private Results getResult(Map<String, String> labels, PolicyConfig policyConfig,
       PolicyDefinitionEntity policyDefinition) {
@@ -572,38 +538,6 @@ public class BosunServiceImpl implements BosunService {
 
   private static Date fromLocalDate(LocalDate date) {
     return Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
-  }
-
-  private List<String> getStagesForPolicy(String ciTeamId, String ciPolicyId) {
-    List<String> stagesForPolicy = new ArrayList<>();
-
-    List<CiPipelineEntity> pipelines = ciPipelineService.findByCiTeamId(ciTeamId);
-    for (CiPipelineEntity pipeline : pipelines) {
-      List<CiStageEntity> stages = ciStagesService.findByPipelineId(pipeline.getId());
-      for (CiStageEntity stage : stages) {
-        if (stage.getGates() != null && stage.getGates().getEnabled()
-            && stage.getGates().getPolicies().contains(ciPolicyId)) {
-          stagesForPolicy.add(stage.getName());
-        }
-      }
-    }
-
-    return stagesForPolicy;
-  }
-
-  private List<String> getStagesForGlobalPolicy(String ciPolicyId) {
-    List<String> stagesForGlobalPolicy = new ArrayList<>();
-    List<CiPipelineEntity> pipelines = ciPipelineService.getAllPipelines();
-    for (CiPipelineEntity pipeline : pipelines) {
-      List<CiStageEntity> stages = ciStagesService.findByPipelineId(pipeline.getId());
-      for (CiStageEntity stage : stages) {
-        if (stage.getGates() != null && stage.getGates().getEnabled()
-            && stage.getGates().getPolicies().contains(ciPolicyId)) {
-          stagesForGlobalPolicy.add(stage.getName());
-        }
-      }
-    }
-    return stagesForGlobalPolicy;
   }
 
   @Override

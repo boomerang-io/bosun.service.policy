@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import net.boomerangplatform.model.PolicyConfig;
-import net.boomerangplatform.mongo.model.Scope;
 
 public class Policy implements Serializable {
 

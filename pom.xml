@@ -22,8 +22,8 @@
 		<java.version>11</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
-		<http.proxyHost></http.proxyHost><!-- set from env: proxy.boomerangplatform.net -->
-		<http.proxyPort></http.proxyPort><!-- set from env: 1080 -->
+		<http.proxyHost></http.proxyHost>
+		<http.proxyPort></http.proxyPort>
 		<jacoco.out.path>${project.build.directory}</jacoco.out.path>
 		<sonar.jacoco.reportPaths>${jacoco.out.path}/jacoco.exec</sonar.jacoco.reportPaths>
 		<jacoco.version>0.8.2</jacoco.version>
@@ -82,30 +82,9 @@
 		
 		<dependency>
 			<groupId>net.boomerangplatform</groupId>
-			<artifactId>lib-mongo-cicd</artifactId>
-			<version>0.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>net.boomerangplatform</groupId>
 			<artifactId>lib-mongo</artifactId>
 			<version>4.0.26</version>
 		</dependency>
-
-		<dependency>
-			<groupId>net.boomerangplatform</groupId>
-			<artifactId>lib-rest</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<dependency>
-            <groupId>net.boomerangplatform</groupId>
-            <artifactId>lib-security</artifactId>
-            <version>1.0.3</version>
-        </dependency>
-        <dependency>
-            <groupId>net.boomerangplatform</groupId>
-            <artifactId>lib-opentracing</artifactId>
-            <version>1.0.3</version>
-        </dependency>
 		
 		<dependency>
 			<groupId>net.boomerangplatform</groupId>
