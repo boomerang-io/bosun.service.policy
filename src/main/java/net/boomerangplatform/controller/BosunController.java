@@ -53,13 +53,13 @@ public class BosunController {
 
   @GetMapping(value = "/policies")
   public ResponseEntity<List<Policy>> getPolicies(
-      @RequestParam(value = "ciTeamId", required = true) String ciTeamId) {
-    return ResponseEntity.ok().body(bosunService.getPoliciesByTeamId(ciTeamId));
+      @RequestParam(value = "teamId", required = true) String teamId) {
+    return ResponseEntity.ok().body(bosunService.getPoliciesByTeamId(teamId));
   }
 
-  @GetMapping(value = "/policies/{ciPolicyId}")
-  public ResponseEntity<Policy> getPolicy(@PathVariable String ciPolicyId) {
-    return ResponseEntity.ok().body(bosunService.getPolicyById(ciPolicyId));
+  @GetMapping(value = "/policies/{policyId}")
+  public ResponseEntity<Policy> getPolicy(@PathVariable String policyId) {
+    return ResponseEntity.ok().body(bosunService.getPolicyById(policyId));
   }
 
   @PostMapping(value = "/policies")
@@ -67,22 +67,22 @@ public class BosunController {
     return ResponseEntity.ok().body(bosunService.addPolicy(policy));
   }
 
-  @PatchMapping(value = "/policies/{ciPolicyId}")
-  public ResponseEntity<Policy> updatePolicy(@PathVariable String ciPolicyId,
+  @PatchMapping(value = "/policies/{policyId}")
+  public ResponseEntity<Policy> updatePolicy(@PathVariable String policyId,
       @RequestBody Policy policy) {
     return ResponseEntity.ok().body(bosunService.updatePolicy(policy));
   }
   
   @GetMapping(value = "/policies/violations")
   public ResponseEntity<List<PolicyViolations>> getViolations(
-      @RequestParam(value = "ciTeamId", required = true) String ciTeamId) {
-    return ResponseEntity.ok().body(bosunService.getViolations(ciTeamId));
+      @RequestParam(value = "teamId", required = true) String teamId) {
+    return ResponseEntity.ok().body(bosunService.getViolations(teamId));
   }
 
   @GetMapping(value = "/policies/insights")
   public ResponseEntity<List<PolicyInsights>> getInsights(
-      @RequestParam(value = "ciTeamId", required = true) String ciTeamId) {
-    return ResponseEntity.ok().body(bosunService.getInsights(ciTeamId));
+      @RequestParam(value = "teamId", required = true) String teamId) {
+    return ResponseEntity.ok().body(bosunService.getInsights(teamId));
   }
 
 
@@ -92,9 +92,9 @@ public class BosunController {
         .body(bosunService.validatePolicy(policyValidation));
   }
   
-  @DeleteMapping(value = "/policies/{ciPolicyId}")
-  public ResponseEntity<PolicyResponse> deletePolicy(@PathVariable String ciPolicyId){  
-    PolicyResponse response= bosunService.deletePolicy(ciPolicyId);
+  @DeleteMapping(value = "/policies/{policyId}")
+  public ResponseEntity<PolicyResponse> deletePolicy(@PathVariable String policyId){  
+    PolicyResponse response= bosunService.deletePolicy(policyId);
     
      return ResponseEntity.status(response.getStatus()).body(response);
   }
