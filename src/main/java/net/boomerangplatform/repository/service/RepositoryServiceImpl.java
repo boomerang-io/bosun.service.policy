@@ -40,9 +40,7 @@ public class RepositoryServiceImpl implements RepositoryService {
   @Value("${repository.rest.url.sonarqubetestcoverage}")
   private String repositoryRestUrlSonarqubetestcoverage;
 
-  @Autowired
-  @Qualifier("internalRestTemplate")
-  private RestTemplate restTemplate;
+  private RestTemplate restTemplate = new RestTemplate();
 
   @Override
   public DependencyGraph getDependencyGraph(String ciComponentId, String version) {

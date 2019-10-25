@@ -27,9 +27,7 @@ public class OpenPolicyAgentClient {
   @Value("${opa.rest.url.data}")
   public String opaRestDataUrl;
 
-  @Autowired
-  @Qualifier("internalRestTemplate")
-  private RestTemplate restTemplate;
+  private RestTemplate restTemplate = new RestTemplate();
 
   public DataResponse validateData(DataRequest dataRequest) {
 
