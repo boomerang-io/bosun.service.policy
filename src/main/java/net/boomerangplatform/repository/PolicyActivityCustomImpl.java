@@ -1,4 +1,4 @@
-package net.boomerangplatform.service;
+package net.boomerangplatform.repository;
 
 import java.util.ArrayList;
 import java.util.List;

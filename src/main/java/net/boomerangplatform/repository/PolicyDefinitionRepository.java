@@ -1,4 +1,4 @@
-package net.boomerangplatform.service;
+package net.boomerangplatform.repository;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import net.boomerangplatform.entity.PolicyDefinitionEntity;
