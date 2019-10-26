@@ -23,13 +23,13 @@ import net.boomerangplatform.rest.RestControllerConfig;
 
 @Service
 @Primary
-@ConditionalOnProperty(name = "bosun.external.teams", havingValue = "true")
+@ConditionalOnProperty(name = "boomerang.standalone", havingValue = "false")
 public class PolicyTeamExternalServiceImpl implements PolicyTeamService {
 
 	private RestTemplate restTemplate = new RestTemplate();
 
-	@Value("${bosun.external.team.url}")
-	public String externalTeamURL;
+	@Value("${boomerang.teams.url}")
+	public String boomerangTeamURL;
 
 	@Autowired
 	private RestControllerConfig restControllerConfig;
@@ -41,7 +41,7 @@ public class PolicyTeamExternalServiceImpl implements PolicyTeamService {
 		final HttpHeaders headers = buildHeaders();
 		final HttpEntity<String> request = new HttpEntity<>(headers);
 
-		ResponseEntity<List<PolicyTeam>> response = restTemplate.exchange(externalTeamURL, HttpMethod.GET, request,
+		ResponseEntity<List<PolicyTeam>> response = restTemplate.exchange(boomerangTeamURL, HttpMethod.GET, request,
 				new ParameterizedTypeReference<List<PolicyTeam>>() {
 				});
 		List<PolicyTeam> allTeams = response.getBody();
@@ -54,7 +54,7 @@ public class PolicyTeamExternalServiceImpl implements PolicyTeamService {
 		final HttpHeaders headers = buildHeaders();
 		final HttpEntity<String> request = new HttpEntity<>(headers);
 
-		ResponseEntity<List<PolicyTeam>> response = restTemplate.exchange(externalTeamURL, HttpMethod.GET, request,
+		ResponseEntity<List<PolicyTeam>> response = restTemplate.exchange(boomerangTeamURL, HttpMethod.GET, request,
 				new ParameterizedTypeReference<List<PolicyTeam>>() {
 				});
 		List<PolicyTeam> allTeams = response.getBody();
@@ -73,7 +73,7 @@ public class PolicyTeamExternalServiceImpl implements PolicyTeamService {
 		final HttpHeaders headers = buildHeaders();
 		final HttpEntity<String> request = new HttpEntity<>(headers);
 
-		ResponseEntity<List<PolicyTeam>> response = restTemplate.exchange(externalTeamURL, HttpMethod.GET, request,
+		ResponseEntity<List<PolicyTeam>> response = restTemplate.exchange(boomerangTeamURL, HttpMethod.GET, request,
 				new ParameterizedTypeReference<List<PolicyTeam>>() {
 				});
 		List<PolicyTeam> allTeams = response.getBody();

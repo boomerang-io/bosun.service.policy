@@ -20,11 +20,9 @@ import net.boomerangplatform.model.Policy;
 import net.boomerangplatform.model.PolicyDefinition;
 import net.boomerangplatform.model.PolicyInsights;
 import net.boomerangplatform.model.PolicyResponse;
-import net.boomerangplatform.model.PolicyTeam;
 import net.boomerangplatform.model.PolicyValidation;
 import net.boomerangplatform.model.PolicyViolations;
 import net.boomerangplatform.service.BosunService;
-import net.boomerangplatform.service.PolicyTeamService;
 
 @RestController
 @RequestMapping("/bosun")
@@ -32,14 +30,6 @@ public class BosunController {
 
   @Autowired
   private BosunService bosunService;
-
-  @Autowired
-  private PolicyTeamService teamService;
-
-  @GetMapping(value = "/teams")
-  public List<PolicyTeam> getAllTeams() {
-    return teamService.getAllTeams();
-  }
 
   @GetMapping(value = "/definitions")
   public ResponseEntity<List<PolicyDefinition>> getAllDefinitions() {
