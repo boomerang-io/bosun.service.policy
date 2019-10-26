@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import net.boomerangplatform.model.Results;
 
-@Document(collection = "ci_policies_activities")
+@Document(collection = "bosun_activities")
 public class PolicyActivityEntity {
 
   @Id private String id;

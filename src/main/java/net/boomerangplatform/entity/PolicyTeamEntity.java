@@ -3,7 +3,7 @@ package net.boomerangplatform.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "policy_teams")
+@Document(collection = "bosun_teams")
 public class PolicyTeamEntity {
 
 	public String getId() {

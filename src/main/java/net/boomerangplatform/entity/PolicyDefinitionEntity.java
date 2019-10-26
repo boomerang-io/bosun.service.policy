@@ -5,7 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import net.boomerangplatform.model.PolicyDefinitionConfig;
 
-@Document(collection = "ci_policies_definitions")
+@Document(collection = "bosun_definitions")
 public class PolicyDefinitionEntity {
 
   @Id
