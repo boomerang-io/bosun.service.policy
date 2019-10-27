@@ -23,8 +23,6 @@ public class BosunTeamController {
   public List<PolicyTeam> getAllTeams() {
     return teamService.getAllTeams();
   }
-  
-
 
   @PostMapping(value = "")
   public PolicyTeam createTeam(@RequestBody PolicyTeam createTeamRequest) {
