@@ -19,8 +19,6 @@ public class Policy implements Serializable {
   private Date createdDate;
 
   private List<PolicyConfig> definitions = new ArrayList<>();
-
-  private List<String> stages = new ArrayList<>();
   
   private Scope scope;
 
@@ -63,14 +61,6 @@ public class Policy implements Serializable {
   public void setDefinitions(List<PolicyConfig> definitions) {
     this.definitions =
         definitions == null ? new ArrayList<>() : new ArrayList<>(definitions);
-  }
-
-  public List<String> getStages() {
-    return Collections.unmodifiableList(stages);
-  }
-
-  public void setStages(List<String> stages) {
-    this.stages = stages == null ? new ArrayList<>() : new ArrayList<>(stages);
   }
 
   public Scope getScope() {

@@ -116,11 +116,9 @@ public class BosunServiceImpl implements BosunService {
     List<PolicyEntity> entities = policyRepository.findByTeamId(teamId);
     List<Policy> policies = new ArrayList<>();
 
-    /** TODO: Fix compilation error here. 
     entities.forEach(entity -> {
       Policy policy = new Policy();
       BeanUtils.copyProperties(entity, policy);
-      policy.setStages(getStagesForPolicy(teamId, entity.getId()));
       policies.add(policy);
     });
 
@@ -128,9 +126,8 @@ public class BosunServiceImpl implements BosunService {
     globalPolicies.forEach(entity -> {
       Policy policy = new Policy();
       BeanUtils.copyProperties(entity, policy);
-      policy.setStages(getStagesForGlobalPolicy(entity.getId()));
       policies.add(policy);
-    }); */
+    });
 
     return policies;
   }
