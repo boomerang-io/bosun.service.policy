@@ -10,12 +10,12 @@
 	</parent>
 	
 	<groupId>net.boomerangplatform</groupId>
-	<artifactId>service-citadel</artifactId>
+	<artifactId>service-bosun</artifactId>
 	<version>${version.name}</version>
 	<packaging>jar</packaging>
 
-	<name>service-citadel</name>
-	<description>Service for Citadel</description>
+	<name>service-bosun</name>
+	<description>Boomerang Bosun Service</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
