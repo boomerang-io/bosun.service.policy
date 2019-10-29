@@ -17,8 +17,14 @@ import net.boomerangplatform.repository.model.SonarQubeReport;
 
 @Service
 public class RepositoryServiceImpl implements RepositoryService {
+	
+	private static final String PARAM_ARTIFACT_PATH = "{artifactPath}";
+	
+	private static final String PARAM_ARTIFACT_NAME = "{artifactName}";
+	
+	private static final String PARAM_ARTIFACT_VERSION = "{artifactVersion}";
 
-  private static final String PARAM_COMPONENT_ID = "{ciComponentId}";
+  private static final String PARAM_ID = "{id}";
 
   private static final String PARAM_VERSION = "{version}";
 
@@ -38,17 +44,20 @@ public class RepositoryServiceImpl implements RepositoryService {
   
   @Value("${repository.rest.url.sonarqubetestcoverage}")
   private String repositoryRestUrlSonarqubetestcoverage;
+  
+  @Value("${repository.rest.url.sonarqubetestcoveragedetail}")
+  private String repositoryRestUrlSonarqubetestcoveragedetail;
 
   private RestTemplate restTemplate = new RestTemplate();
 
   @Override
-  public DependencyGraph getDependencyGraph(String ciComponentId, String version) {
+  public DependencyGraph getDependencyGraph(String artifactPath, String artifactName,String artifactVersion) {
 
     final HttpHeaders headers = new HttpHeaders();
     final HttpEntity<String> request = new HttpEntity<>(headers);
 
     String url = repositoryRestUrlBase + repositoryRestUrlDependencygraph
-        .replace(PARAM_COMPONENT_ID, ciComponentId).replace(PARAM_VERSION, version);
+    		.replace(PARAM_ARTIFACT_PATH, artifactPath).replace(PARAM_ARTIFACT_NAME, artifactName).replace(PARAM_ARTIFACT_VERSION, artifactVersion);
 
     LOGGER.info("getDependencyGraph() - url: " + url);
 
@@ -65,13 +74,13 @@ public class RepositoryServiceImpl implements RepositoryService {
   }
 
   @Override
-  public ArtifactSummary getArtifactSummary(String ciComponentId, String version) {
+  public ArtifactSummary getArtifactSummary(String artifactPath, String artifactName,String artifactVersion) {
 
     final HttpHeaders headers = new HttpHeaders();
     final HttpEntity<String> request = new HttpEntity<>(headers);
 
     String url = repositoryRestUrlBase + repositoryRestUrlArtifactsummary
-        .replace(PARAM_COMPONENT_ID, ciComponentId).replace(PARAM_VERSION, version);
+        .replace(PARAM_ARTIFACT_PATH, artifactPath).replace(PARAM_ARTIFACT_NAME, artifactName).replace(PARAM_ARTIFACT_VERSION, artifactVersion);
 
     LOGGER.info("getArtifactSummary() - url: " + url);
 
@@ -88,13 +97,13 @@ public class RepositoryServiceImpl implements RepositoryService {
   }
 
   @Override
-  public SonarQubeReport getSonarQubeReport(String ciComponentId, String version) {
+  public SonarQubeReport getSonarQubeReport(String id, String version) {
 
     final HttpHeaders headers = new HttpHeaders();
     final HttpEntity<String> request = new HttpEntity<>(headers);
 
     String url = repositoryRestUrlBase + repositoryRestUrlSonarqubereport
-        .replace(PARAM_COMPONENT_ID, ciComponentId).replace(PARAM_VERSION, version);
+        .replace(PARAM_ID, id).replace(PARAM_VERSION, version);
 
     LOGGER.info("getSonarQubeReport() - url: " + url);
 
@@ -111,13 +120,13 @@ public class RepositoryServiceImpl implements RepositoryService {
   }
   
   @Override
-  public SonarQubeReport getSonarQubeTestCoverage(String ciComponentId, String version) {
+  public SonarQubeReport getSonarQubeTestCoverage(String id, String version) {
 
     final HttpHeaders headers = new HttpHeaders();
     final HttpEntity<String> request = new HttpEntity<>(headers);
 
     String url = repositoryRestUrlBase + repositoryRestUrlSonarqubetestcoverage
-        .replace(PARAM_COMPONENT_ID, ciComponentId).replace(PARAM_VERSION, version);
+        .replace(PARAM_ID, id).replace(PARAM_VERSION, version);
 
     LOGGER.info("getSonarQubeTestCoverage() - url: " + url);
 

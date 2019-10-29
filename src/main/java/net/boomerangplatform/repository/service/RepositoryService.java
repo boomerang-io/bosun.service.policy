@@ -5,11 +5,11 @@ import net.boomerangplatform.repository.model.DependencyGraph;
 import net.boomerangplatform.repository.model.SonarQubeReport;
 
 public interface RepositoryService {
-  DependencyGraph getDependencyGraph(String ciComponentId, String version);
+  DependencyGraph getDependencyGraph(String artifactPath, String artifactName,String artifactVersion);
 
-  ArtifactSummary getArtifactSummary(String ciComponentId, String version);
+  ArtifactSummary getArtifactSummary(String artifactPath, String artifactName,String artifactVersion);
 
-  SonarQubeReport getSonarQubeReport(String ciComponentId, String version);
+  SonarQubeReport getSonarQubeReport(String id, String version);
   
-  SonarQubeReport getSonarQubeTestCoverage(String ciComponentId, String version);
+  SonarQubeReport getSonarQubeTestCoverage(String id, String version);
 }

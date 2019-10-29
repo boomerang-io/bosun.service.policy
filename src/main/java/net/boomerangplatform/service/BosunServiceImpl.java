@@ -220,34 +220,34 @@ public class BosunServiceImpl implements BosunService {
 	}
 
   @Override
-  public List<PolicyInsights> getInsights(String ciTeamId) {
+  public List<PolicyInsights> getInsights(String teamId) {
     Map<String, PolicyInsights> insights = new HashMap<>();
-//    LocalDate date = LocalDate.now(clock).minusMonths(Integer.valueOf(insightsPeriodMonths));
-//
-//    List<PolicyActivityEntity> activities = policyActivityRepository
-//        .findByCiTeamIdAndValidAndCreatedDateAfter(ciTeamId, false, fromLocalDate(date));
-//
-//    for (PolicyActivityEntity activity : activities) {
-//      String ciPolicyId = activity.getPolicyId();
-//
-//      PolicyInsights policyInsights = insights.get(ciPolicyId);
-//      if (policyInsights == null && policyRepository.findById(ciPolicyId).isPresent()) {
-//        Policy ciPolicy = getPolicyById(ciPolicyId);
-//        policyInsights = new PolicyInsights();
-//        policyInsights.setCiPolicyId(ciPolicy.getId());
-//        policyInsights.setCiPolicyName(ciPolicy.getName());
-//        policyInsights.setCiPolicyCreatedDate(ciPolicy.getCreatedDate());
-//      }
-//
-//      PolicyActivitiesInsights policyActivitiesInsights =
-//          getPolicyActivitiesInsights(activity, policyInsights);
-//
-//      if(policyInsights != null) {
-//      policyInsights.addInsights(policyActivitiesInsights);
-//      insights.put(ciPolicyId, policyInsights);
-//      }
-//     
-//    }
+    LocalDate date = LocalDate.now(clock).minusMonths(Integer.valueOf(insightsPeriodMonths));
+
+    List<PolicyActivityEntity> activities = policyActivityRepository
+        .findByTeamIdAndValidAndCreatedDateAfter(teamId, false, fromLocalDate(date));
+
+    for (PolicyActivityEntity activity : activities) {
+      String policyId = activity.getPolicyId();
+
+      PolicyInsights policyInsights = insights.get(policyId);
+      if (policyInsights == null && policyRepository.findById(policyId).isPresent()) {
+        Policy policy = getPolicyById(policyId);
+        policyInsights = new PolicyInsights();
+        policyInsights.setPolicyId(policy.getId());
+        policyInsights.setPolicyName(policy.getName());
+        policyInsights.setPolicyCreatedDate(policy.getCreatedDate());
+      }
+
+      PolicyActivitiesInsights policyActivitiesInsights =
+          getPolicyActivitiesInsights(activity, policyInsights);
+
+      if(policyInsights != null) {
+      policyInsights.addInsights(policyActivitiesInsights);
+      insights.put(policyId, policyInsights);
+      }
+     
+    }
 
     return new ArrayList<>(insights.values());
   }
@@ -270,7 +270,7 @@ public class BosunServiceImpl implements BosunService {
 
 //    if(policyInsights != null) {
 //    for (PolicyActivitiesInsights activites : policyInsights.getInsights()) {
-//      if (activites.getPolicyActivityId().equalsIgnoreCase(activity.getCiComponentActivityId())) {
+//      if (activites.getPolicyActivityId().equalsIgnoreCase(activity.ActivityId())) {
 //        policyActivitiesInsights = activites;
 //        policyInsights.removeInsights(activites);
 //        break;
@@ -424,23 +424,23 @@ public class BosunServiceImpl implements BosunService {
     switch (key) {
       case "static_code_analysis":
         SonarQubeReport sonarQubeReport =
-            repositoryService.getSonarQubeReport(labels.get("sonarqubeId"), labels.get("versionId"));
+            repositoryService.getSonarQubeReport(labels.get("sonarqube-id"), labels.get("sonarqube-version"));
         result = getResults(policyDefinition, policyConfig, getJsonNode(sonarQubeReport, key));
         break;
       case "unit_tests":
         SonarQubeReport sonarQubeTestCoverage =
-            repositoryService.getSonarQubeTestCoverage(labels.get("sonarqubeId"), labels.get("versionId"));
+            repositoryService.getSonarQubeTestCoverage(labels.get("sonarqube-id"), labels.get("sonarqube-version"));
         result =
             getResults(policyDefinition, policyConfig, getJsonNode(sonarQubeTestCoverage, key));
         break;
       case "package_safelist":
         DependencyGraph dependencyGraph =
-            repositoryService.getDependencyGraph(labels.get("artifactoryId"), labels.get("versionId"));
+            repositoryService.getDependencyGraph(labels.get("artifact-path"), labels.get("artifact-name"), labels.get("artifact-version"));
         result = getResults(policyDefinition, policyConfig, getJsonNode(dependencyGraph, key));
         break;
       case "cve_safelist":
       case "security_issue_analysis":
-        ArtifactSummary summary = repositoryService.getArtifactSummary(labels.get("artifactoryId"), labels.get("versionId"));
+        ArtifactSummary summary = repositoryService.getArtifactSummary(labels.get("artifact-path"), labels.get("artifact-name"), labels.get("artifact-version"));
         if (!summary.getArtifacts().isEmpty()) {
           result = getResults(policyDefinition, policyConfig,
               getJsonNode(summary.getArtifacts().get(0).getIssues(), key));

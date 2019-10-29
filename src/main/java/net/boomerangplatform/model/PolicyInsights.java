@@ -10,38 +10,38 @@ public class PolicyInsights implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  private String ciPolicyId;
-  private String ciPolicyName;
-  private Date ciPolicyCreatedDate;
+  private String policyId;
+  private String policyName;
+  private Date policyCreatedDate;
   private List<PolicyActivitiesInsights> insights = new ArrayList<>();
 
   public PolicyInsights() {
     // Do nothing
   }
 
-  public String getCiPolicyId() {
-    return ciPolicyId;
+  public String getPolicyId() {
+    return policyId;
   }
 
-  public void setCiPolicyId(String ciPolicyId) {
-    this.ciPolicyId = ciPolicyId;
+  public void setPolicyId(String policyId) {
+    this.policyId = policyId;
   }
 
-  public String getCiPolicyName() {
-    return ciPolicyName;
+  public String getPolicyName() {
+    return policyName;
   }
 
-  public void setCiPolicyName(String ciPolicyName) {
-    this.ciPolicyName = ciPolicyName;
+  public void setPolicyName(String policyName) {
+    this.policyName = policyName;
   }
 
-  public Date getCiPolicyCreatedDate() {
-    return ciPolicyCreatedDate == null ? null : (Date) ciPolicyCreatedDate.clone();
+  public Date getPolicyCreatedDate() {
+    return policyCreatedDate == null ? null : (Date) policyCreatedDate.clone();
   }
 
-  public void setCiPolicyCreatedDate(Date ciPolicyCreatedDate) {
-    this.ciPolicyCreatedDate =
-        ciPolicyCreatedDate == null ? null : (Date) ciPolicyCreatedDate.clone();
+  public void setPolicyCreatedDate(Date policyCreatedDate) {
+    this.policyCreatedDate =
+        policyCreatedDate == null ? null : (Date) policyCreatedDate.clone();
   }
 
   public List<PolicyActivitiesInsights> getInsights() {
