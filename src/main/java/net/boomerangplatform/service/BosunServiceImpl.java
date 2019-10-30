@@ -276,15 +276,15 @@ public class BosunServiceImpl implements BosunService {
 
     PolicyActivitiesInsights policyActivitiesInsights = null;
 
-    if (policyInsights != null) {
-      for (PolicyActivitiesInsights activites : policyInsights.getInsights()) {
-        if (activites.getPolicyActivityId().equalsIgnoreCase(activity.getReferenceId())) {
-          policyActivitiesInsights = activites;
-          policyInsights.removeInsights(activites);
-          break;
-        }
-      }
-    }
+//    if (policyInsights != null) {
+//      for (PolicyActivitiesInsights activites : policyInsights.getInsights()) {
+//        if (activites.getPolicyActivityId().equalsIgnoreCase(activity.getReferenceId())) {
+//          policyActivitiesInsights = activites;
+//          policyInsights.removeInsights(activites);
+//          break;
+//        }
+//      }
+//    }
 
     if (policyActivitiesInsights == null) {
       policyActivitiesInsights = new PolicyActivitiesInsights();
