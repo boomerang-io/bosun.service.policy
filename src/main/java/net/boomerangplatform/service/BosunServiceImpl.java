@@ -166,6 +166,7 @@ public class BosunServiceImpl implements BosunService {
   public Policy updatePolicy(Policy policy) {
     PolicyEntity entity = policyRepository.findById(policy.getId()).orElse(null);
     policy.setScope(Scope.team);
+    policy.setCreatedDate(entity.getCreatedDate());
     policy.setDefinitions(getFilteredDefinition(policy.getDefinitions()));
 
     BeanUtils.copyProperties(policy, entity);
