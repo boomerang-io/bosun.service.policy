@@ -147,7 +147,7 @@ public class BosunServiceImpl implements BosunService {
 
   @Override
   public Policy addPolicy(Policy policy) {
-    policy.setCreatedDate(fromLocalDate(LocalDate.now(clock())));
+    policy.setCreatedDate(new Date());
 
     policy.setDefinitions(getFilteredDefinition(policy.getDefinitions()));
 
@@ -188,7 +188,7 @@ public class BosunServiceImpl implements BosunService {
 			policiesActivities.setPolicyId(policyEntity.getId());
 			policiesActivities.setLabels(policyValidation.getLabels());
 			policiesActivities.setReferenceId(policyValidation.getReferenceId());
-			policiesActivities.setCreatedDate(fromLocalDate(LocalDate.now(clock)));
+			policiesActivities.setCreatedDate(new Date());
 			policiesActivities.setValid(true);
 
 			List<Results> results = new ArrayList<>();
