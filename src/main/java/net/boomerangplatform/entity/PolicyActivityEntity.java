@@ -15,6 +15,7 @@ public class PolicyActivityEntity {
   @Id private String id;
   private String teamId;
   private String referenceId;
+  private String referenceLink;
   private String policyId;
   private Map<String, String> labels;
   private Date createdDate;
@@ -43,6 +44,14 @@ public class PolicyActivityEntity {
 
   public void setReferenceId(String referenceId) {
     this.referenceId = referenceId;
+  }
+
+  public String getReferenceLink() {
+    return referenceLink;
+  }
+
+  public void setReferenceLink(String referenceLink) {
+    this.referenceLink = referenceLink;
   }
 
   public String getPolicyId() {

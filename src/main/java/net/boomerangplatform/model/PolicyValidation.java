@@ -5,11 +5,11 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties
-
 public class PolicyValidation {
 
   private String policyId;
   private String referenceId;
+  private String referenceLink;
   private Map<String, String> labels;
 
   public String getPolicyId() {
@@ -26,6 +26,14 @@ public class PolicyValidation {
 
   public void setReferenceId(String referenceId) {
     this.referenceId = referenceId;
+  }
+
+  public String getReferenceLink() {
+    return referenceLink;
+  }
+
+  public void setReferenceLink(String referenceLink) {
+    this.referenceLink = referenceLink;
   }
 
   public Map<String, String> getLabels() {

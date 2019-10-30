@@ -1,0 +1,144 @@
+{
+	"info": {
+		"_postman_id": "05449a45-0d98-4a18-9455-b7555e34e1da",
+		"name": "boomerang.service.bosun",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "getAllDefinitions",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "validatePolicy",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"policyId\":\"5db9a8c7b01c530001b838d1\",\n\t\"referenceId\":\"boomerang.service.flow_2.1.13-195\",\n\t\"labels\":{\n\t\t\"sonarqube-id\":\"5bc69daa1516b200011020ee\",\n\t\t\"sonarqube-version\":\"2.1.13-195\",\n\t\t\"artifact-path\":\"ise\",\n\t\t\"artifact-name\":\"boomerang.service.flow\",\n\t\t\"artifact-version\":\"2.1.13-195\"\t\t\n\t}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/bosun/policies/validate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"bosun",
+						"policies",
+						"validate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getPolicy",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"policyId\":\"\",\n\t\"referenceId\":\"\",\n\t\"labels\":null\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/bosun/policies/5db9a8c7b01c530001b838d1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"bosun",
+						"policies",
+						"5db9a8c7b01c530001b838d1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getViolations",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"policyId\":\"\",\n\t\"referenceId\":\"\",\n\t\"labels\":null\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/bosun/policies/violations?teamId=5db85635110fc4000140a5ab",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"bosun",
+						"policies",
+						"violations"
+					],
+					"query": [
+						{
+							"key": "teamId",
+							"value": "5db85635110fc4000140a5ab"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

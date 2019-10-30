@@ -14,6 +14,7 @@ public class PolicyViolations implements Serializable {
   private String policyId;
   private String policyName;
   private String referenceId;
+  private String referenceLink;
   private Map<String, String> labels;
   private Date policyActivityCreatedDate;
   private List<String> policyDefinitionTypes;
@@ -54,6 +55,14 @@ public class PolicyViolations implements Serializable {
 
   public void setReferenceId(String referenceId) {
     this.referenceId = referenceId;
+  }
+
+  public String getReferenceLink() {
+    return referenceLink;
+  }
+
+  public void setReferenceLink(String referenceLink) {
+    this.referenceLink = referenceLink;
   }
 
   public Map<String, String> getLabels() {

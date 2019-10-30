@@ -166,7 +166,6 @@ public class BosunServiceImpl implements BosunService {
   public Policy updatePolicy(Policy policy) {
     PolicyEntity entity = policyRepository.findById(policy.getId()).orElse(null);
     policy.setScope(Scope.team);
-//    policy.setCreatedDate(entity.getCreatedDate());
     policy.setDefinitions(getFilteredDefinition(policy.getDefinitions()));
 
     BeanUtils.copyProperties(policy, entity);
@@ -187,6 +186,7 @@ public class BosunServiceImpl implements BosunService {
 			policiesActivities.setTeamId(policyEntity.getTeamId());
 			policiesActivities.setPolicyId(policyEntity.getId());
 			policiesActivities.setLabels(policyValidation.getLabels());
+			policiesActivities.setReferenceLink(policyValidation.getReferenceLink());
 			policiesActivities.setReferenceId(policyValidation.getReferenceId());
 			policiesActivities.setCreatedDate(new Date());
 			policiesActivities.setValid(true);
@@ -351,6 +351,7 @@ public class BosunServiceImpl implements BosunService {
 			violation.setPolicyId(policy.getId());
 			violation.setPolicyName(policy.getName());
 			violation.setReferenceId(policyActivity.getReferenceId());
+			violation.setReferenceLink(policyActivity.getReferenceLink());
 			violation.setLabels(policyActivity.getLabels());
 			violation.setNbrViolations(0);
 			violation.setViolations(null);
@@ -368,19 +369,17 @@ public class BosunServiceImpl implements BosunService {
 
 		return violation;
 	}
-  
+
   private List<PolicyViolation> getViolationsResults(PolicyActivityEntity policyActivity) {
-	  List<PolicyViolation> resultsViolations = new ArrayList<>();
-	  for (Results results : policyActivity.getResults()) {
-		  if (!results.getValid()) {
-			  if (!results.getViolations().isEmpty()) {
-				  resultsViolations.addAll(getPolicyViolations(results.getViolations()));	  
-			  }			  	  
-		  }		  
-	  }	  
-	  return resultsViolations;
+    List<PolicyViolation> resultsViolations = new ArrayList<>();
+    for (Results results : policyActivity.getResults()) {
+      if (!results.getValid() && !results.getViolations().isEmpty()) {
+        resultsViolations.addAll(getPolicyViolations(results.getViolations()));
+      }
+    }
+    return resultsViolations;
   }
-  
+
   private List<PolicyViolation> getPolicyViolations(List<ResultsViolation> violations) {
 	  List<PolicyViolation> policyViolations = new ArrayList<>();
 	  for (ResultsViolation resultsViolation : violations) {
