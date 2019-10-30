@@ -13,6 +13,7 @@ public class PolicyActivities {
   private String referenceLink;
   private String policyId;
   private Map<String, String> labels;
+  private Map<String, String> annotations;
   private List<Result> results = new ArrayList<>();
   private boolean valid;
 
@@ -66,6 +67,14 @@ public class PolicyActivities {
 
   public void setLabels(Map<String, String> labels) {
     this.labels = labels;
+  }
+
+  public Map<String, String> getAnnotations() {
+    return annotations;
+  }
+
+  public void setAnnotations(Map<String, String> annotations) {
+    this.annotations = annotations;
   }
 
   public List<Result> getResults() {

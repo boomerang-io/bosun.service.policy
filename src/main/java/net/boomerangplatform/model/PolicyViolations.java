@@ -16,6 +16,7 @@ public class PolicyViolations implements Serializable {
   private String referenceId;
   private String referenceLink;
   private Map<String, String> labels;
+  private Map<String, String> annotations;
   private Date policyActivityCreatedDate;
   private List<String> policyDefinitionTypes;
   private Integer nbrViolations;
@@ -71,6 +72,14 @@ public class PolicyViolations implements Serializable {
 
   public void setLabels(Map<String, String> labels) {
     this.labels = labels;
+  }
+
+  public Map<String, String> getAnnotations() {
+    return annotations;
+  }
+
+  public void setAnnotations(Map<String, String> annotations) {
+    this.annotations = annotations;
   }
 
   public Integer getNbrViolations() {

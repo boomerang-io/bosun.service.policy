@@ -11,6 +11,7 @@ public class PolicyValidation {
   private String referenceId;
   private String referenceLink;
   private Map<String, String> labels;
+  private Map<String, String> annotations;
 
   public String getPolicyId() {
     return policyId;
@@ -42,5 +43,13 @@ public class PolicyValidation {
 
   public void setLabels(Map<String, String> labels) {
     this.labels = labels;
+  }
+
+  public Map<String, String> getAnnotations() {
+    return annotations;
+  }
+
+  public void setAnnotations(Map<String, String> annotations) {
+    this.annotations = annotations;
   }
 }

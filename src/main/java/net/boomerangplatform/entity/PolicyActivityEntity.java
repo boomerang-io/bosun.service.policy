@@ -18,6 +18,7 @@ public class PolicyActivityEntity {
   private String referenceLink;
   private String policyId;
   private Map<String, String> labels;
+  private Map<String, String> annotations;
   private Date createdDate;
   private List<Results> results;
   private Boolean valid;
@@ -68,6 +69,14 @@ public class PolicyActivityEntity {
 
   public void setLabels(Map<String, String> labels) {
     this.labels = labels;
+  }
+
+  public Map<String, String> getAnnotations() {
+    return annotations;
+  }
+
+  public void setAnnotations(Map<String, String> annotations) {
+    this.annotations = annotations;
   }
 
   public Date getCreatedDate() {

@@ -186,6 +186,7 @@ public class BosunServiceImpl implements BosunService {
 			policiesActivities.setTeamId(policyEntity.getTeamId());
 			policiesActivities.setPolicyId(policyEntity.getId());
 			policiesActivities.setLabels(policyValidation.getLabels());
+			policiesActivities.setAnnotations(policyValidation.getAnnotations());
 			policiesActivities.setReferenceLink(policyValidation.getReferenceLink());
 			policiesActivities.setReferenceId(policyValidation.getReferenceId());
 			policiesActivities.setCreatedDate(new Date());
@@ -353,6 +354,7 @@ public class BosunServiceImpl implements BosunService {
 			violation.setReferenceId(policyActivity.getReferenceId());
 			violation.setReferenceLink(policyActivity.getReferenceLink());
 			violation.setLabels(policyActivity.getLabels());
+			violation.setAnnotations(policyActivity.getAnnotations());
 			violation.setNbrViolations(0);
 			violation.setViolations(null);
 			violation.setPolicyActivityCreatedDate(policyActivity.getCreatedDate());
