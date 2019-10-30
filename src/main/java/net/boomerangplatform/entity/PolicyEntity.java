@@ -8,61 +8,71 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import net.boomerangplatform.model.PolicyConfig;
 import net.boomerangplatform.model.Scope;
+import net.boomerangplatform.model.Status;
 
 @Document(collection = "bosun_policies")
 public class PolicyEntity {
-	@Id
-	private String id;
+  @Id private String id;
 
-	private String name;
+  private String name;
 
-	private String teamId;
+  private String teamId;
 
-	private Date createdDate;
-	
-	private Scope scope;
+  private Date createdDate;
 
-	private List<PolicyConfig> definitions;
+  private Scope scope;
 
-	public String getId() {
-		return id;
-	}
+  private List<PolicyConfig> definitions;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+  private Status status;
 
-	public String getName() {
-		return name;
-	}
+  public String getId() {
+    return id;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setId(String id) {
+    this.id = id;
+  }
 
-	public String getTeamId() {
-		return teamId;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public void setTeamId(String teamId) {
-		this.teamId = teamId;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public Date getCreatedDate() {
-		return createdDate;
-	}
+  public String getTeamId() {
+    return teamId;
+  }
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
+  public void setTeamId(String teamId) {
+    this.teamId = teamId;
+  }
 
-	public List<PolicyConfig> getDefinitions() {
-		return definitions;
-	}
+  public Date getCreatedDate() {
+    return createdDate;
+  }
 
-	public void setDefinitions(List<PolicyConfig> definitions) {
-		this.definitions = definitions;
-	}
+  public void setCreatedDate(Date createdDate) {
+    this.createdDate = createdDate;
+  }
+
+  public List<PolicyConfig> getDefinitions() {
+    return definitions;
+  }
+
+  public void setDefinitions(List<PolicyConfig> definitions) {
+    this.definitions = definitions;
+  }
+
+  public Status getStatus() {
+    return status;
+  }
+
+  public void setStatus(Status status) {
+    this.status = status;
+  }
 
   public Scope getScope() {
     return scope;
@@ -71,6 +81,4 @@ public class PolicyEntity {
   public void setScope(Scope scope) {
     this.scope = scope;
   }
-	
-	
 }

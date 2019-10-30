@@ -29,6 +29,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.boomerangplatform.entity.PolicyActivityEntity;
 import net.boomerangplatform.entity.PolicyDefinitionEntity;
 import net.boomerangplatform.entity.PolicyEntity;
+import net.boomerangplatform.exception.BosunError;
+import net.boomerangplatform.exception.BosunException;
 import net.boomerangplatform.model.Policy;
 import net.boomerangplatform.model.PolicyActivitiesInsights;
 import net.boomerangplatform.model.PolicyConfig;
@@ -41,6 +43,7 @@ import net.boomerangplatform.model.PolicyViolations;
 import net.boomerangplatform.model.Results;
 import net.boomerangplatform.model.ResultsViolation;
 import net.boomerangplatform.model.Scope;
+import net.boomerangplatform.model.Status;
 import net.boomerangplatform.mongo.model.OperatorType;
 import net.boomerangplatform.opa.model.DataRequest;
 import net.boomerangplatform.opa.model.DataRequestInput;
@@ -174,46 +177,51 @@ public class BosunServiceImpl implements BosunService {
 	public PolicyActivityEntity validatePolicy(PolicyValidation policyValidation) {
 
 		PolicyEntity policyEntity = policyRepository.findById(policyValidation.getPolicyId()).orElse(null);
+		
+		if (policyEntity != null && policyEntity.getStatus().equals(Status.inactive)) {
+			throw new BosunException(BosunError.POLICY_DELETED.getMessage(policyEntity.getId()));
+		} else if (policyEntity != null) {
+			final PolicyActivityEntity policiesActivities = new PolicyActivityEntity();
+			policiesActivities.setTeamId(policyEntity.getTeamId());
+			policiesActivities.setPolicyId(policyEntity.getId());
+			policiesActivities.setLabels(policyValidation.getLabels());
+			policiesActivities.setReferenceId(policyValidation.getReferenceId());
+			policiesActivities.setCreatedDate(fromLocalDate(LocalDate.now(clock)));
+			policiesActivities.setValid(true);
 
-		final PolicyActivityEntity policiesActivities = new PolicyActivityEntity();
-		policiesActivities.setTeamId(policyEntity.getTeamId());
-		policiesActivities.setPolicyId(policyEntity.getId());
-		policiesActivities.setLabels(policyValidation.getLabels());
-		policiesActivities.setReferenceId(policyValidation.getReferenceId());
-		policiesActivities.setCreatedDate(fromLocalDate(LocalDate.now(clock)));
-		policiesActivities.setValid(true);
+			List<Results> results = new ArrayList<>();
 
-		List<Results> results = new ArrayList<>();
+			if (policyEntity.getDefinitions() != null) {
+				policyEntity.getDefinitions().stream()
+						.filter(policyConfig -> !CollectionUtils.isEmpty(policyConfig.getRules())).forEach(policyConfig -> {
 
-		if (policyEntity != null && policyEntity.getDefinitions() != null) {
-			policyEntity.getDefinitions().stream()
-					.filter(policyConfig -> !CollectionUtils.isEmpty(policyConfig.getRules())).forEach(policyConfig -> {
+							PolicyDefinitionEntity policyDefinitionEntity = policyDefinitionRepository
+									.findById(policyConfig.getPolicyDefinitionId()).orElse(null);
 
-						PolicyDefinitionEntity policyDefinitionEntity = policyDefinitionRepository
-								.findById(policyConfig.getPolicyDefinitionId()).orElse(null);
+							Results result = getResult(policyValidation.getLabels(),
+									policyConfig, policyDefinitionEntity);
 
-						Results result = getResult(policyValidation.getLabels(),
-								policyConfig, policyDefinitionEntity);
-
-						if (result != null) {
-							if (!result.getValid()) {
-								policiesActivities.setValid(false);
-								if (result.getViolations().isEmpty()) {
-									ResultsViolation resultsViolation = new ResultsViolation();
-									resultsViolation.setMetric(policyDefinitionEntity.getName());
-									resultsViolation.setMessage("No data exists for component/version");
-									resultsViolation.setValid(false);
-									result.getViolations().add(resultsViolation);
+							if (result != null) {
+								if (!result.getValid()) {
+									policiesActivities.setValid(false);
+									if (result.getViolations().isEmpty()) {
+										ResultsViolation resultsViolation = new ResultsViolation();
+										resultsViolation.setMetric(policyDefinitionEntity.getName());
+										resultsViolation.setMessage("No data exists for component/version");
+										resultsViolation.setValid(false);
+										result.getViolations().add(resultsViolation);
+									}
 								}
+								results.add(result);
 							}
-							results.add(result);
-						}
-					});
+						});
+			}
+			
+			policiesActivities.setResults(results);
+			return policyActivityRepository.save(policiesActivities);
+		} else {
+			throw new BosunException(BosunError.POLICY_NOT_FOUND.getMessage(policyValidation.getPolicyId()));
 		}
-
-		policiesActivities.setResults(results);
-		return policyActivityRepository.save(policiesActivities);
-
 	}
 
   @Override
@@ -545,20 +553,19 @@ public class BosunServiceImpl implements BosunService {
   public PolicyResponse deletePolicy(String policyId) {
     PolicyEntity policy = policyRepository.findById(policyId).orElse(null);
     PolicyResponse response = new PolicyResponse();
-    /* TODO: Fix compilation errors. 
-    if (getStagesForPolicy(policy.getTeamId(), policy.getId()).size() != 0) {
-      response.setStatus(409);
-      response.setMessage("Policy associated with gate");
-      response.setError("Unable to delete");
-      return response;
-    } else {
-      policyRepository.delete(policy);
+
+    if (policy != null) {
+      policy.setStatus(Status.inactive);
+      policyRepository.save(policy);
       response.setStatus(200);
       response.setMessage("Policy deleted");
       response.setError("Policy deleted");
       return response;
-    } */
-    
-    return null;
+    } else {
+      response.setStatus(409);
+      response.setMessage("Unable to mark inactive");
+      response.setError("Unable to mark inactive");
+      return response;
+    }
   }
 }
