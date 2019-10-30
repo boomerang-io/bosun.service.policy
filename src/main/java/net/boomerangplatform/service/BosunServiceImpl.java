@@ -166,7 +166,7 @@ public class BosunServiceImpl implements BosunService {
   public Policy updatePolicy(Policy policy) {
     PolicyEntity entity = policyRepository.findById(policy.getId()).orElse(null);
     policy.setScope(Scope.team);
-    policy.setCreatedDate(entity.getCreatedDate());
+//    policy.setCreatedDate(entity.getCreatedDate());
     policy.setDefinitions(getFilteredDefinition(policy.getDefinitions()));
 
     BeanUtils.copyProperties(policy, entity);
@@ -230,31 +230,31 @@ public class BosunServiceImpl implements BosunService {
   public List<PolicyInsights> getInsights(String teamId) {
     Map<String, PolicyInsights> insights = new HashMap<>();
     LocalDate date = LocalDate.now(clock).minusMonths(Integer.valueOf(insightsPeriodMonths));
-
-    List<PolicyActivityEntity> activities = policyActivityRepository
-        .findByTeamIdAndValidAndCreatedDateAfter(teamId, false, fromLocalDate(date));
-
-    for (PolicyActivityEntity activity : activities) {
-      String policyId = activity.getPolicyId();
-
-      PolicyInsights policyInsights = insights.get(policyId);
-      if (policyInsights == null && policyRepository.findById(policyId).isPresent()) {
-        Policy policy = getPolicyById(policyId);
-        policyInsights = new PolicyInsights();
-        policyInsights.setPolicyId(policy.getId());
-        policyInsights.setPolicyName(policy.getName());
-        policyInsights.setPolicyCreatedDate(policy.getCreatedDate());
-      }
-
-      PolicyActivitiesInsights policyActivitiesInsights =
-          getPolicyActivitiesInsights(activity, policyInsights);
-
-      if(policyInsights != null) {
-      policyInsights.addInsights(policyActivitiesInsights);
-      insights.put(policyId, policyInsights);
-      }
-     
-    }
+//
+//    List<PolicyActivityEntity> activities = policyActivityRepository
+//        .findByTeamIdAndValidAndCreatedDateAfter(teamId, false, fromLocalDate(date));
+//
+//    for (PolicyActivityEntity activity : activities) {
+//      String policyId = activity.getPolicyId();
+//
+//      PolicyInsights policyInsights = insights.get(policyId);
+//      if (policyInsights == null && policyRepository.findById(policyId).isPresent()) {
+//        Policy policy = getPolicyById(policyId);
+//        policyInsights = new PolicyInsights();
+//        policyInsights.setPolicyId(policy.getId());
+//        policyInsights.setPolicyName(policy.getName());
+//        policyInsights.setPolicyCreatedDate(policy.getCreatedDate());
+//      }
+//
+//      PolicyActivitiesInsights policyActivitiesInsights =
+//          getPolicyActivitiesInsights(activity, policyInsights);
+//
+//      if(policyInsights != null) {
+//      policyInsights.addInsights(policyActivitiesInsights);
+//      insights.put(policyId, policyInsights);
+//      }
+//     
+//    }
 
     return new ArrayList<>(insights.values());
   }
