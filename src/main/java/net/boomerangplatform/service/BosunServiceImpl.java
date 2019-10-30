@@ -1,8 +1,8 @@
 package net.boomerangplatform.service;
 
 import java.time.Clock;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -230,32 +230,32 @@ public class BosunServiceImpl implements BosunService {
   @Override
   public List<PolicyInsights> getInsights(String teamId) {
     Map<String, PolicyInsights> insights = new HashMap<>();
-    LocalDate date = LocalDate.now(clock).minusMonths(Integer.valueOf(insightsPeriodMonths));
-//
-//    List<PolicyActivityEntity> activities = policyActivityRepository
-//        .findByTeamIdAndValidAndCreatedDateAfter(teamId, false, fromLocalDate(date));
-//
-//    for (PolicyActivityEntity activity : activities) {
-//      String policyId = activity.getPolicyId();
-//
-//      PolicyInsights policyInsights = insights.get(policyId);
-//      if (policyInsights == null && policyRepository.findById(policyId).isPresent()) {
-//        Policy policy = getPolicyById(policyId);
-//        policyInsights = new PolicyInsights();
-//        policyInsights.setPolicyId(policy.getId());
-//        policyInsights.setPolicyName(policy.getName());
-//        policyInsights.setPolicyCreatedDate(policy.getCreatedDate());
-//      }
-//
-//      PolicyActivitiesInsights policyActivitiesInsights =
-//          getPolicyActivitiesInsights(activity, policyInsights);
-//
-//      if(policyInsights != null) {
-//      policyInsights.addInsights(policyActivitiesInsights);
-//      insights.put(policyId, policyInsights);
-//      }
-//     
-//    }
+    LocalDateTime date = LocalDateTime.now(clock).minusMonths(Integer.valueOf(insightsPeriodMonths));
+
+    List<PolicyActivityEntity> activities = policyActivityRepository
+        .findByTeamIdAndValidAndCreatedDateAfter(teamId, false, date);
+
+    for (PolicyActivityEntity activity : activities) {
+      String policyId = activity.getPolicyId();
+
+      PolicyInsights policyInsights = insights.get(policyId);
+      if (policyInsights == null && policyRepository.findById(policyId).isPresent()) {
+        Policy policy = getPolicyById(policyId);
+        policyInsights = new PolicyInsights();
+        policyInsights.setPolicyId(policy.getId());
+        policyInsights.setPolicyName(policy.getName());
+        policyInsights.setPolicyCreatedDate(policy.getCreatedDate());
+      }
+
+      PolicyActivitiesInsights policyActivitiesInsights =
+          getPolicyActivitiesInsights(activity, policyInsights);
+
+      if(policyInsights != null) {
+      policyInsights.addInsights(policyActivitiesInsights);
+      insights.put(policyId, policyInsights);
+      }
+     
+    }
 
     return new ArrayList<>(insights.values());
   }
@@ -270,31 +270,30 @@ public class BosunServiceImpl implements BosunService {
     return filteredDefinitions;
   }
 
-  private PolicyActivitiesInsights getPolicyActivitiesInsights(PolicyActivityEntity activity,
-      PolicyInsights policyInsights) {
+  private PolicyActivitiesInsights getPolicyActivitiesInsights(
+      PolicyActivityEntity activity, PolicyInsights policyInsights) {
     Integer failCount = getFaildedCount(activity);
 
     PolicyActivitiesInsights policyActivitiesInsights = null;
 
-//    if(policyInsights != null) {
-//    for (PolicyActivitiesInsights activites : policyInsights.getInsights()) {
-//      if (activites.getPolicyActivityId().equalsIgnoreCase(activity.ActivityId())) {
-//        policyActivitiesInsights = activites;
-//        policyInsights.removeInsights(activites);
-//        break;
-//      }
-//    }
-//    }
-//
-//    if (policyActivitiesInsights == null) {
-//    	policyActivitiesInsights = new PolicyActivitiesInsights();
-//    	policyActivitiesInsights.setPolicyActivityId(activity.getCiComponentActivityId());
-//    	policyActivitiesInsights.setPolicyActivityCreatedDate(activity.getCreatedDate());
-//    	policyActivitiesInsights.setViolations(failCount);
-//    } else {
-//      policyActivitiesInsights
-//          .setViolations(policyActivitiesInsights.getViolations() + failCount);
-//    }
+    if (policyInsights != null) {
+      for (PolicyActivitiesInsights activites : policyInsights.getInsights()) {
+        if (activites.getPolicyActivityId().equalsIgnoreCase(activity.getReferenceId())) {
+          policyActivitiesInsights = activites;
+          policyInsights.removeInsights(activites);
+          break;
+        }
+      }
+    }
+
+    if (policyActivitiesInsights == null) {
+      policyActivitiesInsights = new PolicyActivitiesInsights();
+      policyActivitiesInsights.setPolicyActivityId(activity.getReferenceId());
+      policyActivitiesInsights.setPolicyActivityCreatedDate(activity.getCreatedDate());
+      policyActivitiesInsights.setViolations(failCount);
+    } else {
+      policyActivitiesInsights.setViolations(policyActivitiesInsights.getViolations() + failCount);
+    }
     return policyActivitiesInsights;
   }
 
@@ -521,13 +520,7 @@ public class BosunServiceImpl implements BosunService {
   }
 
   private static Integer getFaildedCount(PolicyActivityEntity activity) {
-    Integer failCount = 0;
-    for (Results results : activity.getResults()) {
-      if (!results.getValid()) {
-        failCount++;
-      }
-    }
-    return failCount;
+    return (int) activity.getResults().stream().filter(result -> !result.getValid()).count();
   }
 
   private static JsonNode getJsonNode(Object obj, String key) {
@@ -546,10 +539,6 @@ public class BosunServiceImpl implements BosunService {
       LOGGER.info(e);
     }
     return null;
-  }
-
-  private static Date fromLocalDate(LocalDate date) {
-    return Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
   }
 
   @Override
