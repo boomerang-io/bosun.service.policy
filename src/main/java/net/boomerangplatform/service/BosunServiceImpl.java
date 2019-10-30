@@ -126,7 +126,7 @@ public class BosunServiceImpl implements BosunService {
     });
 
     List<PolicyEntity> globalPolicies = policyRepository.findByScope(Scope.global);
-    globalPolicies.forEach(entity -> {
+    globalPolicies.stream().filter(entity -> !entity.getStatus().equals(Status.inactive)).forEach(entity -> {
       Policy policy = new Policy();
       BeanUtils.copyProperties(entity, policy);
       policies.add(policy);
