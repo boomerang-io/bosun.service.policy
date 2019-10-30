@@ -119,7 +119,7 @@ public class BosunServiceImpl implements BosunService {
     List<PolicyEntity> entities = policyRepository.findByTeamId(teamId);
     List<Policy> policies = new ArrayList<>();
 
-    entities.forEach(entity -> {
+    entities.stream().filter(entity -> !entity.getStatus().equals(Status.inactive)).forEach(entity -> {
       Policy policy = new Policy();
       BeanUtils.copyProperties(entity, policy);
       policies.add(policy);
