@@ -154,6 +154,7 @@ public class BosunServiceImpl implements BosunService {
     policy.setScope(Scope.team);
     PolicyEntity entity = new PolicyEntity();
     BeanUtils.copyProperties(policy, entity);
+    entity.setStatus(Status.active);
     entity = policyRepository.insert(entity);
     policy.setId(entity.getId());
 
@@ -297,23 +298,23 @@ public class BosunServiceImpl implements BosunService {
 
 	@Override
 	public List<PolicyViolations> getViolations(String teamId) {
+//		TODO: return violations for globally scoped policies
 
 		Map<String, PolicyViolations> violationsMap = new HashMap<>();
 		
 		LOGGER.info("team.id=" + teamId);
 
 		List<PolicyEntity> policyEntities = policyRepository.findByTeamId(teamId);
-
-		for (PolicyEntity policyEntity : policyEntities) {
-
-			LOGGER.info("policy.name=" + policyEntity.getName());
+		
+		policyEntities.stream().filter(entity -> !entity.getStatus().equals(Status.inactive)).forEach(entity -> {
+			LOGGER.info("policy.name=" + entity.getName());
 			
-			List<PolicyActivityEntity> policyActivityEntities = policyActivityRepository.findTopDistinctViolationsByPolicyIdAndReferenceId(policyEntity.getId());
+			List<PolicyActivityEntity> policyActivityEntities = policyActivityRepository.findTopDistinctViolationsByPolicyIdAndReferenceId(entity.getId());
 
 			LOGGER.info("policyActivities.size=" + policyActivityEntities.size());
 
 			setViolations(violationsMap, policyActivityEntities);
-		}
+		});
 
 		return new ArrayList<>(violationsMap.values());
 	}
