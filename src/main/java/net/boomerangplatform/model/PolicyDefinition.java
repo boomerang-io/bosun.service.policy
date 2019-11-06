@@ -3,6 +3,7 @@ package net.boomerangplatform.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import net.boomerangplatform.model.PolicyDefinitionConfig;
 
@@ -15,6 +16,8 @@ public class PolicyDefinition implements Serializable {
   private String key;
 
   private String name;
+
+  private Date createdDate;
 
   private String description;
 
@@ -46,6 +49,14 @@ public class PolicyDefinition implements Serializable {
     this.name = name;
   }
 
+  public Date getCreatedDate() {
+    return createdDate;
+  }
+
+  public void setCreatedDate(Date createdDate) {
+    this.createdDate = createdDate;
+  }
+
   public String getDescription() {
     return description;
   }
@@ -69,6 +80,4 @@ public class PolicyDefinition implements Serializable {
   public void setConfig(List<PolicyDefinitionConfig> config) {
     this.config = config == null ? null : new ArrayList<>(config);
   }
-
-
 }

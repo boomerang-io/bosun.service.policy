@@ -2,7 +2,6 @@ package net.boomerangplatform.service;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -102,6 +102,37 @@ public class BosunServiceImpl implements BosunService {
     });
 
     return descriptions;
+  }
+  
+  @Override
+  public PolicyDefinition getDefinition(String definitionId) {
+    Optional<PolicyDefinitionEntity> entity = policyDefinitionRepository.findById(definitionId);
+    PolicyDefinition definition = new PolicyDefinition();
+    BeanUtils.copyProperties(entity, definition);
+    
+    return definition;
+  }
+
+  @Override
+  public PolicyDefinition addDefinition(PolicyDefinition definition) {
+    definition.setCreatedDate(new Date());
+
+	PolicyDefinitionEntity entity = new PolicyDefinitionEntity();
+    BeanUtils.copyProperties(definition, entity);
+    entity = policyDefinitionRepository.insert(entity);
+    definition.setId(entity.getId());
+
+    return definition;
+  }
+
+  @Override
+  public PolicyDefinition updateDefinition(String definitionId, PolicyDefinition definition) {
+    PolicyDefinitionEntity entity = policyDefinitionRepository.findById(definitionId).orElse(null);
+
+    BeanUtils.copyProperties(definition, entity);
+    policyDefinitionRepository.save(entity);
+
+    return definition;
   }
 
   @Override

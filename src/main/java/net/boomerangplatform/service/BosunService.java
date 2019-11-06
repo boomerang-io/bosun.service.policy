@@ -31,4 +31,10 @@ public interface BosunService {
   PolicyResponse deletePolicy(String ciPolicyId);
 
   PolicyActivityEntity validatePolicy(PolicyValidation policyValidation);
+
+PolicyDefinition getDefinition(String definitionId);
+
+PolicyDefinition addDefinition(PolicyDefinition definition);
+
+PolicyDefinition updateDefinition(String definitionId,PolicyDefinition definition);
 }

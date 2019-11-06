@@ -31,11 +31,6 @@ public class BosunController {
   @Autowired
   private BosunService bosunService;
 
-  @GetMapping(value = "/definitions")
-  public ResponseEntity<List<PolicyDefinition>> getAllDefinitions() {
-    return ResponseEntity.ok().body(bosunService.getAllDefinitions());
-  }
-
   @GetMapping(value = "/policies/operators")
   public ResponseEntity<Map<String, String>> getAllOperators() {
     return ResponseEntity.ok().body(bosunService.getAllOperators());
