@@ -2,13 +2,14 @@ package net.boomerangplatform.service;
 
 import java.util.List;
 import java.util.Map;
+
+import net.boomerangplatform.entity.PolicyActivityEntity;
 import net.boomerangplatform.model.Policy;
 import net.boomerangplatform.model.PolicyDefinition;
 import net.boomerangplatform.model.PolicyInsights;
-import net.boomerangplatform.model.PolicyViolations;
 import net.boomerangplatform.model.PolicyResponse;
 import net.boomerangplatform.model.PolicyValidation;
-import net.boomerangplatform.entity.PolicyActivityEntity;
+import net.boomerangplatform.model.PolicyViolations;
 
 public interface BosunService {
 

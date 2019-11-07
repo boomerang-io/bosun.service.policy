@@ -1,0 +1,11 @@
+services:
+  bosun:
+    url: http://docker.for.mac.localhost:8080/internal
+
+bundles:
+  bosun:
+    service: bosun
+    resource: bundle.tar.gz
+    polling:
+      min_delay_seconds: 60
+      max_delay_seconds: 300

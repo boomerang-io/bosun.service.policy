@@ -24,6 +24,8 @@ public class PolicyDefinition implements Serializable {
   private Integer order;
 
   private List<PolicyDefinitionConfig> config;
+  
+  private String rego;
 
   public String getId() {
     return id;
@@ -79,5 +81,13 @@ public class PolicyDefinition implements Serializable {
 
   public void setConfig(List<PolicyDefinitionConfig> config) {
     this.config = config == null ? null : new ArrayList<>(config);
+  }
+
+  public String getRego() {
+    return rego;
+  }
+
+  public void setRego(String rego) {
+    this.rego = rego;
   }
 }

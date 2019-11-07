@@ -20,6 +20,8 @@ public class PolicyDefinitionEntity {
   private Integer order;
 
   private List<PolicyDefinitionConfig> config;
+  
+  private String rego;
 
   public String getId() {
     return id;
@@ -69,4 +71,11 @@ public class PolicyDefinitionEntity {
     this.config = config;
   }
 
+  public String getRego() {
+    return rego;
+  }
+
+  public void setRego(String rego) {
+    this.rego = rego;
+  }
 }
