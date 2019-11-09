@@ -7,7 +7,7 @@ public class Result {
 
 	private String policyTemplateId;
 	private Boolean valid;
-	private List<ResultsViolation> violations;
+	private List<ResultViolation> violations;
 
 	public Result() {
     	//do nothing
@@ -29,14 +29,14 @@ public class Result {
 		this.valid = valid;
 	}
 
-	public List<ResultsViolation> getViolations() {
+	public List<ResultViolation> getViolations() {
 		if (violations == null) {
-			violations = new ArrayList<ResultsViolation>();
+			violations = new ArrayList<ResultViolation>();
 		}
 		return violations;
 	}
 
-	public void setViolations(List<ResultsViolation> violations) {
+	public void setViolations(List<ResultViolation> violations) {
 		this.violations = violations;
 	}
 }

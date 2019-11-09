@@ -1,40 +1,36 @@
 package net.boomerangplatform.model;
 
-import java.io.Serializable;
+public class ResultViolation {
 
-public class ResultViolation implements Serializable {
+	  private String metric;  
+	  private String message;
+	  private Boolean valid;
+	  
+	  public ResultViolation() {
+			// Do nothing
+	  }
 
-	private static final long serialVersionUID = 1L;
+	  public String getMetric() {
+	    return metric;
+	  }
 
-	private String metric;
-	private String message;
-	private Boolean valid;
+	  public void setMetric(String metric) {
+	    this.metric = metric;
+	  }
 
-	public ResultViolation() {
-		// Do nothing
-	}
+	  public String getMessage() {
+	    return message;
+	  }
 
-	public String getMetric() {
-		return metric;
-	}
+	  public void setMessage(String message) {
+	    this.message = message;
+	  }
 
-	public void setMetric(String metric) {
-		this.metric = metric;
-	}
+	  public Boolean getValid() {
+	    return valid;
+	  }
 
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
-	public Boolean getValid() {
-		return valid;
-	}
-
-	public void setValid(Boolean valid) {
-		this.valid = valid;
-	}
+	  public void setValid(Boolean valid) {
+	    this.valid = valid;
+	  }
 }

@@ -41,7 +41,7 @@ import net.boomerangplatform.model.PolicyValidation;
 import net.boomerangplatform.model.PolicyViolation;
 import net.boomerangplatform.model.PolicyViolations;
 import net.boomerangplatform.model.Result;
-import net.boomerangplatform.model.ResultsViolation;
+import net.boomerangplatform.model.ResultViolation;
 import net.boomerangplatform.model.Scope;
 import net.boomerangplatform.model.Status;
 import net.boomerangplatform.mongo.model.OperatorType;
@@ -239,11 +239,11 @@ public class BosunServiceImpl implements BosunService {
 								if (!result.getValid()) {
 									policiesActivities.setValid(false);
 									if (result.getViolations().isEmpty()) {
-										ResultsViolation resultsViolation = new ResultsViolation();
-										resultsViolation.setMetric(policyTemplateEntity.getName());
-										resultsViolation.setMessage("No data exists for component/version");
-										resultsViolation.setValid(false);
-										result.getViolations().add(resultsViolation);
+										ResultViolation resultViolation = new ResultViolation();
+										resultViolation.setMetric(policyTemplateEntity.getName());
+										resultViolation.setMessage("No data exists for component/version");
+										resultViolation.setValid(false);
+										result.getViolations().add(resultViolation);
 									}
 								}
 								results.add(result);
@@ -406,15 +406,15 @@ public class BosunServiceImpl implements BosunService {
     List<PolicyViolation> resultsViolations = new ArrayList<>();
     for (Result result : policyActivity.getResults()) {
       if (!result.getValid() && !result.getViolations().isEmpty()) {
-        resultsViolations.addAll(getPolicyViolations(result.getViolations()));
+        resultsViolations.addAll(getPolicyViolation(result.getViolations()));
       }
     }
     return resultsViolations;
   }
 
-  private List<PolicyViolation> getPolicyViolations(List<ResultsViolation> violations) {
+  private List<PolicyViolation> getPolicyViolation(List<ResultViolation> violations) {
 	  List<PolicyViolation> policyViolations = new ArrayList<>();
-	  for (ResultsViolation resultsViolation : violations) {
+	  for (ResultViolation resultsViolation : violations) {
 		  PolicyViolation policyViolation = new PolicyViolation();
 		  policyViolation.setMetric(resultsViolation.getMetric());
 		  policyViolation.setMessage(resultsViolation.getMessage());
@@ -494,7 +494,7 @@ public class BosunServiceImpl implements BosunService {
   private Result getDefaultResult(String policyTemplateId) {
     Result result = new Result();
     result.setPolicyTemplateId(policyTemplateId);
-    result.setViolations(new ArrayList<ResultsViolation>());
+    result.setViolations(new ArrayList<ResultViolation>());
     result.setValid(false);
 
     return result;
@@ -514,10 +514,10 @@ public class BosunServiceImpl implements BosunService {
     return result;
   }
   
-  private List<ResultsViolation> getResultsViolation(List<DataResponseResultViolation> dataResponseResultViolations) {
-	  List<ResultsViolation> resultsViolations = new ArrayList<ResultsViolation>();
+  private List<ResultViolation> getResultsViolation(List<DataResponseResultViolation> dataResponseResultViolations) {
+	  List<ResultViolation> resultsViolations = new ArrayList<ResultViolation>();
 	  for (DataResponseResultViolation dataResponseResultViolation : dataResponseResultViolations) {
-		  ResultsViolation resultsViolation = new ResultsViolation();
+		  ResultViolation resultsViolation = new ResultViolation();
 		  resultsViolation.setMessage(dataResponseResultViolation.getMessage());
 		  resultsViolation.setMetric(dataResponseResultViolation.getMetric());
 		  resultsViolation.setValid(dataResponseResultViolation.getValid());
