@@ -1,17 +1,26 @@
 {
 	"info": {
-		"_postman_id": "05449a45-0d98-4a18-9455-b7555e34e1da",
+		"_postman_id": "97a8448d-b0d3-4835-98f7-a75019cbde81",
 		"name": "boomerang.service.bosun",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "getAllDefinitions",
+			"name": "getAllTemplates",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": ""
+					"raw": "http://localhost:8080/bosun/templates",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"bosun",
+						"templates"
+					]
 				}
 			},
 			"response": []
@@ -30,7 +39,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"policyId\":\"5db9a8c7b01c530001b838d1\",\n\t\"referenceId\":\"boomerang.service.flow_2.1.13-195\",\n\t\"labels\":{\n\t\t\"sonarqube-id\":\"5bc69daa1516b200011020ee\",\n\t\t\"sonarqube-version\":\"2.1.13-195\",\n\t\t\"artifact-path\":\"ise\",\n\t\t\"artifact-name\":\"boomerang.service.flow\",\n\t\t\"artifact-version\":\"2.1.13-195\"\t\t\n\t}\n}",
+					"raw": "{\n\t\"policyId\":\"5db9a8c7b01c530001b838d1\",\n\t\"referenceId\":\"boomerangServiceFlow\",\n\t\"referenceLink\":\"https://launch.boomerangplatform.net/apps/ci/teams/gbs-engineering/boomerang.service.flow\",\n\t\"labels\":{\n\t\t\"sonarqube-id\":\"5bc69daa1516b200011020ee\",\n\t\t\"sonarqube-version\":\"2.1.13-195\",\n\t\t\"artifact-path\":\"ise\",\n\t\t\"artifact-name\":\"boomerang.service.flow\",\n\t\t\"artifact-version\":\"2.1.13-195\"\n\t}\n}",
 					"options": {
 						"raw": {
 							"language": "json"
