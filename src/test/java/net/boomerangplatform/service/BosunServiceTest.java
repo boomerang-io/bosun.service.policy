@@ -158,7 +158,7 @@ public class BosunServiceTest extends AbstractBoomerangTest {
     Assert.assertEquals(1, policy.getDefinitions().size());
 
     PolicyConfig definition = policy.getDefinitions().get(0);
-    Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definition.getPolicyDefinitionId());
+    Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definition.getPolicyTemplateId());
 
     Assert.assertEquals(2, definition.getRules().size());
     Map<String, String> rule = definition.getRules().get(0);
@@ -182,7 +182,7 @@ public class BosunServiceTest extends AbstractBoomerangTest {
     PolicyConfig definition = policyReturn.getDefinitions().get(0);
 
 
-    String definitionId = definition.getPolicyDefinitionId();
+    String definitionId = definition.getPolicyTemplateId();
     Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definitionId);
 
 
@@ -191,7 +191,7 @@ public class BosunServiceTest extends AbstractBoomerangTest {
 
     Policy policyFound = policies.get(0);
     Assert.assertEquals(definitionId,
-        policyFound.getDefinitions().get(0).getPolicyDefinitionId());
+        policyFound.getDefinitions().get(0).getPolicyTemplateId());
   }
 
 
@@ -206,7 +206,7 @@ public class BosunServiceTest extends AbstractBoomerangTest {
     Assert.assertEquals("Code Low Validation", policyReturn.getName());
 
     PolicyConfig ciPolicyConfig = policyReturn.getDefinitions().get(0);
-    String definitionId = ciPolicyConfig.getPolicyDefinitionId();
+    String definitionId = ciPolicyConfig.getPolicyTemplateId();
     Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definitionId);
 
 
@@ -265,7 +265,7 @@ public class BosunServiceTest extends AbstractBoomerangTest {
     Assert.assertEquals(Boolean.FALSE, savedEntity.getResults().get(0).getValid());
 //    Assert.assertEquals("[]", savedEntity.getResults().get(0).getViolations());
     Assert.assertEquals("5cd328ae1e9bbbb710590d9d",
-        savedEntity.getResults().get(0).getPolicyDefinitionId());
+        savedEntity.getResults().get(0).getPolicyTemplateId());
 
     server.verify();
 
@@ -303,7 +303,7 @@ public class BosunServiceTest extends AbstractBoomerangTest {
     Assert.assertEquals(Boolean.FALSE, savedEntity.getResults().get(0).getValid());
 //    Assert.assertEquals("[]", savedEntity.getResults().get(0).getViolations());
     Assert.assertEquals("5cdd8425f6ea74a9bbaf2fe6",
-        savedEntity.getResults().get(0).getPolicyDefinitionId());
+        savedEntity.getResults().get(0).getPolicyTemplateId());
 
     server.verify();
 
@@ -341,7 +341,7 @@ public class BosunServiceTest extends AbstractBoomerangTest {
     Assert.assertEquals(Boolean.FALSE, savedEntity.getResults().get(0).getValid());
 //    Assert.assertEquals("[]", savedEntity.getResults().get(0).getViolations());
     Assert.assertEquals("5cd498f3f6ea74a9bb6ad0f3",
-        savedEntity.getResults().get(0).getPolicyDefinitionId());
+        savedEntity.getResults().get(0).getPolicyTemplateId());
 
     server.verify();
 

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import net.boomerangplatform.entity.PolicyActivityEntity;
 import net.boomerangplatform.model.Policy;
-import net.boomerangplatform.model.PolicyDefinition;
+import net.boomerangplatform.model.PolicyTemplate;
 import net.boomerangplatform.model.PolicyInsights;
 import net.boomerangplatform.model.PolicyResponse;
 import net.boomerangplatform.model.PolicyValidation;
@@ -13,7 +13,7 @@ import net.boomerangplatform.model.PolicyViolations;
 
 public interface BosunService {
 
-  List<PolicyDefinition> getAllDefinitions();
+  List<PolicyTemplate> getAllTemplates();
 
   Map<String, String> getAllOperators();
 
@@ -33,9 +33,9 @@ public interface BosunService {
 
   PolicyActivityEntity validatePolicy(PolicyValidation policyValidation);
 
-PolicyDefinition getDefinition(String definitionId);
+PolicyTemplate getTemplate(String templateId);
 
-PolicyDefinition addDefinition(PolicyDefinition definition);
+PolicyTemplate addTemplate(PolicyTemplate template);
 
-PolicyDefinition updateDefinition(String definitionId,PolicyDefinition definition);
+PolicyTemplate updateTemplate(String templateId,PolicyTemplate template);
 }

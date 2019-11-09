@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import net.boomerangplatform.entity.PolicyActivityEntity;
 import net.boomerangplatform.model.Policy;
-import net.boomerangplatform.model.PolicyDefinition;
+import net.boomerangplatform.model.PolicyTemplate;
 import net.boomerangplatform.model.PolicyInsights;
 import net.boomerangplatform.model.PolicyResponse;
 import net.boomerangplatform.model.PolicyValidation;

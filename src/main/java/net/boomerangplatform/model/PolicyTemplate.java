@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import net.boomerangplatform.model.PolicyDefinitionConfig;
+import net.boomerangplatform.model.PolicyTemplateConfig;
 
-public class PolicyDefinition implements Serializable {
+public class PolicyTemplate implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
@@ -23,7 +23,7 @@ public class PolicyDefinition implements Serializable {
 
   private Integer order;
 
-  private List<PolicyDefinitionConfig> config;
+  private List<PolicyTemplateConfig> config;
   
   private String rego;
 
@@ -75,11 +75,11 @@ public class PolicyDefinition implements Serializable {
     this.order = order;
   }
 
-  public List<PolicyDefinitionConfig> getConfig() {
+  public List<PolicyTemplateConfig> getConfig() {
     return config == null ? null : Collections.unmodifiableList(config);
   }
 
-  public void setConfig(List<PolicyDefinitionConfig> config) {
+  public void setConfig(List<PolicyTemplateConfig> config) {
     this.config = config == null ? null : new ArrayList<>(config);
   }
 

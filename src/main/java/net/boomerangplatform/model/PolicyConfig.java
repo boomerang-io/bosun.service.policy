@@ -8,17 +8,17 @@ public class PolicyConfig implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  private String policyDefinitionId;
+  private String policyTemplateId;
 
   private List<Map<String, String>> rules;
   
 
-  public String getPolicyDefinitionId() {
-    return policyDefinitionId;
+  public String getPolicyTemplateId() {
+    return policyTemplateId;
   }
 
-  public void setPolicyDefinitionId(String policyDefinitionId) {
-    this.policyDefinitionId = policyDefinitionId;
+  public void setPolicyTemplateId(String policyTemplateId) {
+    this.policyTemplateId = policyTemplateId;
   }
 
   public List<Map<String, String>> getRules() {

@@ -27,14 +27,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.boomerangplatform.entity.PolicyActivityEntity;
-import net.boomerangplatform.entity.PolicyDefinitionEntity;
+import net.boomerangplatform.entity.PolicyTemplateEntity;
 import net.boomerangplatform.entity.PolicyEntity;
 import net.boomerangplatform.exception.BosunError;
 import net.boomerangplatform.exception.BosunException;
 import net.boomerangplatform.model.Policy;
 import net.boomerangplatform.model.PolicyActivitiesInsights;
 import net.boomerangplatform.model.PolicyConfig;
-import net.boomerangplatform.model.PolicyDefinition;
+import net.boomerangplatform.model.PolicyTemplate;
 import net.boomerangplatform.model.PolicyInsights;
 import net.boomerangplatform.model.PolicyResponse;
 import net.boomerangplatform.model.PolicyValidation;
@@ -52,7 +52,7 @@ import net.boomerangplatform.opa.model.DataResponse;
 import net.boomerangplatform.opa.model.DataResponseResultViolation;
 import net.boomerangplatform.opa.service.OpenPolicyAgentClient;
 import net.boomerangplatform.repository.PolicyActivityRepository;
-import net.boomerangplatform.repository.PolicyDefinitionRepository;
+import net.boomerangplatform.repository.PolicyTemplateRepository;
 import net.boomerangplatform.repository.PolicyRepository;
 import net.boomerangplatform.repository.model.ArtifactSummary;
 import net.boomerangplatform.repository.model.DependencyGraph;
@@ -69,7 +69,7 @@ public class BosunServiceImpl implements BosunService {
   private PolicyRepository policyRepository;
 
   @Autowired
-  private PolicyDefinitionRepository policyDefinitionRepository;
+  private PolicyTemplateRepository policyTemplateRepository;
 
   @Autowired
   private PolicyActivityRepository policyActivityRepository;
@@ -91,12 +91,12 @@ public class BosunServiceImpl implements BosunService {
   }
 
   @Override
-  public List<PolicyDefinition> getAllDefinitions() {
-    List<PolicyDefinitionEntity> entities = policyDefinitionRepository.findAll(new Sort(Sort.Direction.ASC, "order"));
-    List<PolicyDefinition> descriptions = new ArrayList<>();
+  public List<PolicyTemplate> getAllTemplates() {
+    List<PolicyTemplateEntity> entities = policyTemplateRepository.findAll(new Sort(Sort.Direction.ASC, "order"));
+    List<PolicyTemplate> descriptions = new ArrayList<>();
 
     entities.forEach(entity -> {
-      PolicyDefinition description = new PolicyDefinition();
+      PolicyTemplate description = new PolicyTemplate();
       BeanUtils.copyProperties(entity, description);
       descriptions.add(description);
     });
@@ -105,34 +105,34 @@ public class BosunServiceImpl implements BosunService {
   }
   
   @Override
-  public PolicyDefinition getDefinition(String definitionId) {
-    Optional<PolicyDefinitionEntity> entity = policyDefinitionRepository.findById(definitionId);
-    PolicyDefinition definition = new PolicyDefinition();
-    BeanUtils.copyProperties(entity, definition);
+  public PolicyTemplate getTemplate(String templateId) {
+    Optional<PolicyTemplateEntity> entity = policyTemplateRepository.findById(templateId);
+    PolicyTemplate template = new PolicyTemplate();
+    BeanUtils.copyProperties(entity, template);
     
-    return definition;
+    return template;
   }
 
   @Override
-  public PolicyDefinition addDefinition(PolicyDefinition definition) {
-    definition.setCreatedDate(new Date());
+  public PolicyTemplate addTemplate(PolicyTemplate template) {
+    template.setCreatedDate(new Date());
 
-	PolicyDefinitionEntity entity = new PolicyDefinitionEntity();
-    BeanUtils.copyProperties(definition, entity);
-    entity = policyDefinitionRepository.insert(entity);
-    definition.setId(entity.getId());
+	PolicyTemplateEntity entity = new PolicyTemplateEntity();
+    BeanUtils.copyProperties(template, entity);
+    entity = policyTemplateRepository.insert(entity);
+    template.setId(entity.getId());
 
-    return definition;
+    return template;
   }
 
   @Override
-  public PolicyDefinition updateDefinition(String definitionId, PolicyDefinition definition) {
-    PolicyDefinitionEntity entity = policyDefinitionRepository.findById(definitionId).orElse(null);
+  public PolicyTemplate updateTemplate(String templateId, PolicyTemplate template) {
+    PolicyTemplateEntity entity = policyTemplateRepository.findById(templateId).orElse(null);
 
-    BeanUtils.copyProperties(definition, entity);
-    policyDefinitionRepository.save(entity);
+    BeanUtils.copyProperties(template, entity);
+    policyTemplateRepository.save(entity);
 
-    return definition;
+    return template;
   }
 
   @Override
@@ -229,18 +229,18 @@ public class BosunServiceImpl implements BosunService {
 				policyEntity.getDefinitions().stream()
 						.filter(policyConfig -> !CollectionUtils.isEmpty(policyConfig.getRules())).forEach(policyConfig -> {
 
-							PolicyDefinitionEntity policyDefinitionEntity = policyDefinitionRepository
-									.findById(policyConfig.getPolicyDefinitionId()).orElse(null);
+							PolicyTemplateEntity policyTemplateEntity = policyTemplateRepository
+									.findById(policyConfig.getPolicyTemplateId()).orElse(null);
 
 							Results result = getResult(policyValidation.getLabels(),
-									policyConfig, policyDefinitionEntity);
+									policyConfig, policyTemplateEntity);
 
 							if (result != null) {
 								if (!result.getValid()) {
 									policiesActivities.setValid(false);
 									if (result.getViolations().isEmpty()) {
 										ResultsViolation resultsViolation = new ResultsViolation();
-										resultsViolation.setMetric(policyDefinitionEntity.getName());
+										resultsViolation.setMetric(policyTemplateEntity.getName());
 										resultsViolation.setMessage("No data exists for component/version");
 										resultsViolation.setValid(false);
 										result.getViolations().add(resultsViolation);
@@ -438,12 +438,12 @@ public class BosunServiceImpl implements BosunService {
 		List<String> violationsDefinitionTypes = new ArrayList<>();
 		for (Results result : policyActivity.getResults()) {
 			if (!result.getValid()) {
-				String policyDefinitionId = result.getPolicyDefinitionId() != null ? result.getPolicyDefinitionId() : "";
-				LOGGER.info("policyDefinitionId=" + policyDefinitionId);
-				PolicyDefinitionEntity policyDefinitionEntity = policyDefinitionRepository.findById(policyDefinitionId).orElse(null);
-				if (policyDefinitionEntity != null && !current.contains(policyDefinitionEntity.getName())) {
-					LOGGER.info("policyDefinitionName=" + policyDefinitionEntity.getName());
-					violationsDefinitionTypes.add(policyDefinitionEntity.getName());
+				String policyTemplateId = result.getPolicyTemplateId() != null ? result.getPolicyTemplateId() : "";
+				LOGGER.info("policyTemplateId=" + policyTemplateId);
+				PolicyTemplateEntity policyTemplateEntity = policyTemplateRepository.findById(policyTemplateId).orElse(null);
+				if (policyTemplateEntity != null && !current.contains(policyTemplateEntity.getName())) {
+					LOGGER.info("policyDefinitionName=" + policyTemplateEntity.getName());
+					violationsDefinitionTypes.add(policyTemplateEntity.getName());
 				}
 			}
 		}		
@@ -451,7 +451,7 @@ public class BosunServiceImpl implements BosunService {
 	}
 
   private Results getResult(Map<String, String> labels, PolicyConfig policyConfig,
-      PolicyDefinitionEntity policyDefinition) {
+      PolicyTemplateEntity policyDefinition) {
 
     if (policyDefinition == null) {
       return null;
@@ -491,23 +491,23 @@ public class BosunServiceImpl implements BosunService {
     return result;
   }
 
-  private Results getDefaultResult(String policyDefinitionId) {
+  private Results getDefaultResult(String policyTemplateId) {
     Results result = new Results();
-    result.setPolicyDefinitionId(policyDefinitionId);
+    result.setPolicyTemplateId(policyTemplateId);
     result.setViolations(new ArrayList<ResultsViolation>());
     result.setValid(false);
 
     return result;
   }
 
-  private Results getResults(PolicyDefinitionEntity policyDefinitionEntity,
+  private Results getResults(PolicyTemplateEntity policyTemplateEntity,
       PolicyConfig policyConfig, JsonNode data) {
 
-    DataResponse dataResponse = callOpenPolicyAgentClient(policyDefinitionEntity.getId(),
-        policyDefinitionEntity.getKey(), policyConfig.getRules(), data);
+    DataResponse dataResponse = callOpenPolicyAgentClient(policyTemplateEntity.getId(),
+        policyTemplateEntity.getKey(), policyConfig.getRules(), data);
 
     Results result = new Results();
-    result.setPolicyDefinitionId(policyDefinitionEntity.getId());    
+    result.setPolicyTemplateId(policyTemplateEntity.getId());    
     result.setViolations(getResultsViolation(dataResponse.getResult().getViolations()));
     result.setValid(dataResponse.getResult().getValid());
 
@@ -526,12 +526,12 @@ public class BosunServiceImpl implements BosunService {
 	  return resultsViolations;
   }
 
-  private DataResponse callOpenPolicyAgentClient(String policyDefinitionId,
-      String policyDefinitionKey, List<Map<String, String>> rules, JsonNode data) {
+  private DataResponse callOpenPolicyAgentClient(String policyTemplateId,
+      String policyTemplateKey, List<Map<String, String>> rules, JsonNode data) {
 
     DataRequestPolicy dataRequestPolicy = new DataRequestPolicy();
-    dataRequestPolicy.setId(policyDefinitionId);
-    dataRequestPolicy.setKey(policyDefinitionKey);
+    dataRequestPolicy.setId(policyTemplateId);
+    dataRequestPolicy.setKey(policyTemplateKey);
     dataRequestPolicy.setRules(rules);
 
     DataRequestInput dataRequestInput = new DataRequestInput();

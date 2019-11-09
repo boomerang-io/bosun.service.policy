@@ -8,7 +8,7 @@ public class Result implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
-	private String ciPolicyDefinitionId;
+	private String policyTemplateId;
 	private boolean valid;
 	private List<ResultViolation> violations;
 
@@ -16,12 +16,12 @@ public class Result implements Serializable {
 		// Do nothing
 	}
 
-	public String getCiPolicyDefinitionId() {
-		return ciPolicyDefinitionId;
+	public String getPolicyTemplateId() {
+		return policyTemplateId;
 	}
 
-	public void setCiPolicyDefinitionId(String ciPolicyDefinitionId) {
-		this.ciPolicyDefinitionId = ciPolicyDefinitionId;
+	public void setCiPolicyDefinitionId(String policyTemplateId) {
+		this.policyTemplateId = policyTemplateId;
 	}
 
 	public boolean isValid() {
