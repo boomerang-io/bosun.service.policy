@@ -16,7 +16,7 @@ import net.boomerangplatform.AbstractBoomerangTest;
 import net.boomerangplatform.Application;
 import net.boomerangplatform.MongoConfig;
 import net.boomerangplatform.mongo.model.Audit;
-import net.boomerangplatform.team.model.CiTeam;
+import net.boomerangplatform.model.PolicyTeam;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles(profiles = "test")
@@ -25,7 +25,7 @@ import net.boomerangplatform.team.model.CiTeam;
 public class TeamServiceTest extends AbstractBoomerangTest {
 
   @Autowired
-  private TeamService teamService;
+  private PolicyTeamService teamService;
 
   @Override
   protected String[] getCollections() {

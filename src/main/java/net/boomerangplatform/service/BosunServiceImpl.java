@@ -27,20 +27,20 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.boomerangplatform.entity.PolicyActivityEntity;
-import net.boomerangplatform.entity.PolicyTemplateEntity;
 import net.boomerangplatform.entity.PolicyEntity;
+import net.boomerangplatform.entity.PolicyTemplateEntity;
 import net.boomerangplatform.exception.BosunError;
 import net.boomerangplatform.exception.BosunException;
 import net.boomerangplatform.model.Policy;
 import net.boomerangplatform.model.PolicyActivitiesInsights;
 import net.boomerangplatform.model.PolicyConfig;
-import net.boomerangplatform.model.PolicyTemplate;
 import net.boomerangplatform.model.PolicyInsights;
 import net.boomerangplatform.model.PolicyResponse;
+import net.boomerangplatform.model.PolicyTemplate;
 import net.boomerangplatform.model.PolicyValidation;
 import net.boomerangplatform.model.PolicyViolation;
 import net.boomerangplatform.model.PolicyViolations;
-import net.boomerangplatform.model.Results;
+import net.boomerangplatform.model.Result;
 import net.boomerangplatform.model.ResultsViolation;
 import net.boomerangplatform.model.Scope;
 import net.boomerangplatform.model.Status;
@@ -52,8 +52,8 @@ import net.boomerangplatform.opa.model.DataResponse;
 import net.boomerangplatform.opa.model.DataResponseResultViolation;
 import net.boomerangplatform.opa.service.OpenPolicyAgentClient;
 import net.boomerangplatform.repository.PolicyActivityRepository;
-import net.boomerangplatform.repository.PolicyTemplateRepository;
 import net.boomerangplatform.repository.PolicyRepository;
+import net.boomerangplatform.repository.PolicyTemplateRepository;
 import net.boomerangplatform.repository.model.ArtifactSummary;
 import net.boomerangplatform.repository.model.DependencyGraph;
 import net.boomerangplatform.repository.model.SonarQubeReport;
@@ -223,7 +223,7 @@ public class BosunServiceImpl implements BosunService {
 			policiesActivities.setCreatedDate(new Date());
 			policiesActivities.setValid(true);
 
-			List<Results> results = new ArrayList<>();
+			List<Result> results = new ArrayList<>();
 
 			if (policyEntity.getDefinitions() != null) {
 				policyEntity.getDefinitions().stream()
@@ -232,7 +232,7 @@ public class BosunServiceImpl implements BosunService {
 							PolicyTemplateEntity policyTemplateEntity = policyTemplateRepository
 									.findById(policyConfig.getPolicyTemplateId()).orElse(null);
 
-							Results result = getResult(policyValidation.getLabels(),
+							Result result = getResult(policyValidation.getLabels(),
 									policyConfig, policyTemplateEntity);
 
 							if (result != null) {
@@ -404,9 +404,9 @@ public class BosunServiceImpl implements BosunService {
 
   private List<PolicyViolation> getViolationsResults(PolicyActivityEntity policyActivity) {
     List<PolicyViolation> resultsViolations = new ArrayList<>();
-    for (Results results : policyActivity.getResults()) {
-      if (!results.getValid() && !results.getViolations().isEmpty()) {
-        resultsViolations.addAll(getPolicyViolations(results.getViolations()));
+    for (Result result : policyActivity.getResults()) {
+      if (!result.getValid() && !result.getViolations().isEmpty()) {
+        resultsViolations.addAll(getPolicyViolations(result.getViolations()));
       }
     }
     return resultsViolations;
@@ -426,7 +426,7 @@ public class BosunServiceImpl implements BosunService {
 
   private Integer getViolationsTotal(PolicyActivityEntity policyActivity) {
     Integer violationsTotal = 0;
-    for (Results result : policyActivity.getResults()) {
+    for (Result result : policyActivity.getResults()) {
       if (!result.getValid()) {
         violationsTotal++;
       }
@@ -436,7 +436,7 @@ public class BosunServiceImpl implements BosunService {
   
 	private List<String> getViolationsDefinitionTypes(List<String> current, PolicyActivityEntity policyActivity) {
 		List<String> violationsDefinitionTypes = new ArrayList<>();
-		for (Results result : policyActivity.getResults()) {
+		for (Result result : policyActivity.getResults()) {
 			if (!result.getValid()) {
 				String policyTemplateId = result.getPolicyTemplateId() != null ? result.getPolicyTemplateId() : "";
 				LOGGER.info("policyTemplateId=" + policyTemplateId);
@@ -450,37 +450,37 @@ public class BosunServiceImpl implements BosunService {
 		return violationsDefinitionTypes;
 	}
 
-  private Results getResult(Map<String, String> labels, PolicyConfig policyConfig,
+  private Result getResult(Map<String, String> labels, PolicyConfig policyConfig,
       PolicyTemplateEntity policyDefinition) {
 
     if (policyDefinition == null) {
       return null;
     }
 
-    Results result = getDefaultResult(policyDefinition.getId());
+    Result result = getDefaultResult(policyDefinition.getId());
     String key = policyDefinition.getKey().toLowerCase(Locale.US);
     switch (key) {
       case "static_code_analysis":
         SonarQubeReport sonarQubeReport =
             repositoryService.getSonarQubeReport(labels.get("sonarqube-id"), labels.get("sonarqube-version"));
-        result = getResults(policyDefinition, policyConfig, getJsonNode(sonarQubeReport, key));
+        result = getResult(policyDefinition, policyConfig, getJsonNode(sonarQubeReport, key));
         break;
       case "unit_tests":
         SonarQubeReport sonarQubeTestCoverage =
             repositoryService.getSonarQubeTestCoverage(labels.get("sonarqube-id"), labels.get("sonarqube-version"));
         result =
-            getResults(policyDefinition, policyConfig, getJsonNode(sonarQubeTestCoverage, key));
+            getResult(policyDefinition, policyConfig, getJsonNode(sonarQubeTestCoverage, key));
         break;
       case "package_safelist":
         DependencyGraph dependencyGraph =
             repositoryService.getDependencyGraph(labels.get("artifact-path"), labels.get("artifact-name"), labels.get("artifact-version"));
-        result = getResults(policyDefinition, policyConfig, getJsonNode(dependencyGraph, key));
+        result = getResult(policyDefinition, policyConfig, getJsonNode(dependencyGraph, key));
         break;
       case "cve_safelist":
       case "security_issue_analysis":
         ArtifactSummary summary = repositoryService.getArtifactSummary(labels.get("artifact-path"), labels.get("artifact-name"), labels.get("artifact-version"));
         if (!summary.getArtifacts().isEmpty()) {
-          result = getResults(policyDefinition, policyConfig,
+          result = getResult(policyDefinition, policyConfig,
               getJsonNode(summary.getArtifacts().get(0).getIssues(), key));
         }
         break;
@@ -491,8 +491,8 @@ public class BosunServiceImpl implements BosunService {
     return result;
   }
 
-  private Results getDefaultResult(String policyTemplateId) {
-    Results result = new Results();
+  private Result getDefaultResult(String policyTemplateId) {
+    Result result = new Result();
     result.setPolicyTemplateId(policyTemplateId);
     result.setViolations(new ArrayList<ResultsViolation>());
     result.setValid(false);
@@ -500,13 +500,13 @@ public class BosunServiceImpl implements BosunService {
     return result;
   }
 
-  private Results getResults(PolicyTemplateEntity policyTemplateEntity,
+  private Result getResult(PolicyTemplateEntity policyTemplateEntity,
       PolicyConfig policyConfig, JsonNode data) {
 
     DataResponse dataResponse = callOpenPolicyAgentClient(policyTemplateEntity.getId(),
         policyTemplateEntity.getKey(), policyConfig.getRules(), data);
 
-    Results result = new Results();
+    Result result = new Result();
     result.setPolicyTemplateId(policyTemplateEntity.getId());    
     result.setViolations(getResultsViolation(dataResponse.getResult().getViolations()));
     result.setValid(dataResponse.getResult().getValid());

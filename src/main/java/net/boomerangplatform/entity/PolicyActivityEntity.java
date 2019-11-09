@@ -7,7 +7,7 @@ import java.util.Map;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import net.boomerangplatform.model.Results;
+import net.boomerangplatform.model.Result;
 
 @Document(collection = "bosun_activities")
 public class PolicyActivityEntity {
@@ -20,7 +20,7 @@ public class PolicyActivityEntity {
   private Map<String, String> labels;
   private Map<String, String> annotations;
   private Date createdDate;
-  private List<Results> results;
+  private List<Result> results;
   private Boolean valid;
 
   public String getId() {
@@ -87,11 +87,11 @@ public class PolicyActivityEntity {
     this.createdDate = createdDate;
   }
 
-  public List<Results> getResults() {
+  public List<Result> getResults() {
     return results;
   }
 
-  public void setResults(List<Results> results) {
+  public void setResults(List<Result> results) {
     this.results = results;
   }
 
