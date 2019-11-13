@@ -38,4 +38,6 @@ PolicyTemplate getTemplate(String templateId);
 PolicyTemplate addTemplate(PolicyTemplate template);
 
 PolicyTemplate updateTemplate(String templateId,PolicyTemplate template);
+
+PolicyValidation validateInfo(String policyId);
 }

@@ -9,7 +9,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -256,6 +255,19 @@ public class BosunServiceImpl implements BosunService {
 		} else {
 			throw new BosunException(BosunError.POLICY_NOT_FOUND.getMessage(policyValidation.getPolicyId()));
 		}
+	}
+	
+	@Override
+	public PolicyValidation validateInfo(String policyId) {
+		PolicyValidation policyInfo = new PolicyValidation();
+		policyInfo.setPolicyId(policyId);
+		Map<String, String> labels = new HashMap<>();
+		policyTemplateRepository.findAll().forEach(policyTemplate -> 
+				policyTemplate.getLabels().forEach(label -> {
+					labels.put(label,"");
+				}));
+		policyInfo.setLabels(labels);
+		return policyInfo;
 	}
 
   @Override

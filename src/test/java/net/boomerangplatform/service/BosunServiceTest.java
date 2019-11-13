@@ -130,7 +130,7 @@ public class BosunServiceTest extends AbstractBoomerangTest {
         definition.getDescription());
     Assert.assertEquals("static_code_analysis", definition.getKey());
     Assert.assertEquals(0, definition.getOrder().intValue());
-    Assert.assertEquals(3, definition.getConfig().size());
+    Assert.assertEquals(3, definition.getRules().size());
   }
 
   @Test

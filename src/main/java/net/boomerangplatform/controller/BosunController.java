@@ -69,13 +69,6 @@ public class BosunController {
       @RequestParam(value = "teamId", required = true) String teamId) {
     return ResponseEntity.ok().body(bosunService.getInsights(teamId));
   }
-
-
-  @PostMapping(value = "/policies/validate")
-  public ResponseEntity<PolicyActivityEntity> validatePolicy(@RequestBody PolicyValidation policyValidation) {
-    return ResponseEntity.ok()
-        .body(bosunService.validatePolicy(policyValidation));
-  }
   
   @DeleteMapping(value = "/policies/{policyId}")
   public ResponseEntity<PolicyResponse> deletePolicy(@PathVariable String policyId){  

@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import net.boomerangplatform.model.PolicyTemplateConfig;
+import java.util.Map;
+
+import net.boomerangplatform.model.PolicyTemplateRules;
 
 public class PolicyTemplate implements Serializable {
 
@@ -21,10 +23,14 @@ public class PolicyTemplate implements Serializable {
 
   private String description;
 
+  private String integrationType;
+
+  private List<String> labels;
+
   private Integer order;
 
-  private List<PolicyTemplateConfig> config;
-  
+  private List<PolicyTemplateRules> rules;
+
   private String rego;
 
   public String getId() {
@@ -67,6 +73,22 @@ public class PolicyTemplate implements Serializable {
     this.description = description;
   }
 
+  public String getIntegrationType() {
+    return integrationType;
+  }
+
+  public void setIntegrationType(String integrationType) {
+    this.integrationType = integrationType;
+  }
+
+  public List<String> getLabels() {
+    return labels;
+  }
+
+  public void setLabels(List<String> labels) {
+    this.labels = labels;
+  }
+
   public Integer getOrder() {
     return order;
   }
@@ -75,12 +97,12 @@ public class PolicyTemplate implements Serializable {
     this.order = order;
   }
 
-  public List<PolicyTemplateConfig> getConfig() {
-    return config == null ? null : Collections.unmodifiableList(config);
+  public List<PolicyTemplateRules> getRules() {
+    return rules == null ? null : Collections.unmodifiableList(rules);
   }
 
-  public void setConfig(List<PolicyTemplateConfig> config) {
-    this.config = config == null ? null : new ArrayList<>(config);
+  public void setRules(List<PolicyTemplateRules> rules) {
+    this.rules = rules == null ? null : new ArrayList<>(rules);
   }
 
   public String getRego() {

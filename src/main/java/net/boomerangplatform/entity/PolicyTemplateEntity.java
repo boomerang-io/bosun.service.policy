@@ -2,15 +2,16 @@ package net.boomerangplatform.entity;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import net.boomerangplatform.model.PolicyTemplateConfig;
+import net.boomerangplatform.model.PolicyTemplateRules;
 
 @Document(collection = "bosun_templates")
 public class PolicyTemplateEntity {
 
-  @Id
-  private String id;
+  @Id private String id;
 
   private String key;
 
@@ -20,10 +21,14 @@ public class PolicyTemplateEntity {
 
   private String description;
 
+  private String integrationType;
+
+  private List<String> labels;
+
   private Integer order;
 
-  private List<PolicyTemplateConfig> config;
-  
+  private List<PolicyTemplateRules> rules;
+
   private String rego;
 
   public String getId() {
@@ -66,6 +71,22 @@ public class PolicyTemplateEntity {
     this.description = description;
   }
 
+  public String getIntegrationType() {
+    return integrationType;
+  }
+
+  public void setIntegrationType(String integrationType) {
+    this.integrationType = integrationType;
+  }
+
+  public List<String> getLabels() {
+    return labels;
+  }
+
+  public void setLabels(List<String> labels) {
+    this.labels = labels;
+  }
+
   public Integer getOrder() {
     return order;
   }
@@ -74,12 +95,12 @@ public class PolicyTemplateEntity {
     this.order = order;
   }
 
-  public List<PolicyTemplateConfig> getConfig() {
-    return config;
+  public List<PolicyTemplateRules> getRules() {
+    return rules;
   }
 
-  public void setConfig(List<PolicyTemplateConfig> config) {
-    this.config = config;
+  public void setRules(List<PolicyTemplateRules> rules) {
+    this.rules = rules;
   }
 
   public String getRego() {
