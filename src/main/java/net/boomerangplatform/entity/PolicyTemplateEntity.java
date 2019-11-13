@@ -1,5 +1,6 @@
 package net.boomerangplatform.entity;
 
+import java.util.Date;
 import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -14,6 +15,8 @@ public class PolicyTemplateEntity {
   private String key;
 
   private String name;
+
+  private Date createdDate;
 
   private String description;
 
@@ -45,6 +48,14 @@ public class PolicyTemplateEntity {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public Date getCreatedDate() {
+    return createdDate;
+  }
+
+  public void setCreatedDate(Date createdDate) {
+    this.createdDate = createdDate;
   }
 
   public String getDescription() {

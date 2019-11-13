@@ -3,6 +3,7 @@ package net.boomerangplatform.model;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.JsonNode;
 
 @JsonIgnoreProperties
 public class PolicyValidation {
@@ -12,6 +13,7 @@ public class PolicyValidation {
   private String referenceLink;
   private Map<String, String> labels;
   private Map<String, String> annotations;
+  private JsonNode data;
 
   public String getPolicyId() {
     return policyId;
@@ -51,5 +53,13 @@ public class PolicyValidation {
 
   public void setAnnotations(Map<String, String> annotations) {
     this.annotations = annotations;
+  }
+
+  public JsonNode getData() {
+    return data;
+  }
+
+  public void setData(JsonNode data) {
+    this.data = data;
   }
 }
