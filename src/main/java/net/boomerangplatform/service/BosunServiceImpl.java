@@ -262,10 +262,13 @@ public class BosunServiceImpl implements BosunService {
 		PolicyValidation policyInfo = new PolicyValidation();
 		policyInfo.setPolicyId(policyId);
 		Map<String, String> labels = new HashMap<>();
-		policyTemplateRepository.findAll().forEach(policyTemplate -> 
+		policyTemplateRepository.findAll().forEach(policyTemplate -> {
+			if (policyTemplate.getLabels() != null) {
 				policyTemplate.getLabels().forEach(label -> {
-					labels.put(label,"");
-				}));
+				labels.put(label,"");
+			});
+			}
+		});
 		policyInfo.setLabels(labels);
 		return policyInfo;
 	}
