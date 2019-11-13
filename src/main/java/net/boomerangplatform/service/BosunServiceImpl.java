@@ -106,7 +106,7 @@ public class BosunServiceImpl implements BosunService {
   
   @Override
   public PolicyTemplate getTemplate(String templateId) {
-    Optional<PolicyTemplateEntity> entity = policyTemplateRepository.findById(templateId);
+    PolicyTemplateEntity entity = policyTemplateRepository.findById(templateId).orElse(null);
     PolicyTemplate template = new PolicyTemplate();
     BeanUtils.copyProperties(entity, template);
     
