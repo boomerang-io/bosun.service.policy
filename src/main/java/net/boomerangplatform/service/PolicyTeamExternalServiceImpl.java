@@ -92,7 +92,7 @@ public class PolicyTeamExternalServiceImpl implements PolicyTeamService {
 
 	private HttpHeaders buildHeaders() {
 		String authToken = restControllerConfig.getCurrentAuthHeader();
-		
+		LOGGER.info("Auth Token: " + authToken);
 		final HttpHeaders headers = new HttpHeaders();
 		headers.add("Accept", "application/json");
 		headers.add("Authorization", authToken);
