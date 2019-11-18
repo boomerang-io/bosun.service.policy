@@ -35,6 +35,7 @@ import net.boomerangplatform.model.PolicyActivitiesInsights;
 import net.boomerangplatform.model.PolicyDefinition;
 import net.boomerangplatform.model.PolicyInsights;
 import net.boomerangplatform.model.PolicyResponse;
+import net.boomerangplatform.model.PolicySummary;
 import net.boomerangplatform.model.PolicyTemplate;
 import net.boomerangplatform.model.PolicyValidation;
 import net.boomerangplatform.model.PolicyValidationInput;
@@ -164,6 +165,27 @@ public class BosunServiceImpl implements BosunService {
     });
 
     return policies;
+  }
+
+  @Override
+  public List<PolicySummary> getPoliciesSummaryByTeamId(String teamId) {
+    List<PolicyEntity> entities = policyRepository.findByTeamId(teamId);
+    List<PolicySummary> policySummaries = new ArrayList<>();
+
+    entities.stream().filter(entity -> !entity.getStatus().equals(Status.inactive)).forEach(entity -> {
+      PolicySummary policy = new PolicySummary();
+      BeanUtils.copyProperties(entity, policy);
+      policySummaries.add(policy);
+    });
+
+    List<PolicyEntity> globalPolicies = policyRepository.findByScope(Scope.global);
+    globalPolicies.stream().filter(entity -> !entity.getStatus().equals(Status.inactive)).forEach(entity -> {
+	  PolicySummary policy = new PolicySummary();
+      BeanUtils.copyProperties(entity, policy);
+      policySummaries.add(policy);
+    });
+
+    return policySummaries;
   }
 
   @Override

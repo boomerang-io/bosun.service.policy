@@ -8,6 +8,7 @@ import net.boomerangplatform.model.Policy;
 import net.boomerangplatform.model.PolicyTemplate;
 import net.boomerangplatform.model.PolicyInsights;
 import net.boomerangplatform.model.PolicyResponse;
+import net.boomerangplatform.model.PolicySummary;
 import net.boomerangplatform.model.PolicyValidation;
 import net.boomerangplatform.model.PolicyViolations;
 
@@ -33,11 +34,13 @@ public interface BosunService {
 
   PolicyActivityEntity validatePolicy(PolicyValidation policyValidation);
 
-PolicyTemplate getTemplate(String templateId);
+  PolicyTemplate getTemplate(String templateId);
 
-PolicyTemplate addTemplate(PolicyTemplate template);
+  PolicyTemplate addTemplate(PolicyTemplate template);
 
-PolicyTemplate updateTemplate(String templateId,PolicyTemplate template);
+  PolicyTemplate updateTemplate(String templateId, PolicyTemplate template);
 
-PolicyValidation validateInfo(String policyId);
+  PolicyValidation validateInfo(String policyId);
+
+  List<PolicySummary> getPoliciesSummaryByTeamId(String teamId);
 }

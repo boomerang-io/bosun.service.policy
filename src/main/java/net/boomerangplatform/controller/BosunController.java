@@ -15,12 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import net.boomerangplatform.entity.PolicyActivityEntity;
 import net.boomerangplatform.model.Policy;
-import net.boomerangplatform.model.PolicyTemplate;
 import net.boomerangplatform.model.PolicyInsights;
 import net.boomerangplatform.model.PolicyResponse;
-import net.boomerangplatform.model.PolicyValidation;
+import net.boomerangplatform.model.PolicySummary;
 import net.boomerangplatform.model.PolicyViolations;
 import net.boomerangplatform.service.BosunService;
 
@@ -40,6 +38,12 @@ public class BosunController {
   public ResponseEntity<List<Policy>> getPolicies(
       @RequestParam(value = "teamId", required = true) String teamId) {
     return ResponseEntity.ok().body(bosunService.getPoliciesByTeamId(teamId));
+  }
+  
+  @GetMapping(value = "/policies/summary")
+  public ResponseEntity<List<PolicySummary>> getPoliciesSummary(
+      @RequestParam(value = "teamId", required = true) String teamId) {
+    return ResponseEntity.ok().body(bosunService.getPoliciesSummaryByTeamId(teamId));
   }
 
   @GetMapping(value = "/policies/{policyId}")
