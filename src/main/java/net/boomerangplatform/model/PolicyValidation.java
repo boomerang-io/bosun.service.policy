@@ -1,9 +1,9 @@
 package net.boomerangplatform.model;
 
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.JsonNode;
 
 @JsonIgnoreProperties
 public class PolicyValidation {
@@ -13,7 +13,7 @@ public class PolicyValidation {
   private String referenceLink;
   private Map<String, String> labels;
   private Map<String, String> annotations;
-  private JsonNode data;
+  private List<PolicyValidationInput> inputs;
 
   public String getPolicyId() {
     return policyId;
@@ -55,11 +55,11 @@ public class PolicyValidation {
     this.annotations = annotations;
   }
 
-  public JsonNode getData() {
-    return data;
+  public List<PolicyValidationInput> getInputs() {
+    return inputs;
   }
 
-  public void setData(JsonNode data) {
-    this.data = data;
+  public void setInputs(List<PolicyValidationInput> inputs) {
+    this.inputs = inputs;
   }
 }

@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-
-import net.boomerangplatform.model.PolicyTemplateRules;
 
 public class PolicyTemplate implements Serializable {
 

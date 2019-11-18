@@ -2,10 +2,10 @@ package net.boomerangplatform.entity;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
 import net.boomerangplatform.model.PolicyTemplateRules;
 
 @Document(collection = "bosun_templates")

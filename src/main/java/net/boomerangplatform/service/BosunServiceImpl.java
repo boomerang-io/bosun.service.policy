@@ -37,6 +37,7 @@ import net.boomerangplatform.model.PolicyInsights;
 import net.boomerangplatform.model.PolicyResponse;
 import net.boomerangplatform.model.PolicyTemplate;
 import net.boomerangplatform.model.PolicyValidation;
+import net.boomerangplatform.model.PolicyValidationInput;
 import net.boomerangplatform.model.PolicyViolation;
 import net.boomerangplatform.model.PolicyViolations;
 import net.boomerangplatform.model.Result;
@@ -261,6 +262,17 @@ public class BosunServiceImpl implements BosunService {
 	public PolicyValidation validateInfo(String policyId) {
 		PolicyValidation policyInfo = new PolicyValidation();
 		policyInfo.setPolicyId(policyId);
+		PolicyEntity policy = policyRepository.findById(policyId).orElse(new PolicyEntity());
+		List<PolicyValidationInput> policyInfoInputs = new ArrayList<>();
+		ObjectMapper objectMapper = new ObjectMapper();
+		JsonNode jsonNode = objectMapper.createObjectNode();
+		policy.getDefinitions().stream().filter(definition -> !CollectionUtils.isEmpty(definition.getRules())).forEach(definition -> {
+			PolicyValidationInput policyInfoInput = new PolicyValidationInput();
+			policyInfoInput.setTemplateId(definition.getPolicyTemplateId());
+			policyInfoInput.setData(jsonNode);
+			policyInfoInputs.add(policyInfoInput);
+		});
+		policyInfo.setInputs(policyInfoInputs);
 		Map<String, String> labels = new HashMap<>();
 		policyTemplateRepository.findAll().forEach(policyTemplate -> {
 			if (policyTemplate.getLabels() != null) {
@@ -270,6 +282,8 @@ public class BosunServiceImpl implements BosunService {
 			}
 		});
 		policyInfo.setLabels(labels);
+		policyInfo.setReferenceId("");
+		policyInfo.setReferenceLink("");
 		return policyInfo;
 	}
 
