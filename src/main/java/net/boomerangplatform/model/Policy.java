@@ -18,7 +18,7 @@ public class Policy implements Serializable {
 
   private Date createdDate;
 
-  private List<PolicyConfig> definitions = new ArrayList<>();
+  private List<PolicyDefinition> definitions = new ArrayList<>();
   
   private Scope scope;
 
@@ -54,11 +54,11 @@ public class Policy implements Serializable {
     this.createdDate = createdDate == null ? null : (Date) createdDate.clone();
   }
 
-  public List<PolicyConfig> getDefinitions() {
+  public List<PolicyDefinition> getDefinitions() {
     return Collections.unmodifiableList(definitions);
   }
 
-  public void setDefinitions(List<PolicyConfig> definitions) {
+  public void setDefinitions(List<PolicyDefinition> definitions) {
     this.definitions =
         definitions == null ? new ArrayList<>() : new ArrayList<>(definitions);
   }

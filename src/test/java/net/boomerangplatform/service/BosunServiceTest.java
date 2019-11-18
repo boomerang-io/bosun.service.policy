@@ -36,7 +36,7 @@ import net.boomerangplatform.model.PolicyDefinition;
 import net.boomerangplatform.model.PolicyInsights;
 import net.boomerangplatform.model.PolicyViolations;
 import net.boomerangplatform.entity.PolicyActivityEntity;
-import net.boomerangplatform.model.PolicyConfig;
+import net.boomerangplatform.model.PolicyDefinitions;
 import net.boomerangplatform.repository.model.Artifact;
 import net.boomerangplatform.repository.model.ArtifactPackage;
 import net.boomerangplatform.repository.model.ArtifactSummary;
@@ -157,7 +157,7 @@ public class BosunServiceTest extends AbstractBoomerangTest {
 
     Assert.assertEquals(1, policy.getDefinitions().size());
 
-    PolicyConfig definition = policy.getDefinitions().get(0);
+    PolicyDefinitions definition = policy.getDefinitions().get(0);
     Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definition.getPolicyTemplateId());
 
     Assert.assertEquals(2, definition.getRules().size());
@@ -179,7 +179,7 @@ public class BosunServiceTest extends AbstractBoomerangTest {
     Assert.assertEquals("Code High Validation", policyReturn.getName());
     Assert.assertEquals(1, policyReturn.getDefinitions().size());
 
-    PolicyConfig definition = policyReturn.getDefinitions().get(0);
+    PolicyDefinitions definition = policyReturn.getDefinitions().get(0);
 
 
     String definitionId = definition.getPolicyTemplateId();
@@ -205,7 +205,7 @@ public class BosunServiceTest extends AbstractBoomerangTest {
 
     Assert.assertEquals("Code Low Validation", policyReturn.getName());
 
-    PolicyConfig ciPolicyConfig = policyReturn.getDefinitions().get(0);
+    PolicyDefinitions ciPolicyConfig = policyReturn.getDefinitions().get(0);
     String definitionId = ciPolicyConfig.getPolicyTemplateId();
     Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definitionId);
 

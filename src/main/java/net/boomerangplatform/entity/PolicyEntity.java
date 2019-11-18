@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import net.boomerangplatform.model.PolicyConfig;
+import net.boomerangplatform.model.PolicyDefinition;
 import net.boomerangplatform.model.Scope;
 import net.boomerangplatform.model.Status;
 
@@ -22,7 +22,7 @@ public class PolicyEntity {
 
   private Scope scope;
 
-  private List<PolicyConfig> definitions;
+  private List<PolicyDefinition> definitions;
 
   private Status status;
 
@@ -58,11 +58,11 @@ public class PolicyEntity {
     this.createdDate = createdDate;
   }
 
-  public List<PolicyConfig> getDefinitions() {
+  public List<PolicyDefinition> getDefinitions() {
     return definitions;
   }
 
-  public void setDefinitions(List<PolicyConfig> definitions) {
+  public void setDefinitions(List<PolicyDefinition> definitions) {
     this.definitions = definitions;
   }
 
