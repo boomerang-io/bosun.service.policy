@@ -1,5 +1,6 @@
 package net.boomerangplatform.service;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -18,6 +19,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import net.boomerangplatform.model.InternalPolicyTeam;
 import net.boomerangplatform.model.PolicyTeam;
 import net.boomerangplatform.rest.RestControllerConfig;
 
@@ -41,43 +44,34 @@ public class PolicyTeamExternalServiceImpl implements PolicyTeamService {
 		final HttpHeaders headers = buildHeaders();
 		final HttpEntity<String> request = new HttpEntity<>(headers);
 
-		ResponseEntity<List<PolicyTeam>> response = restTemplate.exchange(boomerangTeamURL, HttpMethod.GET, request,
-				new ParameterizedTypeReference<List<PolicyTeam>>() {
+		ResponseEntity<List<InternalPolicyTeam>> response = restTemplate.exchange(boomerangTeamURL, HttpMethod.GET, request,
+				new ParameterizedTypeReference<List<InternalPolicyTeam>>() {
 				});
-		List<PolicyTeam> allTeams = response.getBody();
-		return allTeams;
+		List<InternalPolicyTeam> allTeams = response.getBody();	
+		List<PolicyTeam> policyTeams = new LinkedList<>();
+		for (InternalPolicyTeam team : allTeams) {
+			PolicyTeam policyTeam = new PolicyTeam();
+			policyTeam.setId(team.getId());
+			policyTeam.setName(team.getBoomerangTeamName());
+			policyTeams.add(policyTeam);
+		}
+		
+		return policyTeams;
 	}
 
 	@Override
 	public PolicyTeam getTeamById(String id) {
-
-		final HttpHeaders headers = buildHeaders();
-		final HttpEntity<String> request = new HttpEntity<>(headers);
-
-		ResponseEntity<List<PolicyTeam>> response = restTemplate.exchange(boomerangTeamURL, HttpMethod.GET, request,
-				new ParameterizedTypeReference<List<PolicyTeam>>() {
-				});
-		List<PolicyTeam> allTeams = response.getBody();
-
+		List<PolicyTeam> allTeams = this.getAllTeams();
 		if (allTeams != null) {
 			PolicyTeam team = allTeams.stream().filter(t -> t.getId().equals(id)).findAny().orElse(null);
 			return team;
 		}
-
 		return null;
 	}
 
 	@Override
 	public PolicyTeam getTeamByName(String name) {
-
-		final HttpHeaders headers = buildHeaders();
-		final HttpEntity<String> request = new HttpEntity<>(headers);
-
-		ResponseEntity<List<PolicyTeam>> response = restTemplate.exchange(boomerangTeamURL, HttpMethod.GET, request,
-				new ParameterizedTypeReference<List<PolicyTeam>>() {
-				});
-		List<PolicyTeam> allTeams = response.getBody();
-
+		List<PolicyTeam> allTeams = this.getAllTeams();
 		if (allTeams != null) {
 			PolicyTeam team = allTeams.stream().filter(t -> t.getName().equals(name)).findAny().orElse(null);
 			return team;
