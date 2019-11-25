@@ -8,10 +8,10 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Resource;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,13 +30,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.boomerangplatform.AbstractBoomerangTest;
 import net.boomerangplatform.Application;
 import net.boomerangplatform.MongoConfig;
+import net.boomerangplatform.entity.PolicyActivityEntity;
 import net.boomerangplatform.model.Policy;
 import net.boomerangplatform.model.PolicyActivitiesInsights;
 import net.boomerangplatform.model.PolicyDefinition;
 import net.boomerangplatform.model.PolicyInsights;
+import net.boomerangplatform.model.PolicyValidation;
 import net.boomerangplatform.model.PolicyViolations;
-import net.boomerangplatform.entity.PolicyActivityEntity;
-import net.boomerangplatform.model.PolicyDefinitions;
+import net.boomerangplatform.mongo.entity.CiComponentActivityEntity;
+import net.boomerangplatform.mongo.service.CiComponentActivityService;
 import net.boomerangplatform.repository.model.Artifact;
 import net.boomerangplatform.repository.model.ArtifactPackage;
 import net.boomerangplatform.repository.model.ArtifactSummary;
@@ -57,13 +59,16 @@ import net.boomerangplatform.repository.model.SonarQubeReport;
 public class BosunServiceTest extends AbstractBoomerangTest {
 
   private final static LocalDate LOCAL_DATE = LocalDate.of(2019, 05, 15);
+  
+  @Autowired
+  private CiComponentActivityService activityService;
 
   @Autowired
   private BosunService bosunService;
 
   @Autowired
   @Qualifier("internalRestTemplate")
-  @Resource(name = "internalRestTemplate")
+//  @Resource(name = "internalRestTemplate")
   RestTemplate restTemplate;
 
   private MockRestServiceServer server;
@@ -118,20 +123,14 @@ public class BosunServiceTest extends AbstractBoomerangTest {
     return data;
   }
 
-  @Test
-  public void testGetAllDefinitions() {
-    List<PolicyDefinition> definitions = bosunService.getAllDefinitions();
-
-    Assert.assertEquals(3, definitions.size());
-    PolicyDefinition definition = definitions.get(0);
-    Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definition.getId());
-    Assert.assertEquals("Static Code Analysis", definition.getName());
-    Assert.assertEquals("The following policy metrics are retrieved from SonarQube",
-        definition.getDescription());
-    Assert.assertEquals("static_code_analysis", definition.getKey());
-    Assert.assertEquals(0, definition.getOrder().intValue());
-    Assert.assertEquals(3, definition.getRules().size());
-  }
+//  @Test
+//  public void testGetAllDefinitions() {
+//    List<PolicyDefinition> definitions = bosunService.getAllDefinitions();
+//
+//    Assert.assertEquals(3, definitions.size());
+//    PolicyDefinition definition = definitions.get(0);
+//    Assert.assertEquals(3, definition.getRules().size());
+//  }
 
   @Test
   public void testGetAllOperators() throws JsonProcessingException {
@@ -157,7 +156,7 @@ public class BosunServiceTest extends AbstractBoomerangTest {
 
     Assert.assertEquals(1, policy.getDefinitions().size());
 
-    PolicyDefinitions definition = policy.getDefinitions().get(0);
+    PolicyDefinition definition = policy.getDefinitions().get(0);
     Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definition.getPolicyTemplateId());
 
     Assert.assertEquals(2, definition.getRules().size());
@@ -179,7 +178,7 @@ public class BosunServiceTest extends AbstractBoomerangTest {
     Assert.assertEquals("Code High Validation", policyReturn.getName());
     Assert.assertEquals(1, policyReturn.getDefinitions().size());
 
-    PolicyDefinitions definition = policyReturn.getDefinitions().get(0);
+    PolicyDefinition definition = policyReturn.getDefinitions().get(0);
 
 
     String definitionId = definition.getPolicyTemplateId();
@@ -205,7 +204,7 @@ public class BosunServiceTest extends AbstractBoomerangTest {
 
     Assert.assertEquals("Code Low Validation", policyReturn.getName());
 
-    PolicyDefinitions ciPolicyConfig = policyReturn.getDefinitions().get(0);
+    PolicyDefinition ciPolicyConfig = policyReturn.getDefinitions().get(0);
     String definitionId = ciPolicyConfig.getPolicyTemplateId();
     Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definitionId);
 
@@ -223,7 +222,7 @@ public class BosunServiceTest extends AbstractBoomerangTest {
 
     Assert.assertEquals(1, insights.size());
     PolicyInsights entry = insights.get(0);
-    Policy policy = bosunService.getPolicyById(entry.getCiPolicyId());
+    Policy policy = bosunService.getPolicyById(entry.getPolicyId());
     Assert.assertEquals("Code Medium Validation", policy.getName());
     Assert.assertEquals("5c5b5a0b352b1b614143b7c3", policy.getId());
     Integer failCount = 0;
@@ -254,12 +253,22 @@ public class BosunServiceTest extends AbstractBoomerangTest {
     String componentId = "";
     String version = "";
 
+    PolicyValidation policyValidation = new PolicyValidation();
+    policyValidation.setPolicyId(ciPolicyId);
+    
+    Map<String, String> label = new HashMap<>();
+    label.put("sonarqube-id", componentId);
+    label.put("sonarqube-version", version);
+    label.put("artifact-version", version);
+    
+    CiComponentActivityEntity activityEntity = activityService.findById(componentActivityId);
+    
+    policyValidation.setReferenceId(componentId + activityEntity.getCiStageId());
+    
     PolicyActivityEntity savedEntity =
-        bosunService.validatePolicy(ciPolicyId, componentActivityId, componentId, version);
+        bosunService.validatePolicy(policyValidation);
 
     Assert.assertEquals("5c5b5a0b352b1b614143b7c3", savedEntity.getPolicyId());
-    Assert.assertEquals(componentActivityId, savedEntity.getCiComponentActivityId());
-    Assert.assertEquals("5cedb53fdd1be20001f3d8c2", savedEntity.getCiTeamId());
     Assert.assertEquals(Boolean.FALSE, savedEntity.getValid());
     Assert.assertEquals(1, savedEntity.getResults().size());
     Assert.assertEquals(Boolean.FALSE, savedEntity.getResults().get(0).getValid());
@@ -292,12 +301,23 @@ public class BosunServiceTest extends AbstractBoomerangTest {
     String componentId = "";
     String version = "";
 
+    PolicyValidation policyValidation = new PolicyValidation();
+    policyValidation.setPolicyId(ciPolicyId);
+    
+    Map<String, String> label = new HashMap<>();
+    label.put("sonarqube-id", componentId);
+    label.put("sonarqube-version", version);
+    label.put("artifact-version", version);
+    
+    CiComponentActivityEntity activityEntity = activityService.findById(componentActivityId);
+    
+    policyValidation.setReferenceId(componentId + activityEntity.getCiStageId());
+    
     PolicyActivityEntity savedEntity =
-        bosunService.validatePolicy(ciPolicyId, componentActivityId, componentId, version);
+        bosunService.validatePolicy(policyValidation);
+   
 
     Assert.assertEquals("5cf151691417760001c0a679", savedEntity.getPolicyId());
-    Assert.assertEquals(componentActivityId, savedEntity.getCiComponentActivityId());
-    Assert.assertEquals("5cedb53fdd1be20001f3d8c2", savedEntity.getCiTeamId());
     Assert.assertEquals(Boolean.FALSE, savedEntity.getValid());
     Assert.assertEquals(1, savedEntity.getResults().size());
     Assert.assertEquals(Boolean.FALSE, savedEntity.getResults().get(0).getValid());
@@ -330,12 +350,22 @@ public class BosunServiceTest extends AbstractBoomerangTest {
     String componentId = "";
     String version = "";
 
+    PolicyValidation policyValidation = new PolicyValidation();
+    policyValidation.setPolicyId(ciPolicyId);
+    
+    Map<String, String> label = new HashMap<>();
+    label.put("sonarqube-id", componentId);
+    label.put("sonarqube-version", version);
+    label.put("artifact-version", version);
+    
+    CiComponentActivityEntity activityEntity = activityService.findById(componentActivityId);
+    
+    policyValidation.setReferenceId(componentId + activityEntity.getCiStageId());
+    
     PolicyActivityEntity savedEntity =
-        bosunService.validatePolicy(ciPolicyId, componentActivityId, componentId, version);
+        bosunService.validatePolicy(policyValidation);
 
     Assert.assertEquals("5cf151691417760001c0a675", savedEntity.getPolicyId());
-    Assert.assertEquals(componentActivityId, savedEntity.getCiComponentActivityId());
-    Assert.assertEquals("5cedb53fdd1be20001f3d8c2", savedEntity.getCiTeamId());
     Assert.assertEquals(Boolean.FALSE, savedEntity.getValid());
     Assert.assertEquals(1, savedEntity.getResults().size());
     Assert.assertEquals(Boolean.FALSE, savedEntity.getResults().get(0).getValid());
@@ -354,14 +384,8 @@ public class BosunServiceTest extends AbstractBoomerangTest {
     List<PolicyViolations> violations = bosunService.getViolations(teamId);
     Assert.assertEquals(1, violations.size());
     PolicyViolations violation = violations.get(0);
-    Assert.assertEquals("5cedbec5dd1be20001f3d942", violation.getCiComponentId());
-    Assert.assertEquals("next-gen-docker", violation.getCiComponentName());
-    Assert.assertEquals("5cee1d76dd1be20001f3d9c4", violation.getCiComponentVersionId());
-    Assert.assertEquals("nextgen-2", violation.getCiComponentVersionName());
     Assert.assertEquals("5cf151691417760001c0a679", violation.getPolicyId());
     Assert.assertEquals("Glens Zero Defns Test", violation.getPolicyName());
-    Assert.assertEquals("5cedf589dd1be20001f3d994", violation.getCiStageId());
-    Assert.assertEquals("dev", violation.getCiStageName());
     Assert.assertEquals(2, violation.getNbrViolations().intValue());
   }
 
