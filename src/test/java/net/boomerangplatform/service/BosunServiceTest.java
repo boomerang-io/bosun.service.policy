@@ -309,6 +309,7 @@ public class BosunServiceTest extends BosunTests {
     this.server.expect(requestTo(opaURL)).andRespond(
         withSuccess(loadResourceAsString("dataResponse.json"), MediaType.APPLICATION_JSON));
 
+    
     String componentActivityId = "5cee1d76dd1be20001f3d9c5";
     String ciPolicyId = "5cf151691417760001c0a675";
     String componentId = "";
