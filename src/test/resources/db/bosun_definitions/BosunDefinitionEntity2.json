@@ -1,0 +1,19 @@
+{
+    "_id" : ObjectId("5cdd8425f6ea74a9bbaf2fe6"),
+    "key" : "cve_safelist",
+    "name" : "CVE Safe List",
+    "description" : "The Common Vulnerabilities & Exposures (CVE) are validated against JFrog Xray Security Issues. Artifact and Version are validated through regular expression.",
+    "order" : "3",
+    "config" : [ 
+        {
+            "key" : "cve",
+            "label" : "CVE",
+            "type" : "text",
+            "defaultValue" : "",
+            "required" : false,
+            "description" : "Regular Expression",
+            "options" : null
+        }
+    ],
+    "rego" : "cGFja2FnZSBjdmVfc2FmZWxpc3QKCmRlZmF1bHQgdmFsaWQgPSBmYWxzZQoKdmFsaWQgPSB0cnVlIHsKICAgIGNvdW50KHJ1bGVzKSA+PSAwCiAgICBjb3VudCh2aW9sYXRpb25zKSA9PSAwCn0KCnJ1bGVzW3sKICAgICJtZXRyaWMiOiBtZXRyaWMKfV0gewogICAgbWV0cmljIDo9IGNvbmNhdCgiIiwgWyJeIiwgaW5wdXQucG9saWN5LnJ1bGVzW19dLmN2ZSwgIiQiXSkKfQoKdmlvbGF0aW9uc1t7CiAgICAibWV0cmljIjogbWV0cmljLAogICAgIm1lc3NhZ2UiOiBtZXNzYWdlLAogICAgInZhbGlkIjogZmFsc2UKfV0gewogICAgbWV0cmljIDo9IHJ1bGVzW2ldLm1ldHJpYwogICAgcnVsZXNfbWF0Y2hlZFtfXS5tZXRyaWMgPT0gbWV0cmljCiAgICBtZXNzYWdlIDo9IHNwcmludGYoIkNWRSBydWxlIG1hdGNoZWQuIFJ1bGU6ICVzIiwgW21ldHJpY10pCn0KCmN2ZXNbb3V0cHV0XSB7IAogICAgb3V0cHV0IDo9IGlucHV0LmRhdGEuaXNzdWVzW19dLmN2ZXNbX10uY3ZlCn0KCnJ1bGVzX21hdGNoZWRbb3V0cHV0XSB7CiAgICBvdXRwdXQgOj0gcnVsZXNbaV0KICAgIHJlX21hdGNoKHJ1bGVzW2ldLm1ldHJpYywgY3Zlc1tfXSkKfQ=="
+}

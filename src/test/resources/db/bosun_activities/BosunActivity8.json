@@ -1,0 +1,32 @@
+{
+    "_id" : ObjectId("5dba1d2c9e0f890001153732"),
+    "teamId" : "5db85635110fc4000140a5ab",
+    "referenceId" : "boomerangServiceFlow",
+    "referenceLink" : "https://launch.boomerangplatform.net/apps/ci/teams/gbs-engineering/boomerang.service.flow",
+    "policyId" : "5dba1ce19e0f890001153730",
+    "labels" : {
+        "sonarqube-id" : "5bc69daa1516b200011020ee",
+        "sonarqube-version" : "2.1.13-195",
+        "artifact-path" : "ise",
+        "artifact-name" : "boomerang.service.flow",
+        "artifact-version" : "2.1.13-195",
+        "key" : "tyson",
+        "random" : "bob"
+    },
+    "createdDate" : ISODate("2019-10-30T23:30:52.877Z"),
+    "results" : [ 
+        {
+            "policyTemplateId" : "5cdd8667f6ea74a9bbaf5022",
+            "valid" : false,
+            "violations" : [ 
+                {
+                    "metric" : "Security Issue Analysis",
+                    "message" : "No data exists for component/version",
+                    "valid" : false
+                }
+            ]
+        }
+    ],
+    "valid" : false,
+    "_class" : "net.boomerangplatform.entity.PolicyActivityEntity"
+}

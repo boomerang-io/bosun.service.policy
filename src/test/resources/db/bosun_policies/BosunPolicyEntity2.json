@@ -1,0 +1,21 @@
+{
+    "_id" : ObjectId("5db85e35110fc4000140a5ad"),
+    "name" : "Tim Testing Policies",
+    "teamId" : "5db31d8c58b3779d106c508b",
+    "createdDate" : ISODate("2019-10-29T00:00:00.000Z"),
+    "scope" : "team",
+    "definitions" : [ 
+        {
+            "policyTemplateId" : "5cd49777f6ea74a9bb6ac629",
+            "rules" : [ 
+                {
+                    "metric" : "issues-total",
+                    "operator" : "less than or equal",
+                    "value" : "1"
+                }
+            ]
+        }
+    ],
+    "status" : "active",
+    "_class" : "net.boomerangplatform.entity.PolicyEntity"
+}

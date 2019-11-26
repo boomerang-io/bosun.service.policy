@@ -1,0 +1,25 @@
+{
+    "_id" : ObjectId("5db986a085bf860001f72422"),
+    "name" : "Policy 333",
+    "teamId" : "5db85635110fc4000140a5ab",
+    "scope" : "team",
+    "definitions" : [ 
+        {
+            "policyTemplateId" : "5cd49777f6ea74a9bb6ac629",
+            "rules" : [ 
+                {
+                    "metric" : "issues-blocker",
+                    "operator" : "equal",
+                    "value" : "3"
+                }, 
+                {
+                    "metric" : "issues-critical",
+                    "operator" : "greater than",
+                    "value" : "1"
+                }
+            ]
+        }
+    ],
+    "status" : "inactive",
+    "_class" : "net.boomerangplatform.entity.PolicyEntity"
+}
