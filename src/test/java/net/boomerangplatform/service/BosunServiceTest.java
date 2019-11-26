@@ -213,7 +213,7 @@ public class BosunServiceTest extends BosunTests {
         withSuccess(loadResourceAsString("dataResponse.json"), MediaType.APPLICATION_JSON));
 
     String componentActivityId = "5cee1d76dd1be20001f3d9c5";
-    String ciPolicyId = "5c5b5a0b352b1b614143b7c3";
+    String ciPolicyId = "5db85e35110fc4000140a5ad";
     String componentId = "";
     String version = "";
 
@@ -261,7 +261,7 @@ public class BosunServiceTest extends BosunTests {
         withSuccess(loadResourceAsString("dataResponse.json"), MediaType.APPLICATION_JSON));
 
     String componentActivityId = "5cee1d76dd1be20001f3d9c5";
-    String ciPolicyId = "5cf151691417760001c0a679";
+    String ciPolicyId = "5db9a8c7b01c530001b838d1";
     String componentId = "";
     String version = "";
 
@@ -309,9 +309,8 @@ public class BosunServiceTest extends BosunTests {
     this.server.expect(requestTo(opaURL)).andRespond(
         withSuccess(loadResourceAsString("dataResponse.json"), MediaType.APPLICATION_JSON));
 
-    
     String componentActivityId = "5cee1d76dd1be20001f3d9c5";
-    String ciPolicyId = "5cf151691417760001c0a675";
+    String ciPolicyId = "5dba1ce19e0f890001153730";
     String componentId = "";
     String version = "";
 
