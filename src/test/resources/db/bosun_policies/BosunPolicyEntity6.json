@@ -1,0 +1,9 @@
+{
+    "_id" : ObjectId("5db89f071e49b60001c33fc8"),
+    "name" : "Tim Testing",
+    "teamId" : "5db85635110fc4000140a5ab",
+    "scope" : "team",
+    "definitions" : [],
+    "status" : "inactive",
+    "_class" : "net.boomerangplatform.entity.PolicyEntity"
+}

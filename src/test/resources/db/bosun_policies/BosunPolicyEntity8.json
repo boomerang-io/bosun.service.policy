@@ -1,0 +1,21 @@
+{
+    "_id" : ObjectId("5db9a8c7b01c530001b838d1"),
+    "name" : "Tyson 4",
+    "teamId" : "5db85635110fc4000140a5ab",
+    "createdDate" : ISODate("2019-10-30T00:00:00.000Z"),
+    "scope" : "team",
+    "definitions" : [ 
+        {
+            "policyTemplateId" : "5cd49777f6ea74a9bb6ac629",
+            "rules" : [ 
+                {
+                    "metric" : "issues-major",
+                    "operator" : "less than or equal",
+                    "value" : "0"
+                }
+            ]
+        }
+    ],
+    "status" : "active",
+    "_class" : "net.boomerangplatform.entity.PolicyEntity"
+}

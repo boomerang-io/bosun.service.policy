@@ -1,0 +1,21 @@
+{
+    "_id" : ObjectId("5db85e0c110fc4000140a5ac"),
+    "name" : "Testing Policy",
+    "teamId" : "5db31d8c58b3779d106c508b",
+    "createdDate" : ISODate("2019-10-29T00:00:00.000Z"),
+    "scope" : "team",
+    "definitions" : [ 
+        {
+            "policyTemplateId" : "5cd49777f6ea74a9bb6ac629",
+            "rules" : [ 
+                {
+                    "metric" : "issues-total",
+                    "operator" : "less than",
+                    "" : "50"
+                }
+            ]
+        }
+    ],
+    "status" : "inactive",
+    "_class" : "net.boomerangplatform.entity.PolicyEntity"
+}

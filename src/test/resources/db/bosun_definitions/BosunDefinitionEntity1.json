@@ -1,0 +1,39 @@
+{
+    "_id" : ObjectId("5cd498f3f6ea74a9bb6ad0f3"),
+    "key" : "package_safelist",
+    "name" : "Package Safe List",
+    "description" : "The following package and artifact validation is validated against scans by JFrog Xray. Artifact and Version are validated through regular expression.",
+    "order" : "4",
+    "config" : [ 
+        {
+            "key" : "type",
+            "label" : "Type",
+            "type" : "select",
+            "defaultValue" : "",
+            "required" : false,
+            "description" : "",
+            "options" : [ 
+                "maven"
+            ]
+        }, 
+        {
+            "key" : "artifact",
+            "label" : "Package",
+            "type" : "text",
+            "defaultValue" : "",
+            "required" : false,
+            "description" : "Regular Expression",
+            "options" : null
+        }, 
+        {
+            "key" : "version",
+            "label" : "Version",
+            "type" : "text",
+            "defaultValue" : "",
+            "required" : false,
+            "description" : "Regular expression",
+            "options" : null
+        }
+    ],
+    "rego" : "cGFja2FnZSBwYWNrYWdlX3NhZmVsaXN0CgpkZWZhdWx0IHZhbGlkID0gZmFsc2UKCnZhbGlkID0gdHJ1ZSB7CiAgICBjb3VudChydWxlcykgPj0gMAogICAgY291bnQodmlvbGF0aW9ucykgPT0gMAp9CgpydWxlc1t7CiAgICAidHlwZSI6ICJtYXZlbiIsCiAgICAiYXJ0aWZhY3QiOiBhcnRpZmFjdCwKICAgICJ2ZXJzaW9uIjogdmVyc2lvbiwKICAgICJtZXRyaWMiOiBtZXRyaWMKfV0gewogICAgYXJ0aWZhY3QgOj0gaW5wdXQucG9saWN5LnJ1bGVzW2ldLmFydGlmYWN0CiAgICB2ZXJzaW9uIDo9IGlucHV0LnBvbGljeS5ydWxlc1tpXS52ZXJzaW9uCiAgICBtZXRyaWMgOj0gY29uY2F0KCIiLCBbIl4uKjoiLCBhcnRpZmFjdCwgIjoiLCB2ZXJzaW9uLCAiJCJdKQp9Cgp2aW9sYXRpb25zW3sKICAgICJtZXRyaWMiOiBtZXRyaWMsCiAgICAibWVzc2FnZSI6IG1lc3NhZ2UsCiAgICAidmFsaWQiOiBmYWxzZQp9XSB7CiAgICBtZXRyaWMgOj0gcnVsZXNbaV0ubWV0cmljCiAgICBydWxlc19ub3RfbWF0Y2hlZFtfXS5tZXRyaWMgPT0gbWV0cmljCiAgICBtZXNzYWdlIDo9IHNwcmludGYoIlBhY2thZ2UgcnVsZSBub3QgbWV0LiBBcnRpZmFjdDogJXMsIGFuZCBWZXJzaW9uOiAlcyIsIFtydWxlc1tpXS5hcnRpZmFjdCwgcnVsZXNbaV0udmVyc2lvbl0pCn0KCmxpYnJhcnlbb3V0cHV0XSB7CiAgICBvdXRwdXQgOj0gaW5wdXQuZGF0YS5jb21wb25lbnRzW19dLmNvbXBvbmVudHNbX10uY29tcG9uZW50X2lkCn0KCnJ1bGVzX21hdGNoZWRbb3V0cHV0XSB7CiAgICBvdXRwdXQgOj0gcnVsZXNbaV0KICAgIHJlX21hdGNoKHJ1bGVzW2ldLm1ldHJpYywgaW5wdXQuZGF0YS5jb21wb25lbnRzW19dLmNvbXBvbmVudHNbX10uY29tcG9uZW50X2lkKQp9CgpydWxlc19ub3RfbWF0Y2hlZCA9IHJ1bGVzIC0gcnVsZXNfbWF0Y2hlZA=="
+}

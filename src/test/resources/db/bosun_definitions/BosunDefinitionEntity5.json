@@ -1,0 +1,55 @@
+{
+    "_id" : ObjectId("5cd49777f6ea74a9bb6ac629"),
+    "key" : "static_code_analysis",
+    "name" : "Static Code Analysis",
+    "description" : "The following policy metrics are validated from SonarQube data collected in your CI pipeline.",
+    "order" : "0",
+    "config" : [ 
+        {
+            "key" : "metric",
+            "label" : "Metric",
+            "type" : "select",
+            "defaultValue" : "",
+            "required" : false,
+            "description" : "",
+            "options" : [ 
+                "issues-total", 
+                "issues-blocker", 
+                "issues-critical", 
+                "issues-major", 
+                "issues-minor", 
+                "issues-info", 
+                "issues-filesAnalyzed", 
+                "ncloc", 
+                "complexity", 
+                "violations"
+            ]
+        }, 
+        {
+            "key" : "operator",
+            "label" : "Operator",
+            "type" : "select",
+            "defaultValue" : "",
+            "required" : false,
+            "description" : "",
+            "options" : [ 
+                "equal", 
+                "not equal", 
+                "less than", 
+                "less than or equal", 
+                "greater than", 
+                "greater than or equal"
+            ]
+        }, 
+        {
+            "key" : "value",
+            "label" : "Value",
+            "type" : "text",
+            "defaultValue" : "",
+            "required" : false,
+            "description" : "",
+            "options" : null
+        }
+    ],
+    "rego" : "cGFja2FnZSBzdGF0aWNfY29kZV9hbmFseXNpcwoKZGVmYXVsdCB2YWxpZCA9IGZhbHNlCgp2YWxpZCA9IHRydWUgewogICAgY291bnQocnVsZXMpID49IDAKICAgIGNvdW50KHZpb2xhdGlvbnMpID09IDAKfQoKcnVsZXNbewogICAgIm1ldHJpYyI6IG1ldHJpYywKICAgICJ2YWx1ZSI6IHZhbHVlLAogICAgIm9wZXJhdG9yIjogb3BlcmF0b3IsIAogICAgIm1lYXN1cmUiOiBtZWFzdXJlCn1dIHsKICAgIG1ldHJpYyA6PSBpbnB1dC5wb2xpY3kucnVsZXNbaV0ubWV0cmljCiAgICBydWxlIDo9IGlucHV0LnBvbGljeS5ydWxlc1tpXQogICAgbWVhc3VyZSA6PSBydWxlLnZhbHVlCiAgICBvcGVyYXRvciA6PSBydWxlLm9wZXJhdG9yCiAgICB2YWx1ZSA6PSBpbnB1dC5kYXRhLm1lYXN1cmVzW21ldHJpY10KfSB7CiAgICBtZXRyaWMgOj0gaW5wdXQucG9saWN5LnJ1bGVzW2ldLm1ldHJpYwogICAgcnVsZSA6PSBpbnB1dC5wb2xpY3kucnVsZXNbaV0KICAgIG1lYXN1cmUgOj0gcnVsZS52YWx1ZQogICAgb3BlcmF0b3IgOj0gcnVsZS5vcGVyYXRvcgogICAgbWV0cmljU3BsaXQgOj0gc3BsaXQobWV0cmljLCAiLSIpCiAgICBtZXRyaWNDYXRlZ29yeSA6PSBtZXRyaWNTcGxpdFswXQogICAgbWV0cmljS2V5IDo9IG1ldHJpY1NwbGl0WzFdCiAgICBtZXRyaWNDYXRlZ29yeSA9PSAiaXNzdWVzIgogICAgdmFsdWUgOj0gaW5wdXQuZGF0YS5pc3N1ZXNbbWV0cmljS2V5XQp9Cgp2aW9sYXRpb25zW3sKICAgICJtZXRyaWMiOiBtZXRyaWMsCiAgICAibWVzc2FnZSI6IG1lc3NhZ2UsCiAgICAidmFsaWQiOiBmYWxzZQp9XSB7CiAgICBtZXRyaWMgOj0gcnVsZXNbaV0ubWV0cmljCiAgICBub3QgdmFsaWRfdmFsdWUocnVsZXNbaV0udmFsdWUsIHJ1bGVzW2ldLm1lYXN1cmUsIHJ1bGVzW2ldLm9wZXJhdG9yKQogICAgbWVzc2FnZSA6PSBzcHJpbnRmKCIldiAlcyAldiB3YXMgbm90IHNhdGlzZmllZCIsIFtydWxlc1tpXS52YWx1ZSwgcnVsZXNbaV0ub3BlcmF0b3IsIHJ1bGVzW2ldLm1lYXN1cmVdKQp9Cgp2YWxpZF92YWx1ZSh2YWx1ZSwgbWVhc3VyZSwgb3BlcmF0b3IpIHsKICAgIG9wZXJhdG9yID09ICJlcXVhbCIKICAgIHRvX251bWJlcih2YWx1ZSkgPSB0b19udW1iZXIobWVhc3VyZSkKfSBlbHNlIHsKICAgIG9wZXJhdG9yID09ICJub3QgZXF1YWwiCiAgICB0b19udW1iZXIodmFsdWUpICE9IHRvX251bWJlcihtZWFzdXJlKQp9IGVsc2UgewogICAgb3BlcmF0b3IgPT0gImxlc3MgdGhhbiIKICAgIHRvX251bWJlcih2YWx1ZSkgPCB0b19udW1iZXIobWVhc3VyZSkKfSBlbHNlIHsKICAgIG9wZXJhdG9yID09ICJsZXNzIHRoYW4gb3IgZXF1YWwiCiAgICB0b19udW1iZXIodmFsdWUpIDw9IHRvX251bWJlcihtZWFzdXJlKQp9ICBlbHNlIHsKICAgIG9wZXJhdG9yID09ICJncmVhdGVyIHRoYW4iCiAgICB0b19udW1iZXIodmFsdWUpID4gdG9fbnVtYmVyKG1lYXN1cmUpCn0gZWxzZSB7CiAgICBvcGVyYXRvciA9PSAiZ3JlYXRlciB0aGFuIG9yIGVxdWFsIgogICAgdG9fbnVtYmVyKHZhbHVlKSA+PSB0b19udW1iZXIobWVhc3VyZSkKfQ=="
+}
