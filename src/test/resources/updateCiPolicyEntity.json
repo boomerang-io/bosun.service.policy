@@ -4,7 +4,7 @@
     "teamId": "9999",
     "definitions" : [ 
         {
-            "ciPolicyDefinitionId" : "5cd328ae1e9bbbb710590d9d",
+            "policyTemplateId" : "5cd328ae1e9bbbb710590d9d",
             "rules" : [ 
                 {
                     "metric" : "lines",
