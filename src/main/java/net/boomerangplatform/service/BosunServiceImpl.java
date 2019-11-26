@@ -9,7 +9,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
@@ -20,11 +19,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import net.boomerangplatform.entity.PolicyActivityEntity;
 import net.boomerangplatform.entity.PolicyEntity;
 import net.boomerangplatform.entity.PolicyTemplateEntity;
@@ -93,7 +90,8 @@ public class BosunServiceImpl implements BosunService {
 
   @Override
   public List<PolicyTemplate> getAllTemplates() {
-    List<PolicyTemplateEntity> entities = policyTemplateRepository.findAll(new Sort(Sort.Direction.ASC, "order"));
+    List<PolicyTemplateEntity> entities =
+        policyTemplateRepository.findAll(new Sort(Sort.Direction.ASC, "order"));
     List<PolicyTemplate> descriptions = new ArrayList<>();
 
     entities.forEach(entity -> {
@@ -104,12 +102,14 @@ public class BosunServiceImpl implements BosunService {
 
     return descriptions;
   }
-  
+
   @Override
   public PolicyTemplate getTemplate(String templateId) {
     PolicyTemplateEntity entity = policyTemplateRepository.findById(templateId).orElse(null);
     PolicyTemplate template = new PolicyTemplate();
-    BeanUtils.copyProperties(entity, template);
+    if(entity != null) {
+      BeanUtils.copyProperties(entity, template);
+    }
     
     return template;
   }
@@ -118,7 +118,7 @@ public class BosunServiceImpl implements BosunService {
   public PolicyTemplate addTemplate(PolicyTemplate template) {
     template.setCreatedDate(new Date());
 
-	PolicyTemplateEntity entity = new PolicyTemplateEntity();
+    PolicyTemplateEntity entity = new PolicyTemplateEntity();
     BeanUtils.copyProperties(template, entity);
     entity = policyTemplateRepository.insert(entity);
     template.setId(entity.getId());
@@ -130,9 +130,11 @@ public class BosunServiceImpl implements BosunService {
   public PolicyTemplate updateTemplate(String templateId, PolicyTemplate template) {
     PolicyTemplateEntity entity = policyTemplateRepository.findById(templateId).orElse(null);
 
-    BeanUtils.copyProperties(template, entity);
-    policyTemplateRepository.save(entity);
-
+    if(entity != null) {
+      BeanUtils.copyProperties(template, entity);
+      policyTemplateRepository.save(entity);
+    }
+    
     return template;
   }
 
@@ -151,18 +153,20 @@ public class BosunServiceImpl implements BosunService {
     List<PolicyEntity> entities = policyRepository.findByTeamId(teamId);
     List<Policy> policies = new ArrayList<>();
 
-    entities.stream().filter(entity -> !entity.getStatus().equals(Status.inactive)).forEach(entity -> {
-      Policy policy = new Policy();
-      BeanUtils.copyProperties(entity, policy);
-      policies.add(policy);
-    });
+    entities.stream().filter(entity -> !entity.getStatus().equals(Status.inactive))
+        .forEach(entity -> {
+          Policy policy = new Policy();
+          BeanUtils.copyProperties(entity, policy);
+          policies.add(policy);
+        });
 
     List<PolicyEntity> globalPolicies = policyRepository.findByScope(Scope.global);
-    globalPolicies.stream().filter(entity -> !entity.getStatus().equals(Status.inactive)).forEach(entity -> {
-      Policy policy = new Policy();
-      BeanUtils.copyProperties(entity, policy);
-      policies.add(policy);
-    });
+    globalPolicies.stream().filter(entity -> !entity.getStatus().equals(Status.inactive))
+        .forEach(entity -> {
+          Policy policy = new Policy();
+          BeanUtils.copyProperties(entity, policy);
+          policies.add(policy);
+        });
 
     return policies;
   }
@@ -172,18 +176,20 @@ public class BosunServiceImpl implements BosunService {
     List<PolicyEntity> entities = policyRepository.findByTeamId(teamId);
     List<PolicySummary> policySummaries = new ArrayList<>();
 
-    entities.stream().filter(entity -> !entity.getStatus().equals(Status.inactive)).forEach(entity -> {
-      PolicySummary policy = new PolicySummary();
-      BeanUtils.copyProperties(entity, policy);
-      policySummaries.add(policy);
-    });
+    entities.stream().filter(entity -> !entity.getStatus().equals(Status.inactive))
+        .forEach(entity -> {
+          PolicySummary policy = new PolicySummary();
+          BeanUtils.copyProperties(entity, policy);
+          policySummaries.add(policy);
+        });
 
     List<PolicyEntity> globalPolicies = policyRepository.findByScope(Scope.global);
-    globalPolicies.stream().filter(entity -> !entity.getStatus().equals(Status.inactive)).forEach(entity -> {
-	  PolicySummary policy = new PolicySummary();
-      BeanUtils.copyProperties(entity, policy);
-      policySummaries.add(policy);
-    });
+    globalPolicies.stream().filter(entity -> !entity.getStatus().equals(Status.inactive))
+        .forEach(entity -> {
+          PolicySummary policy = new PolicySummary();
+          BeanUtils.copyProperties(entity, policy);
+          policySummaries.add(policy);
+        });
 
     return policySummaries;
   }
@@ -193,7 +199,9 @@ public class BosunServiceImpl implements BosunService {
     PolicyEntity entity = policyRepository.findById(ciPolicyId).orElse(null);
 
     Policy policy = new Policy();
-    BeanUtils.copyProperties(entity, policy);
+    if (entity != null) {
+      BeanUtils.copyProperties(entity, policy);
+    }
 
     return policy;
   }
@@ -221,104 +229,123 @@ public class BosunServiceImpl implements BosunService {
     policy.setScope(Scope.team);
     policy.setDefinitions(getFilteredDefinition(policy.getDefinitions()));
 
-    BeanUtils.copyProperties(policy, entity);
-    policyRepository.save(entity);
+    if (entity != null) {
+      BeanUtils.copyProperties(policy, entity);
+      policyRepository.save(entity);
+    }
 
     return policy;
   }
 
-	@Override
-	public PolicyActivityEntity validatePolicy(PolicyValidation policyValidation) {
+  @Override
+  public PolicyActivityEntity validatePolicy(PolicyValidation policyValidation) {
 
-		PolicyEntity policyEntity = policyRepository.findById(policyValidation.getPolicyId()).orElse(null);
-		
-		if (policyEntity != null && policyEntity.getStatus().equals(Status.inactive)) {
-			throw new BosunException(BosunError.POLICY_DELETED.getMessage(policyEntity.getId()));
-		} else if (policyEntity != null) {
-			final PolicyActivityEntity policiesActivities = new PolicyActivityEntity();
-			policiesActivities.setTeamId(policyEntity.getTeamId());
-			policiesActivities.setPolicyId(policyEntity.getId());
-			policiesActivities.setLabels(policyValidation.getLabels());
-			policiesActivities.setAnnotations(policyValidation.getAnnotations());
-			policiesActivities.setReferenceLink(policyValidation.getReferenceLink());
-			policiesActivities.setReferenceId(policyValidation.getReferenceId());
-			policiesActivities.setCreatedDate(new Date());
-			policiesActivities.setValid(true);
+    PolicyEntity policyEntity =
+        policyRepository.findById(policyValidation.getPolicyId()).orElse(null);
 
-			List<Result> results = new ArrayList<>();
+    if (policyEntity != null && policyEntity.getStatus().equals(Status.inactive)) {
+      throw new BosunException(BosunError.POLICY_DELETED.getMessage(policyEntity.getId()));
+    } else if (policyEntity != null) {
+      final PolicyActivityEntity policiesActivities = new PolicyActivityEntity();
+      policiesActivities.setTeamId(policyEntity.getTeamId());
+      policiesActivities.setPolicyId(policyEntity.getId());
+      policiesActivities.setLabels(policyValidation.getLabels());
+      policiesActivities.setAnnotations(policyValidation.getAnnotations());
+      policiesActivities.setReferenceLink(policyValidation.getReferenceLink());
+      policiesActivities.setReferenceId(policyValidation.getReferenceId());
+      policiesActivities.setCreatedDate(new Date());
+      policiesActivities.setValid(true);
 
-			if (policyEntity.getDefinitions() != null) {
-				policyEntity.getDefinitions().stream()
-						.filter(policyTemplate -> !CollectionUtils.isEmpty(policyTemplate.getRules())).forEach(policyTemplate -> {
+      List<Result> results = new ArrayList<>();
 
-							PolicyTemplateEntity policyTemplateEntity = policyTemplateRepository
-									.findById(policyTemplate.getPolicyTemplateId()).orElse(null);
+      if (policyEntity.getDefinitions() != null) {
+        getPolicyDefinitions(policyValidation, policyEntity, policiesActivities, results);
+      }
 
-							PolicyValidationInput policyValidationInput = policyValidation.getInputs().stream().filter(input -> 
-									policyTemplate.getPolicyTemplateId().equals(input.getTemplateId())).findFirst().get();
-							JsonNode data = policyValidationInput != null ? policyValidationInput.getData() : null;
-							Result result = getResult(policyValidation.getLabels(),
-									policyTemplate, policyTemplateEntity, data);
+      policiesActivities.setResults(results);
+      return policyActivityRepository.save(policiesActivities);
+    } else {
+      throw new BosunException(
+          BosunError.POLICY_NOT_FOUND.getMessage(policyValidation.getPolicyId()));
+    }
+  }
 
-							if (result != null) {
-								if (!result.getValid()) {
-									policiesActivities.setValid(false);
-									if (result.getViolations().isEmpty()) {
-										ResultViolation resultViolation = new ResultViolation();
-										resultViolation.setMetric(policyTemplateEntity.getName());
-										resultViolation.setMessage("No data exists for component/version");
-										resultViolation.setValid(false);
-										result.getViolations().add(resultViolation);
-									}
-								}
-								results.add(result);
-							}
-						});
-			}
-			
-			policiesActivities.setResults(results);
-			return policyActivityRepository.save(policiesActivities);
-		} else {
-			throw new BosunException(BosunError.POLICY_NOT_FOUND.getMessage(policyValidation.getPolicyId()));
-		}
-	}
-	
-	@Override
-	public PolicyValidation validateInfo(String policyId) {
-		PolicyValidation policyInfo = new PolicyValidation();
-		policyInfo.setPolicyId(policyId);
-		PolicyEntity policy = policyRepository.findById(policyId).orElse(new PolicyEntity());
-		List<PolicyValidationInput> policyInfoInputs = new ArrayList<>();
-		ObjectMapper objectMapper = new ObjectMapper();
-		JsonNode jsonNode = objectMapper.createObjectNode();
-		policy.getDefinitions().stream().filter(definition -> !CollectionUtils.isEmpty(definition.getRules())).forEach(definition -> {
-			PolicyValidationInput policyInfoInput = new PolicyValidationInput();
-			policyInfoInput.setTemplateId(definition.getPolicyTemplateId());
-			policyInfoInput.setData(jsonNode);
-			policyInfoInputs.add(policyInfoInput);
-		});
-		policyInfo.setInputs(policyInfoInputs);
-		Map<String, String> labels = new HashMap<>();
-		policyTemplateRepository.findAll().forEach(policyTemplate -> {
-			if (policyTemplate.getLabels() != null) {
-				policyTemplate.getLabels().forEach(label -> {
-				labels.put(label,"");
-			});
-			}
-		});
-		policyInfo.setLabels(labels);
-		policyInfo.setReferenceId("");
-		policyInfo.setReferenceLink("");
-		return policyInfo;
-	}
+  private void getPolicyDefinitions(PolicyValidation policyValidation, PolicyEntity policyEntity,
+      final PolicyActivityEntity policiesActivities, List<Result> results) {
+    policyEntity.getDefinitions().stream()
+        .filter(policyTemplate -> !CollectionUtils.isEmpty(policyTemplate.getRules()))
+        .forEach(policyTemplate -> {
+
+          PolicyTemplateEntity policyTemplateEntity = policyTemplateRepository
+              .findById(policyTemplate.getPolicyTemplateId()).orElse(null);
+
+          PolicyValidationInput policyValidationInput = null;
+
+          if (!policyValidation.getInputs().isEmpty()) {
+            policyValidationInput = policyValidation.getInputs().stream()
+                .filter(
+                    input -> policyTemplate.getPolicyTemplateId().equals(input.getTemplateId()))
+                .findFirst().get();
+          }
+
+          JsonNode data =
+              policyValidationInput != null ? policyValidationInput.getData() : null;
+          Result result = getResult(policyValidation.getLabels(), policyTemplate,
+              policyTemplateEntity, data);
+
+          if (result != null) {
+            if (!result.getValid()) {
+              policiesActivities.setValid(false);
+              if (result.getViolations().isEmpty()) {
+                ResultViolation resultViolation = new ResultViolation();
+                resultViolation.setMetric(policyTemplateEntity.getName());
+                resultViolation.setMessage("No data exists for component/version");
+                resultViolation.setValid(false);
+                result.getViolations().add(resultViolation);
+              }
+            }
+            results.add(result);
+          }
+        });
+  }
+
+  @Override
+  public PolicyValidation validateInfo(String policyId) {
+    PolicyValidation policyInfo = new PolicyValidation();
+    policyInfo.setPolicyId(policyId);
+    PolicyEntity policy = policyRepository.findById(policyId).orElse(new PolicyEntity());
+    List<PolicyValidationInput> policyInfoInputs = new ArrayList<>();
+    ObjectMapper objectMapper = new ObjectMapper();
+    JsonNode jsonNode = objectMapper.createObjectNode();
+    policy.getDefinitions().stream()
+        .filter(definition -> !CollectionUtils.isEmpty(definition.getRules()))
+        .forEach(definition -> {
+          PolicyValidationInput policyInfoInput = new PolicyValidationInput();
+          policyInfoInput.setTemplateId(definition.getPolicyTemplateId());
+          policyInfoInput.setData(jsonNode);
+          policyInfoInputs.add(policyInfoInput);
+        });
+    policyInfo.setInputs(policyInfoInputs);
+    Map<String, String> labels = new HashMap<>();
+    policyTemplateRepository.findAll().forEach(policyTemplate -> {
+      if (policyTemplate.getLabels() != null) {
+        policyTemplate.getLabels().forEach(label -> labels.put(label, ""));
+      }
+    });
+    policyInfo.setLabels(labels);
+    policyInfo.setReferenceId("");
+    policyInfo.setReferenceLink("");
+    return policyInfo;
+  }
 
   @Override
   public List<PolicyInsights> getInsights(String teamId) {
     Map<String, PolicyInsights> insights = new HashMap<>();
-    LocalDateTime date = LocalDateTime.now(clock).minusMonths(Integer.valueOf(insightsPeriodMonths));
+    LocalDateTime date =
+        LocalDateTime.now(clock).minusMonths(Integer.valueOf(insightsPeriodMonths));
 
-    List<PolicyActivityEntity> activities = policyActivityRepository
-        .findByTeamIdAndValidAndCreatedDateAfter(teamId, false, date);
+    List<PolicyActivityEntity> activities =
+        policyActivityRepository.findByTeamIdAndValidAndCreatedDateAfter(teamId, false, date);
 
     for (PolicyActivityEntity activity : activities) {
       String policyId = activity.getPolicyId();
@@ -332,14 +359,13 @@ public class BosunServiceImpl implements BosunService {
         policyInsights.setPolicyCreatedDate(policy.getCreatedDate());
       }
 
-      PolicyActivitiesInsights policyActivitiesInsights =
-          getPolicyActivitiesInsights(activity, policyInsights);
+      PolicyActivitiesInsights policyActivitiesInsights = getPolicyActivitiesInsights(activity);
 
-      if(policyInsights != null) {
-      policyInsights.addInsights(policyActivitiesInsights);
-      insights.put(policyId, policyInsights);
+      if (policyInsights != null) {
+        policyInsights.addInsights(policyActivitiesInsights);
+        insights.put(policyId, policyInsights);
       }
-     
+
     }
 
     return new ArrayList<>(insights.values());
@@ -355,106 +381,96 @@ public class BosunServiceImpl implements BosunService {
     return filteredDefinitions;
   }
 
-  private PolicyActivitiesInsights getPolicyActivitiesInsights(
-      PolicyActivityEntity activity, PolicyInsights policyInsights) {
+  private PolicyActivitiesInsights getPolicyActivitiesInsights(PolicyActivityEntity activity) {
     Integer failCount = getFaildedCount(activity);
 
     PolicyActivitiesInsights policyActivitiesInsights = null;
 
-//    if (policyInsights != null) {
-//      for (PolicyActivitiesInsights activites : policyInsights.getInsights()) {
-//        if (activites.getPolicyActivityId().equalsIgnoreCase(activity.getReferenceId())) {
-//          policyActivitiesInsights = activites;
-//          policyInsights.removeInsights(activites);
-//          break;
-//        }
-//      }
-//    }
+    policyActivitiesInsights = new PolicyActivitiesInsights();
+    policyActivitiesInsights.setPolicyActivityId(activity.getReferenceId());
+    policyActivitiesInsights.setPolicyActivityCreatedDate(activity.getCreatedDate());
+    policyActivitiesInsights.setViolations(failCount);
 
-    if (policyActivitiesInsights == null) {
-      policyActivitiesInsights = new PolicyActivitiesInsights();
-      policyActivitiesInsights.setPolicyActivityId(activity.getReferenceId());
-      policyActivitiesInsights.setPolicyActivityCreatedDate(activity.getCreatedDate());
-      policyActivitiesInsights.setViolations(failCount);
-    } else {
-      policyActivitiesInsights.setViolations(policyActivitiesInsights.getViolations() + failCount);
-    }
     return policyActivitiesInsights;
   }
 
-	@Override
-	public List<PolicyViolations> getViolations(String teamId) {
-//		TODO: return violations for globally scoped policies
+  @Override
+  public List<PolicyViolations> getViolations(String teamId) {
 
-		Map<String, PolicyViolations> violationsMap = new HashMap<>();
-		
-		LOGGER.info("team.id=" + teamId);
+    Map<String, PolicyViolations> violationsMap = new HashMap<>();
 
-		List<PolicyEntity> policyEntities = policyRepository.findByTeamId(teamId);
-		
-		policyEntities.stream().filter(entity -> !entity.getStatus().equals(Status.inactive)).forEach(entity -> {
-			LOGGER.info("policy.name=" + entity.getName());
-			
-			List<PolicyActivityEntity> policyActivityEntities = policyActivityRepository.findTopDistinctViolationsByPolicyIdAndReferenceId(entity.getId());
+    LOGGER.info("team.id=" + teamId);
 
-			LOGGER.info("policyActivities.size=" + policyActivityEntities.size());
+    List<PolicyEntity> policyEntities = policyRepository.findByTeamId(teamId);
 
-			setViolations(violationsMap, policyActivityEntities);
-		});
+    policyEntities.stream().filter(entity -> !entity.getStatus().equals(Status.inactive))
+        .forEach(entity -> {
+          LOGGER.info("policy.name=" + entity.getName());
 
-		return new ArrayList<>(violationsMap.values());
-	}
+          List<PolicyActivityEntity> policyActivityEntities = policyActivityRepository
+              .findTopDistinctViolationsByPolicyIdAndReferenceId(entity.getId());
 
-	private void setViolations(Map<String, PolicyViolations> violationsMap, List<PolicyActivityEntity> policyActivities) {
-		for (PolicyActivityEntity policyActivity : policyActivities) {
+          LOGGER.info("policyActivities.size=" + policyActivityEntities.size());
 
-			LOGGER.info(new JSONObject(policyActivity).toString());
-			PolicyEntity policy = policyRepository.findById(policyActivity.getPolicyId()).orElse(null);
-			
-			if (policy == null) {
-				continue;
-			}
+          setViolations(violationsMap, policyActivityEntities);
+        });
 
-			LOGGER.info("policy.name=" + policy.getName());
+    return new ArrayList<>(violationsMap.values());
+  }
 
-			StringBuilder key = new StringBuilder();
-			key.append(policy.getId()).append(policyActivity.getReferenceId());
+  private void setViolations(Map<String, PolicyViolations> violationsMap,
+      List<PolicyActivityEntity> policyActivities) {
+    for (PolicyActivityEntity policyActivity : policyActivities) {
 
-			LOGGER.info("key=" + key.toString());
+      LOGGER.info(new JSONObject(policyActivity).toString());
+      PolicyEntity policy = policyRepository.findById(policyActivity.getPolicyId()).orElse(null);
 
-			PolicyViolations violation = getViolation(key.toString(), policyActivity, policy, violationsMap.get(key.toString()));
+      if (policy == null) {
+        continue;
+      }
 
-			violationsMap.put(key.toString(), violation);
-		}
-	}
+      LOGGER.info("policy.name=" + policy.getName());
 
-	private PolicyViolations getViolation(String key, PolicyActivityEntity policyActivity, PolicyEntity policy, PolicyViolations violation) {
+      StringBuilder key = new StringBuilder();
+      key.append(policy.getId()).append(policyActivity.getReferenceId());
 
-		if (violation == null) {
-			violation = new PolicyViolations();
-			violation.setId(key);
-			violation.setPolicyId(policy.getId());
-			violation.setPolicyName(policy.getName());
-			violation.setReferenceId(policyActivity.getReferenceId());
-			violation.setReferenceLink(policyActivity.getReferenceLink());
-			violation.setLabels(policyActivity.getLabels());
-			violation.setAnnotations(policyActivity.getAnnotations());
-			violation.setNbrViolations(0);
-			violation.setViolations(null);
-			violation.setPolicyActivityCreatedDate(policyActivity.getCreatedDate());
-		} else if (policyActivity.getCreatedDate().after(violation.getPolicyActivityCreatedDate())) {
-			violation.setNbrViolations(0);
-			violation.setViolations(null);
-			violation.setPolicyActivityCreatedDate(policyActivity.getCreatedDate());
-		}
+      LOGGER.info("key=" + key.toString());
 
-		violation.setNbrViolations(violation.getNbrViolations() + getViolationsTotal(policyActivity));
-		violation.getViolations().addAll(getViolationsResults(policyActivity));
-		violation.getPolicyDefinitionTypes()
-				.addAll(getViolationsDefinitionTypes(violation.getPolicyDefinitionTypes(), policyActivity));
+      PolicyViolations violation =
+          getViolation(key.toString(), policyActivity, policy, violationsMap.get(key.toString()));
 
-		return violation;
-	}
+      violationsMap.put(key.toString(), violation);
+    }
+  }
+
+  private PolicyViolations getViolation(String key, PolicyActivityEntity policyActivity,
+      PolicyEntity policy, PolicyViolations violation) {
+
+    if (violation == null) {
+      violation = new PolicyViolations();
+      violation.setId(key);
+      violation.setPolicyId(policy.getId());
+      violation.setPolicyName(policy.getName());
+      violation.setReferenceId(policyActivity.getReferenceId());
+      violation.setReferenceLink(policyActivity.getReferenceLink());
+      violation.setLabels(policyActivity.getLabels());
+      violation.setAnnotations(policyActivity.getAnnotations());
+      violation.setNbrViolations(0);
+      violation.setViolations(null);
+      violation.setPolicyActivityCreatedDate(policyActivity.getCreatedDate());
+    } else if (policyActivity.getCreatedDate().after(violation.getPolicyActivityCreatedDate())) {
+      violation.setNbrViolations(0);
+      violation.setViolations(null);
+      violation.setPolicyActivityCreatedDate(policyActivity.getCreatedDate());
+    }
+
+    violation.setNbrViolations(violation.getNbrViolations() + getViolationsTotal(policyActivity));
+    violation.getViolations().addAll(getViolationsResults(policyActivity));
+    violation.getPolicyDefinitionTypes()
+        .addAll(getViolationsDefinitionTypes(violation.getPolicyDefinitionTypes(), policyActivity));
+
+    return violation;
+  }
 
   private List<PolicyViolation> getViolationsResults(PolicyActivityEntity policyActivity) {
     List<PolicyViolation> resultsViolations = new ArrayList<>();
@@ -467,15 +483,15 @@ public class BosunServiceImpl implements BosunService {
   }
 
   private List<PolicyViolation> getPolicyViolation(List<ResultViolation> violations) {
-	  List<PolicyViolation> policyViolations = new ArrayList<>();
-	  for (ResultViolation resultsViolation : violations) {
-		  PolicyViolation policyViolation = new PolicyViolation();
-		  policyViolation.setMetric(resultsViolation.getMetric());
-		  policyViolation.setMessage(resultsViolation.getMessage());
-		  policyViolation.setValid(resultsViolation.getValid());
-		  policyViolations.add(policyViolation);
-	  }
-	  return policyViolations;
+    List<PolicyViolation> policyViolations = new ArrayList<>();
+    for (ResultViolation resultsViolation : violations) {
+      PolicyViolation policyViolation = new PolicyViolation();
+      policyViolation.setMetric(resultsViolation.getMetric());
+      policyViolation.setMessage(resultsViolation.getMessage());
+      policyViolation.setValid(resultsViolation.getValid());
+      policyViolations.add(policyViolation);
+    }
+    return policyViolations;
   }
 
   private Integer getViolationsTotal(PolicyActivityEntity policyActivity) {
@@ -487,22 +503,25 @@ public class BosunServiceImpl implements BosunService {
     }
     return violationsTotal;
   }
-  
-	private List<String> getViolationsDefinitionTypes(List<String> current, PolicyActivityEntity policyActivity) {
-		List<String> violationsDefinitionTypes = new ArrayList<>();
-		for (Result result : policyActivity.getResults()) {
-			if (!result.getValid()) {
-				String policyTemplateId = result.getPolicyTemplateId() != null ? result.getPolicyTemplateId() : "";
-				LOGGER.info("policyTemplateId=" + policyTemplateId);
-				PolicyTemplateEntity policyTemplateEntity = policyTemplateRepository.findById(policyTemplateId).orElse(null);
-				if (policyTemplateEntity != null && !current.contains(policyTemplateEntity.getName())) {
-					LOGGER.info("policyDefinitionName=" + policyTemplateEntity.getName());
-					violationsDefinitionTypes.add(policyTemplateEntity.getName());
-				}
-			}
-		}		
-		return violationsDefinitionTypes;
-	}
+
+  private List<String> getViolationsDefinitionTypes(List<String> current,
+      PolicyActivityEntity policyActivity) {
+    List<String> violationsDefinitionTypes = new ArrayList<>();
+    for (Result result : policyActivity.getResults()) {
+      if (!result.getValid()) {
+        String policyTemplateId =
+            result.getPolicyTemplateId() != null ? result.getPolicyTemplateId() : "";
+        LOGGER.info("policyTemplateId=" + policyTemplateId);
+        PolicyTemplateEntity policyTemplateEntity =
+            policyTemplateRepository.findById(policyTemplateId).orElse(null);
+        if (policyTemplateEntity != null && !current.contains(policyTemplateEntity.getName())) {
+          LOGGER.info("policyDefinitionName=" + policyTemplateEntity.getName());
+          violationsDefinitionTypes.add(policyTemplateEntity.getName());
+        }
+      }
+    }
+    return violationsDefinitionTypes;
+  }
 
   private Result getResult(Map<String, String> labels, PolicyDefinition policyDefinition,
       PolicyTemplateEntity policyTemplate, JsonNode data) {
@@ -514,38 +533,41 @@ public class BosunServiceImpl implements BosunService {
     Result result = getDefaultResult(policyTemplate.getId());
     String key = policyTemplate.getKey().toLowerCase(Locale.US);
     if (data != null) {
-    	LOGGER.info(data);
-        result = getResult(policyTemplate, policyDefinition, data);
+      LOGGER.info(data);
+      result = getResult(policyTemplate, policyDefinition, data);
     } else {
-	    switch (key) {
-	      case "static_code_analysis":
-	        SonarQubeReport sonarQubeReport =
-	            repositoryService.getSonarQubeReport(labels.get("sonarqube-id"), labels.get("sonarqube-version"));
-	        result = getResult(policyTemplate, policyDefinition, getJsonNode(sonarQubeReport, key));
-	        break;
-	      case "unit_tests":
-	        SonarQubeReport sonarQubeTestCoverage =
-	            repositoryService.getSonarQubeTestCoverage(labels.get("sonarqube-id"), labels.get("sonarqube-version"));
-	        result =
-	            getResult(policyTemplate, policyDefinition, getJsonNode(sonarQubeTestCoverage, key));
-	        break;
-	      case "package_safelist":
-	        DependencyGraph dependencyGraph =
-	            repositoryService.getDependencyGraph(labels.get("artifact-path"), labels.get("artifact-name"), labels.get("artifact-version"));
-	        result = getResult(policyTemplate, policyDefinition, getJsonNode(dependencyGraph, key));
-	        break;
-	      case "cve_safelist":
-	      case "security_issue_analysis":
-	        ArtifactSummary summary = repositoryService.getArtifactSummary(labels.get("artifact-path"), labels.get("artifact-name"), labels.get("artifact-version"));
-	        if (!summary.getArtifacts().isEmpty()) {
-	          result = getResult(policyTemplate, policyDefinition,
-	              getJsonNode(summary.getArtifacts().get(0).getIssues(), key));
-	        }
-	        break;
-	      default:
-	        result = null;
-	        break;
-	    }
+      switch (key) {
+        case "static_code_analysis":
+          SonarQubeReport sonarQubeReport = repositoryService
+              .getSonarQubeReport(labels.get("sonarqube-id"), labels.get("sonarqube-version"));
+          result = getResult(policyTemplate, policyDefinition, getJsonNode(sonarQubeReport, key));
+          break;
+        case "unit_tests":
+          SonarQubeReport sonarQubeTestCoverage = repositoryService.getSonarQubeTestCoverage(
+              labels.get("sonarqube-id"), labels.get("sonarqube-version"));
+          result =
+              getResult(policyTemplate, policyDefinition, getJsonNode(sonarQubeTestCoverage, key));
+          break;
+        case "package_safelist":
+          DependencyGraph dependencyGraph =
+              repositoryService.getDependencyGraph(labels.get("artifact-path"),
+                  labels.get("artifact-name"), labels.get("artifact-version"));
+          result = getResult(policyTemplate, policyDefinition, getJsonNode(dependencyGraph, key));
+          break;
+        case "cve_safelist":
+        case "security_issue_analysis":
+          ArtifactSummary summary =
+              repositoryService.getArtifactSummary(labels.get("artifact-path"),
+                  labels.get("artifact-name"), labels.get("artifact-version"));
+          if (!summary.getArtifacts().isEmpty()) {
+            result = getResult(policyTemplate, policyDefinition,
+                getJsonNode(summary.getArtifacts().get(0).getIssues(), key));
+          }
+          break;
+        default:
+          result = null;
+          break;
+      }
     }
     return result;
   }
@@ -560,33 +582,34 @@ public class BosunServiceImpl implements BosunService {
   }
 
   private Result getResult(PolicyTemplateEntity policyTemplateEntity,
-		  PolicyDefinition policyDefinition, JsonNode data) {
+      PolicyDefinition policyDefinition, JsonNode data) {
 
     DataResponse dataResponse = callOpenPolicyAgentClient(policyTemplateEntity.getId(),
         policyTemplateEntity.getKey(), policyDefinition.getRules(), data);
 
     Result result = new Result();
-    result.setPolicyTemplateId(policyTemplateEntity.getId());    
+    result.setPolicyTemplateId(policyTemplateEntity.getId());
     result.setViolations(getResultsViolation(dataResponse.getResult().getViolations()));
     result.setValid(dataResponse.getResult().getValid());
 
     return result;
   }
-  
-  private List<ResultViolation> getResultsViolation(List<DataResponseResultViolation> dataResponseResultViolations) {
-	  List<ResultViolation> resultsViolations = new ArrayList<ResultViolation>();
-	  for (DataResponseResultViolation dataResponseResultViolation : dataResponseResultViolations) {
-		  ResultViolation resultsViolation = new ResultViolation();
-		  resultsViolation.setMessage(dataResponseResultViolation.getMessage());
-		  resultsViolation.setMetric(dataResponseResultViolation.getMetric());
-		  resultsViolation.setValid(dataResponseResultViolation.getValid());
-		  resultsViolations.add(resultsViolation);		  
-	  }
-	  return resultsViolations;
+
+  private List<ResultViolation> getResultsViolation(
+      List<DataResponseResultViolation> dataResponseResultViolations) {
+    List<ResultViolation> resultsViolations = new ArrayList<>();
+    for (DataResponseResultViolation dataResponseResultViolation : dataResponseResultViolations) {
+      ResultViolation resultsViolation = new ResultViolation();
+      resultsViolation.setMessage(dataResponseResultViolation.getMessage());
+      resultsViolation.setMetric(dataResponseResultViolation.getMetric());
+      resultsViolation.setValid(dataResponseResultViolation.getValid());
+      resultsViolations.add(resultsViolation);
+    }
+    return resultsViolations;
   }
 
-  private DataResponse callOpenPolicyAgentClient(String policyTemplateId,
-      String policyTemplateKey, List<Map<String, String>> rules, JsonNode data) {
+  private DataResponse callOpenPolicyAgentClient(String policyTemplateId, String policyTemplateKey,
+      List<Map<String, String>> rules, JsonNode data) {
 
     DataRequestPolicy dataRequestPolicy = new DataRequestPolicy();
     dataRequestPolicy.setId(policyTemplateId);

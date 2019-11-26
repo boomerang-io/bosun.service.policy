@@ -6,14 +6,13 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
-
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import net.boomerangplatform.entity.PolicyTemplateEntity;
 import net.boomerangplatform.exception.BosunException;
 import net.boomerangplatform.repository.PolicyTemplateRepository;
@@ -21,18 +20,18 @@ import net.boomerangplatform.repository.PolicyTemplateRepository;
 @Service
 public class BosunInternalServiceImpl implements BosunInternalService {
 
-  @Autowired private PolicyTemplateRepository policyTemplateRepository;
+  @Autowired
+  private PolicyTemplateRepository policyTemplateRepository;
 
   private static final Logger LOGGER = LogManager.getLogger();
 
   @Override
   public ByteArrayOutputStream getBundle() {
-    TarArchiveOutputStream taos = null;
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
+    
     List<PolicyTemplateEntity> entities = policyTemplateRepository.findAll();
 
-    try {
+    try(TarArchiveOutputStream taos = null;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();) {
       taos = new TarArchiveOutputStream(new GZIPOutputStream(new BufferedOutputStream(baos)));
 
       for (PolicyTemplateEntity entity : entities) {
@@ -41,8 +40,8 @@ public class BosunInternalServiceImpl implements BosunInternalService {
         TarArchiveEntry tae = new TarArchiveEntry(templateName);
 
         byte[] templateBytes = Base64.getDecoder().decode(entity.getRego());
-//        byte[] templateBytes = entity.getRego().getBytes("UTF-8");
-        LOGGER.info(new String(templateBytes, "UTF-8"));
+
+        LOGGER.info(new String(templateBytes, "StandardCharsets.UTF_8"));
         tae.setSize(templateBytes.length);
         taos.putArchiveEntry(tae);
         // The write command allows you to write bytes to the current entry
@@ -52,14 +51,16 @@ public class BosunInternalServiceImpl implements BosunInternalService {
         taos.closeArchiveEntry();
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      LOGGER.log(Level.ERROR, e);
       throw new BosunException(e.getMessage());
     } finally {
-      try {      
-        taos.close();
+      try {
+        if (taos != null) {
+          taos.close();
+        }
+
       } catch (IOException e) {
-        e.printStackTrace();
-        throw new BosunException(e.getMessage());
+        LOGGER.log(Level.ERROR, e);
       }
     }
 

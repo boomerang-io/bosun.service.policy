@@ -1,5 +1,5 @@
 package net.boomerangplatform.model;
 
 public enum Status {
-  active, inactive
+  active, inactive  //NOSONAR
 }

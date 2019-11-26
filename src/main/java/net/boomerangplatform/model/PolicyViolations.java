@@ -92,7 +92,7 @@ public class PolicyViolations implements Serializable {
 
   public List<PolicyViolation> getViolations() {
     if (violations == null) {
-      violations = new ArrayList<PolicyViolation>();
+      violations = new ArrayList<>();
     }
     return violations;
   }
@@ -112,7 +112,7 @@ public class PolicyViolations implements Serializable {
 
   public List<String> getPolicyDefinitionTypes() {
     if (policyDefinitionTypes == null) {
-      policyDefinitionTypes = new ArrayList<String>();
+      policyDefinitionTypes = new ArrayList<>();
     }
     return policyDefinitionTypes;
   }

@@ -65,7 +65,7 @@ public class RepositoryServiceImpl implements RepositoryService {
     try {
       final ResponseEntity<DependencyGraph> response =
           restTemplate.exchange(url, HttpMethod.GET, request, DependencyGraph.class);
-      result = response == null ? result : response.getBody();
+      result = response.getBody() == null ? result : response.getBody();
     } catch (final RestClientException e) {
       LOGGER.error(e.getMessage(), e);
     }
@@ -88,7 +88,7 @@ public class RepositoryServiceImpl implements RepositoryService {
     try {
       final ResponseEntity<ArtifactSummary> response =
           restTemplate.exchange(url, HttpMethod.GET, request, ArtifactSummary.class);
-      result = response == null ? result : response.getBody();
+      result = response.getBody() == null ? result : response.getBody();
     } catch (final RestClientException e) {
       LOGGER.error(e.getMessage(), e);
     }
