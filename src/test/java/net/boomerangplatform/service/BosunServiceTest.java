@@ -104,28 +104,28 @@ public class BosunServiceTest extends BosunTests {
 
   @Test
   public void testGetPoliciesByTeamId() throws JsonProcessingException {
-    String teamId = "5cedb53fdd1be20001f3d8c2";
+    String teamId = "5db31d8c58b3779d106c508b";
 
     List<Policy> policies = bosunService.getPoliciesByTeamId(teamId);
 
-    Assert.assertEquals(0, policies.size());
+    Assert.assertEquals(1, policies.size());
 
     Policy policy = policies.get(0);
 
-    Assert.assertEquals("Code Medium Validation", policy.getName());
-    Assert.assertEquals("5c5b5a0b352b1b614143b7c3", policy.getId());
+    Assert.assertEquals("Tim Testing Policies", policy.getName());
+    Assert.assertEquals("5db85e35110fc4000140a5ad", policy.getId());
     Assert.assertEquals(teamId, policy.getTeamId());
 
     Assert.assertEquals(1, policy.getDefinitions().size());
 
     PolicyDefinition definition = policy.getDefinitions().get(0);
-    Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definition.getPolicyTemplateId());
+    Assert.assertEquals("5cd49777f6ea74a9bb6ac629", definition.getPolicyTemplateId());
 
-    Assert.assertEquals(2, definition.getRules().size());
+    Assert.assertEquals(1, definition.getRules().size());
     Map<String, String> rule = definition.getRules().get(0);
 
-    Assert.assertEquals("lines", rule.get("metric"));
-    Assert.assertEquals("88", rule.get("value"));
+    Assert.assertEquals("issues-total", rule.get("metric"));
+    Assert.assertEquals("1", rule.get("value"));
   }
 
 
@@ -144,11 +144,11 @@ public class BosunServiceTest extends BosunTests {
 
 
     String definitionId = definition.getPolicyTemplateId();
-    Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definitionId);
+    Assert.assertEquals("5cd49777f6ea74a9bb6ac629", definitionId);
 
 
-    List<Policy> policies = bosunService.getPoliciesByTeamId("5cedb53fdd1be20001f3d8c2");
-    Assert.assertEquals(0, policies.size());
+    List<Policy> policies = bosunService.getPoliciesByTeamId("5cd49777f6ea74a9bb6ac629");
+    Assert.assertEquals(1, policies.size());
 
     Policy policyFound = policies.get(0);
     Assert.assertEquals(definitionId,
