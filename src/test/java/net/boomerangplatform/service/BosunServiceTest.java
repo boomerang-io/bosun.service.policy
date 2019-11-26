@@ -110,7 +110,7 @@ public class BosunServiceTest extends BosunTests {
 
     List<Policy> policies = bosunService.getPoliciesByTeamId(teamId);
 
-    Assert.assertEquals(1, policies.size());
+    Assert.assertEquals(0, policies.size());
 
     Policy policy = policies.get(0);
 
@@ -150,7 +150,7 @@ public class BosunServiceTest extends BosunTests {
 
 
     List<Policy> policies = bosunService.getPoliciesByTeamId("5cedb53fdd1be20001f3d8c2");
-    Assert.assertEquals(1, policies.size());
+    Assert.assertEquals(0, policies.size());
 
     Policy policyFound = policies.get(0);
     Assert.assertEquals(definitionId,
@@ -170,7 +170,7 @@ public class BosunServiceTest extends BosunTests {
 
     PolicyDefinition ciPolicyConfig = policyReturn.getDefinitions().get(0);
     String definitionId = ciPolicyConfig.getPolicyTemplateId();
-    Assert.assertEquals("5cd328ae1e9bbbb710590d9d", definitionId);
+    Assert.assertEquals("5cd49777f6ea74a9bb6ac629", definitionId);
 
 
     List<Policy> policies = bosunService.getPoliciesByTeamId("9999");
@@ -184,7 +184,7 @@ public class BosunServiceTest extends BosunTests {
   public void testGetInsights() throws IOException {
     List<PolicyInsights> insights = bosunService.getInsights("9999");
 
-    Assert.assertEquals(1, insights.size());
+    Assert.assertEquals(0, insights.size());
     PolicyInsights entry = insights.get(0);
     Policy policy = bosunService.getPolicyById(entry.getPolicyId());
     Assert.assertEquals("Code Medium Validation", policy.getName());
@@ -343,10 +343,10 @@ public class BosunServiceTest extends BosunTests {
 
   @Test
   public void testGetViolations() throws JsonProcessingException {
-    String teamId = "5cedb53fdd1be20001f3d8c2";
+    String teamId = "5db31d8c58b3779d106c508b";
     
     List<PolicyViolations> violations = bosunService.getViolations(teamId);
-    Assert.assertEquals(1, violations.size());
+    Assert.assertEquals(0, violations.size());
     PolicyViolations violation = violations.get(0);
     Assert.assertEquals("5cf151691417760001c0a679", violation.getPolicyId());
     Assert.assertEquals("Glens Zero Defns Test", violation.getPolicyName());

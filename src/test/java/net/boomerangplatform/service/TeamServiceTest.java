@@ -26,6 +26,6 @@ public class TeamServiceTest extends BosunTests {
   public void testGetTeams() {
     List<PolicyTeam> teams = teamService.getAllTeams();
 
-    Assert.assertEquals(0, teams.size());
+    Assert.assertEquals(2, teams.size());
   }
 }
