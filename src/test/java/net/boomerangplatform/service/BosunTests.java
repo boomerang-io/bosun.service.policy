@@ -11,7 +11,7 @@ public class BosunTests extends AbstractBoomerangTest {
   @Override
   protected String[] getCollections() {
     return new String[] {"bosun_activities", "bosun_definitions", "bosun_policies", "bosun_teams",
-        "bosun_templates", "ci_components_activities", "ci_policies"};
+        "bosun_templates", "ci_components_activities"};
   }
 
   @Override
@@ -55,9 +55,6 @@ public class BosunTests extends AbstractBoomerangTest {
 
     data.put("ci_components_activities",
         Arrays.asList("db/ci_components_activities/CiComponentActivityEntity.json"));
-    
-    data.put("ci_policies", Arrays.asList("db/ci_policies/CiPolicyEntity1.json",
-        "db/ci_policies/CiPolicyEntity2.json", "db/ci_policies/CiPolicyEntity3.json"));
     
     return data;
   }
