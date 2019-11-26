@@ -56,7 +56,7 @@ import net.boomerangplatform.repository.model.SonarQubeReport;
 @ActiveProfiles(profiles = "test")
 @SpringBootTest
 @ContextConfiguration(classes = {Application.class, MongoConfig.class})
-public class BosunServiceTest extends AbstractBoomerangTest {
+public class BosunServiceTest extends BosunTests {
 
   private final static LocalDate LOCAL_DATE = LocalDate.of(2019, 05, 15);
   
@@ -85,42 +85,6 @@ public class BosunServiceTest extends AbstractBoomerangTest {
         ZoneId.systemDefault());
     when(clock.instant()).thenReturn(fixedClock.instant());
     when(clock.getZone()).thenReturn(fixedClock.getZone());
-  }
-
-
-  @Override
-  protected String[] getCollections() {
-    return new String[] {"ci_policies", "ci_policies_definitions", "ci_policies_activities",
-        "ci_components", "ci_components_activities", "ci_components_versions", "ci_pipelines",
-        "ci_stages"};
-  }
-
-  @Override
-  protected Map<String, List<String>> getData() {
-    LinkedHashMap<String, List<String>> data = new LinkedHashMap<>();
-    data.put("ci_policies", Arrays.asList("db/ci_policies/CiPolicyEntity1.json",
-        "db/ci_policies/CiPolicyEntity2.json", "db/ci_policies/CiPolicyEntity3.json"));
-    data.put("ci_policies_definitions",
-        Arrays.asList("db/ci_policies_definitions/CiPolicyDefinitionEntity1.json",
-            "db/ci_policies_definitions/CiPolicyDefinitionEntity2.json",
-            "db/ci_policies_definitions/CiPolicyDefinitionEntity3.json"));
-    data.put("ci_policies_activities",
-        Arrays.asList("db/ci_policies_activities/PolicyActivityEntity.json",
-            "db/ci_policies_activities/CiPolicyActivityEntity2.json",
-            "db/ci_policies_activities/CiPolicyActivityEntity3.json",
-            "db/ci_policies_activities/CiPolicyActivityEntity4.json",
-            "db/ci_policies_activities/CiPolicyActivityEntity5.json",
-            "db/ci_policies_activities/CiPolicyActivityEntity6.json"));
-    data.put("ci_components_activities",
-        Arrays.asList("db/ci_components_activities/CiComponentActivityEntity.json"));
-    data.put("ci_components_versions",
-        Arrays.asList("db/ci_components_versions/CiComponentVersionEntity.json"));
-    data.put("ci_components", Arrays.asList("db/ci_components/CiComponentEntity.json"));
-    data.put("ci_pipelines", Arrays.asList("db/ci_pipelines/CiPipelineEntity.json"));
-    data.put("ci_stages", Arrays.asList("db/ci_stages/CiStageEntity.json"));
-
-
-    return data;
   }
 
 //  @Test
