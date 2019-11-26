@@ -27,11 +27,12 @@ public class BosunInternalServiceImpl implements BosunInternalService {
 
   @Override
   public ByteArrayOutputStream getBundle() {
-    
+    TarArchiveOutputStream taos = null;
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
     List<PolicyTemplateEntity> entities = policyTemplateRepository.findAll();
 
-    try(TarArchiveOutputStream taos = null;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();) {
+    try {
+
       taos = new TarArchiveOutputStream(new GZIPOutputStream(new BufferedOutputStream(baos)));
 
       for (PolicyTemplateEntity entity : entities) {
