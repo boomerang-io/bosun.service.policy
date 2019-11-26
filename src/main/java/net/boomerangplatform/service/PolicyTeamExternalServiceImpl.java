@@ -63,8 +63,8 @@ public class PolicyTeamExternalServiceImpl implements PolicyTeamService {
 	public PolicyTeam getTeamById(String id) {
 		List<PolicyTeam> allTeams = this.getAllTeams();
 		if (allTeams != null) {
-			PolicyTeam team = allTeams.stream().filter(t -> t.getId().equals(id)).findAny().orElse(null);
-			return team;
+		return allTeams.stream().filter(t -> t.getId().equals(id)).findAny().orElse(null);
+			
 		}
 		return null;
 	}
@@ -73,8 +73,8 @@ public class PolicyTeamExternalServiceImpl implements PolicyTeamService {
 	public PolicyTeam getTeamByName(String name) {
 		List<PolicyTeam> allTeams = this.getAllTeams();
 		if (allTeams != null) {
-			PolicyTeam team = allTeams.stream().filter(t -> t.getName().equals(name)).findAny().orElse(null);
-			return team;
+			return allTeams.stream().filter(t -> t.getName().equals(name)).findAny().orElse(null);
+		
 		}
 		return null;
 	}

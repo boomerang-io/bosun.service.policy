@@ -27,9 +27,7 @@ public class PolicyActivityCustomImpl implements PolicyActivityCustom {
   @Override
   public List<PolicyActivityEntity> findTopDistinctViolationsByPolicyIdAndReferenceId(
       String policyId) {
-    //	  { $sort: { createdDate: -1 } }, { $match: { policyId: $?0 } }, { $group: { _id:
-    // $referenceId, documents : { $push: $$ROOT } } }, { $replaceRoot: { newRoot: {
-    // $arrayElemAt: [$documents, 0] } } }, { $match: { valid: false } }
+
     List<AggregationOperation> list = new ArrayList<>();
     list.add(Aggregation.sort(new Sort(Direction.DESC, "createdDate")));
     list.add(Aggregation.match(new Criteria("policyId").is(policyId)));

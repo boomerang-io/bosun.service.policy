@@ -25,9 +25,9 @@ public class PolicyTeamServiceImpl implements PolicyTeamService {
 	@Override
 	public List<PolicyTeam> getAllTeams() {
 		List<PolicyTeamEntity> allPolicyEntities = teamRepository.findAll();
-		List<PolicyTeam> allTeamPolicies = allPolicyEntities.stream().map(PolicyTeamServiceImpl::convertEntityToDomain)
+		return allPolicyEntities.stream().map(PolicyTeamServiceImpl::convertEntityToDomain)
 				.collect(Collectors.toList());
-		return allTeamPolicies;
+		
 	}
 
 	@Override
@@ -35,8 +35,7 @@ public class PolicyTeamServiceImpl implements PolicyTeamService {
 		Optional<PolicyTeamEntity> result = teamRepository.findById(id);
 		if (result.isPresent()) {
 			PolicyTeamEntity policyEntity = result.get();
-			PolicyTeam teamPolicy = convertEntityToDomain(policyEntity);
-			return teamPolicy;
+			return convertEntityToDomain(policyEntity);
 		}
 		return null;
 	}
@@ -46,8 +45,8 @@ public class PolicyTeamServiceImpl implements PolicyTeamService {
 		Optional<PolicyTeamEntity> result = teamRepository.findByName(name);
 		if (result.isPresent()) {
 			PolicyTeamEntity policyEntity = result.get();
-			PolicyTeam teamPolicy = convertEntityToDomain(policyEntity);
-			return teamPolicy;
+			return  convertEntityToDomain(policyEntity);
+			
 		}
 		return null;
 	}
