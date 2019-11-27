@@ -1,7 +1,9 @@
 package net.boomerangplatform.service;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -9,13 +11,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import javax.annotation.Resource;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -23,7 +24,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.boomerangplatform.Application;
 import net.boomerangplatform.opa.exception.OPAClientException;
@@ -42,14 +42,11 @@ public class OPAClientTest {
   private OpenPolicyAgentClient opaClient;
 
   @Autowired
-  @Qualifier("internalRestTemplate")
-  @Resource(name = "internalRestTemplate")
   protected RestTemplate restTemplate;
 
   protected MockRestServiceServer server;
 
-
-  private static final String opaURL = "http://localhost:8181/v1/data/citadel/";
+  private static final String opaURL = "http://localhost:8181/v1/data/";
 
   @Before
   public void setUp() {
@@ -64,7 +61,7 @@ public class OPAClientTest {
     String key = dataRequest.getInput().getPolicy().getKey();
     String url = opaURL + key;
 
-    this.server.expect(requestTo(url))
+    this.server.expect(requestTo(containsString(url))).andExpect(method(HttpMethod.POST))
         .andRespond(withSuccess(parseToJson(getDataResponse()), MediaType.APPLICATION_JSON));
 
     DataResponse dataResponse = opaClient.validateData(dataRequest);

@@ -16,7 +16,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -57,7 +56,7 @@ import net.boomerangplatform.repository.model.SonarQubeReport;
 public class BosunServiceTest extends BosunTests {
 
   private final static LocalDate LOCAL_DATE = LocalDate.of(2019, 05, 15);
-  
+
   @Autowired
   private CiComponentActivityService activityService;
 
@@ -65,8 +64,6 @@ public class BosunServiceTest extends BosunTests {
   private BosunService bosunService;
 
   @Autowired
-  @Qualifier("internalRestTemplate")
-//  @Resource(name = "internalRestTemplate")
   RestTemplate restTemplate;
 
   private MockRestServiceServer server;
@@ -85,14 +82,14 @@ public class BosunServiceTest extends BosunTests {
     when(clock.getZone()).thenReturn(fixedClock.getZone());
   }
 
-//  @Test
-//  public void testGetAllDefinitions() {
-//    List<PolicyDefinition> definitions = bosunService.getAllDefinitions();
-//
-//    Assert.assertEquals(3, definitions.size());
-//    PolicyDefinition definition = definitions.get(0);
-//    Assert.assertEquals(3, definition.getRules().size());
-//  }
+  // @Test
+  // public void testGetAllDefinitions() {
+  // List<PolicyDefinition> definitions = bosunService.getAllDefinitions();
+  //
+  // Assert.assertEquals(3, definitions.size());
+  // PolicyDefinition definition = definitions.get(0);
+  // Assert.assertEquals(3, definition.getRules().size());
+  // }
 
   @Test
   public void testGetAllOperators() throws JsonProcessingException {
@@ -128,11 +125,10 @@ public class BosunServiceTest extends BosunTests {
     Assert.assertEquals("1", rule.get("value"));
   }
 
-
   @Test
   public void testAddPolicy() throws IOException {
-    Policy policy = new ObjectMapper().readValue(loadResourceAsString("addCiPolicyEntity.json"),
-        Policy.class);
+    Policy policy =
+        new ObjectMapper().readValue(loadResourceAsString("addCiPolicyEntity.json"), Policy.class);
     Policy policyReturn = bosunService.addPolicy(policy);
 
     System.out.println(parseToJson(policyReturn));
@@ -145,11 +141,10 @@ public class BosunServiceTest extends BosunTests {
 
   }
 
-
   @Test
   public void testUpdatePolicy() throws IOException {
-    Policy policy = new ObjectMapper()
-        .readValue(loadResourceAsString("updateCiPolicyEntity.json"), Policy.class);
+    Policy policy = new ObjectMapper().readValue(loadResourceAsString("updateCiPolicyEntity.json"),
+        Policy.class);
     Policy policyReturn = bosunService.updatePolicy(policy);
 
     System.out.println(parseToJson(policyReturn));
@@ -159,7 +154,6 @@ public class BosunServiceTest extends BosunTests {
     PolicyDefinition ciPolicyConfig = policyReturn.getDefinitions().get(0);
     String definitionId = ciPolicyConfig.getPolicyTemplateId();
     Assert.assertEquals("5cd49777f6ea74a9bb6ac629", definitionId);
-
 
     List<Policy> policies = bosunService.getPoliciesByTeamId("9999");
     Assert.assertEquals(1, policies.size());
@@ -190,6 +184,11 @@ public class BosunServiceTest extends BosunTests {
 
     this.server.expect(requestTo(opaURL)).andRespond(
         withSuccess(loadResourceAsString("dataResponse.json"), MediaType.APPLICATION_JSON));
+    
+    server = MockRestServiceServer.bindTo(restTemplate).ignoreExpectOrder(true).build();
+
+    this.server.expect(requestTo("http://localhost:8181/v1/data/static_code_analysis")).andRespond(
+        withSuccess(loadResourceAsString("dataResponse.json"), MediaType.APPLICATION_JSON));
 
     String componentActivityId = "5cee1d76dd1be20001f3d9c5";
     String ciPolicyId = "5db85e35110fc4000140a5ad";
@@ -198,28 +197,27 @@ public class BosunServiceTest extends BosunTests {
 
     PolicyValidation policyValidation = new PolicyValidation();
     policyValidation.setPolicyId(ciPolicyId);
-    
+
     Map<String, String> label = new HashMap<>();
     label.put("sonarqube-id", componentId);
     label.put("sonarqube-version", version);
     label.put("artifact-version", version);
-    
+
     policyValidation.setLabels(label);
     policyValidation.setInputs(new ArrayList<>());
-    
-    CiComponentActivityEntity activityEntity = activityService.findById(componentActivityId);
-    
-    policyValidation.setReferenceId(componentId + activityEntity.getCiStageId());
-    
-    PolicyActivityEntity savedEntity =
-        bosunService.validatePolicy(policyValidation);
 
-    Assert.assertEquals("5c5b5a0b352b1b614143b7c3", savedEntity.getPolicyId());
+    CiComponentActivityEntity activityEntity = activityService.findById(componentActivityId);
+
+    policyValidation.setReferenceId(componentId + activityEntity.getCiStageId());
+
+    PolicyActivityEntity savedEntity = bosunService.validatePolicy(policyValidation);
+
+    Assert.assertEquals("5db85e35110fc4000140a5ad", savedEntity.getPolicyId());
     Assert.assertEquals(Boolean.FALSE, savedEntity.getValid());
     Assert.assertEquals(1, savedEntity.getResults().size());
     Assert.assertEquals(Boolean.FALSE, savedEntity.getResults().get(0).getValid());
-    Assert.assertEquals("[]", savedEntity.getResults().get(0).getViolations());
-    Assert.assertEquals("5cd328ae1e9bbbb710590d9d",
+    Assert.assertEquals(false, savedEntity.getResults().get(0).getViolations().get(0).getValid());
+    Assert.assertEquals("5cd49777f6ea74a9bb6ac629",
         savedEntity.getResults().get(0).getPolicyTemplateId());
 
     server.verify();
@@ -230,16 +228,9 @@ public class BosunServiceTest extends BosunTests {
   public void testValidatePolicyWithCveSafelist() throws JsonProcessingException {
 
     this.server = MockRestServiceServer.createServer(restTemplate);
+    server = MockRestServiceServer.bindTo(restTemplate).ignoreExpectOrder(true).build();
 
-    String sonarQubeURL =
-        "http://localhost:8080/repository/xray/artifact/summary?ciComponentId=5cedbec5dd1be20001f3d942&version=nextgen-2";
-
-    this.server.expect(requestTo(sonarQubeURL))
-        .andRespond(withSuccess(parseToJson(getArtifactSummary()), MediaType.APPLICATION_JSON));
-
-    String opaURL = "http://localhost:8181/v1/data/citadel/cve_safelist";
-
-    this.server.expect(requestTo(opaURL)).andRespond(
+    this.server.expect(requestTo("http://localhost:8181/v1/data/static_code_analysis")).andRespond(
         withSuccess(loadResourceAsString("dataResponse.json"), MediaType.APPLICATION_JSON));
 
     String componentActivityId = "5cee1d76dd1be20001f3d9c5";
@@ -254,24 +245,23 @@ public class BosunServiceTest extends BosunTests {
     label.put("sonarqube-id", componentId);
     label.put("sonarqube-version", version);
     label.put("artifact-version", version);
-    
+
     policyValidation.setLabels(label);
     policyValidation.setInputs(new ArrayList<>());
-    
-    CiComponentActivityEntity activityEntity = activityService.findById(componentActivityId);
-    
-    policyValidation.setReferenceId(componentId + activityEntity.getCiStageId());
-    
-    PolicyActivityEntity savedEntity =
-        bosunService.validatePolicy(policyValidation);
-   
 
-    Assert.assertEquals("5cf151691417760001c0a679", savedEntity.getPolicyId());
+    CiComponentActivityEntity activityEntity = activityService.findById(componentActivityId);
+
+    policyValidation.setReferenceId(componentId + activityEntity.getCiStageId());
+
+    PolicyActivityEntity savedEntity = bosunService.validatePolicy(policyValidation);
+
+
+    Assert.assertEquals("5db9a8c7b01c530001b838d1", savedEntity.getPolicyId());
     Assert.assertEquals(Boolean.FALSE, savedEntity.getValid());
     Assert.assertEquals(1, savedEntity.getResults().size());
     Assert.assertEquals(Boolean.FALSE, savedEntity.getResults().get(0).getValid());
-    Assert.assertEquals("[]", savedEntity.getResults().get(0).getViolations());
-    Assert.assertEquals("5cdd8425f6ea74a9bbaf2fe6",
+    Assert.assertEquals(false, savedEntity.getResults().get(0).getViolations().get(0).getValid());
+    Assert.assertEquals("5cd49777f6ea74a9bb6ac629",
         savedEntity.getResults().get(0).getPolicyTemplateId());
 
     server.verify();
@@ -290,29 +280,29 @@ public class BosunServiceTest extends BosunTests {
 
     PolicyValidation policyValidation = new PolicyValidation();
     policyValidation.setPolicyId(ciPolicyId);
-    
+
     Map<String, String> label = new HashMap<>();
     label.put("sonarqube-id", componentId);
     label.put("sonarqube-version", version);
     label.put("artifact-version", version);
     label.put("artifact-path", "");
-    label.put("artifact-name","");
-    
+    label.put("artifact-name", "");
+
     policyValidation.setLabels(label);
     policyValidation.setInputs(new ArrayList<>());
-    
+
     CiComponentActivityEntity activityEntity = activityService.findById(componentActivityId);
-    
+
     policyValidation.setReferenceId(componentId + activityEntity.getCiStageId());
-    
-    PolicyActivityEntity savedEntity =
-        bosunService.validatePolicy(policyValidation);
+
+    PolicyActivityEntity savedEntity = bosunService.validatePolicy(policyValidation);
 
     Assert.assertEquals("5dba1ce19e0f890001153730", savedEntity.getPolicyId());
     Assert.assertEquals(Boolean.FALSE, savedEntity.getValid());
     Assert.assertEquals(1, savedEntity.getResults().size());
     Assert.assertEquals(Boolean.FALSE, savedEntity.getResults().get(0).getValid());
-    Assert.assertEquals("Security Issue Analysis", savedEntity.getResults().get(0).getViolations().get(0).getMetric());
+    Assert.assertEquals("Security Issue Analysis",
+        savedEntity.getResults().get(0).getViolations().get(0).getMetric());
     Assert.assertEquals("5cdd8667f6ea74a9bbaf5022",
         savedEntity.getResults().get(0).getPolicyTemplateId());
 
@@ -323,7 +313,7 @@ public class BosunServiceTest extends BosunTests {
   @Test
   public void testGetViolations() throws JsonProcessingException {
     String teamId = "5db31d8c58b3779d106c508b";
-    
+
     List<PolicyViolations> violations = bosunService.getViolations(teamId);
     Assert.assertEquals(0, violations.size());
   }
