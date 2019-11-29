@@ -31,7 +31,7 @@ public class Result {
 
 	public List<ResultViolation> getViolations() {
 		if (violations == null) {
-			violations = new ArrayList<ResultViolation>();
+			violations = new ArrayList<>();
 		}
 		return violations;
 	}

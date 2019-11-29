@@ -1,0 +1,21 @@
+{
+    "_id" : ObjectId("5db89b791e49b60001c33fc7"),
+    "name" : "Tysons Third Policy",
+    "teamId" : "5db85635110fc4000140a5ab",
+    "createdDate" : ISODate("2019-10-29T00:00:00.000Z"),
+    "scope" : "team",
+    "definitions" : [ 
+        {
+            "policyTemplateId" : "5cd49777f6ea74a9bb6ac629",
+            "rules" : [ 
+                {
+                    "metric" : "issues-total",
+                    "operator" : "less than",
+                    "value" : "0"
+                }
+            ]
+        }
+    ],
+    "status" : "inactive",
+    "_class" : "net.boomerangplatform.entity.PolicyEntity"
+}

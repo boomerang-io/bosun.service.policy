@@ -1,7 +1,6 @@
 package net.boomerangplatform.opa.model;
 
-import java.util.ArrayList;
-
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -11,7 +10,7 @@ public class DataResponseResult {
   private JsonNode rules;
   
   @JsonProperty("violations")
-  private ArrayList<DataResponseResultViolation> violations;
+  private List<DataResponseResultViolation> violations;
 
   @JsonProperty("valid")
   private Boolean valid;
@@ -32,11 +31,11 @@ public class DataResponseResult {
     this.valid = valid;
   }
 
-  public ArrayList<DataResponseResultViolation> getViolations() {
+  public List<DataResponseResultViolation> getViolations() {
     return violations;
   }
 
-  public void setViolations(ArrayList<DataResponseResultViolation> violations) {
+  public void setViolations(List<DataResponseResultViolation> violations) {
     this.violations = violations;
   }
 }

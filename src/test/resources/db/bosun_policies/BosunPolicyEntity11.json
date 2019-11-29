@@ -1,0 +1,20 @@
+{
+    "_id" : ObjectId("5dd846678e9c4e0001847fd8"),
+    "name" : "Dev Test",
+    "teamId" : "5d099b525aad240001ec3bd2",
+    "scope" : "team",
+    "definitions" : [ 
+        {
+            "policyTemplateId" : "5cd49777f6ea74a9bb6ac629",
+            "rules" : [ 
+                {
+                    "metric" : "issues-total",
+                    "operator" : "less than",
+                    "value" : "30"
+                }
+            ]
+        }
+    ],
+    "status" : "active",
+    "_class" : "net.boomerangplatform.entity.PolicyEntity"
+}

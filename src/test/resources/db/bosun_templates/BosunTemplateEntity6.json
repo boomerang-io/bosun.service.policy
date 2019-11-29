@@ -1,0 +1,19 @@
+{
+    "_id" : ObjectId("5dcbd260a77ec5ba2fa317b3"),
+    "key" : "There",
+    "name" : "Tim Testing",
+    "description" : "Here ",
+    "labels" : [],
+    "order" : 0,
+    "rules" : [ 
+        {
+            "key" : "it",
+            "label" : "here",
+            "type" : "text",
+            "defaultValue" : "",
+            "description" : "is"
+        }
+    ],
+    "rego" : "cGFja2FnZSBleGFtcGxlCgphbGxvdyA9IHRydWUgeyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIyBhbGxvdyBpcyB0cnVlIGlmLi4uCiAgICBjb3VudCh2aW9sYXRpb24pID09IDAgICAgICAgICAgICAgICAgICAgICAgICAgICAjIHRoZXJlIGFyZSB6ZXJvIHZpb2xhdGlvbnMuCn0KCnZpb2xhdGlvbltzZXJ2ZXIuaWRdIHsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAjIGEgc2VydmVyIGlzIGluIHRoZSB2aW9sYXRpb24gc2V0IGlmLi4uCiAgICBzb21lIHNlcnZlcgogICAgcHVibGljX3NlcnZlcltzZXJ2ZXJdICAgICAgICAgICAgICAgICAgICAgICAgICAgIyBpdCBleGlzdHMgaW4gdGhlICdwdWJsaWNfc2VydmVyJyBzZXQgYW5kLi4uCiAgICBzZXJ2ZXIucHJvdG9jb2xzW19dID09ICJodHRwIiAgICAgICAgICAgICAgICAgICAjIGl0IGNvbnRhaW5zIHRoZSBpbnNlY3VyZSAiaHR0cCIgcHJvdG9jb2wuCn0KCnZpb2xhdGlvbltzZXJ2ZXIuaWRdIHsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAjIGEgc2VydmVyIGlzIGluIHRoZSB2aW9sYXRpb24gc2V0IGlmLi4uCiAgICBzZXJ2ZXIgOj0gaW5wdXQuc2VydmVyc1tfXSAgICAgICAgICAgICAgICAgICAgICAjIGl0IGV4aXN0cyBpbiB0aGUgaW5wdXQuc2VydmVycyBjb2xsZWN0aW9uIGFuZC4uLgogICAgc2VydmVyLnByb3RvY29sc1tfXSA9PSAidGVsbmV0IiAgICAgICAgICAgICAgICAgIyBpdCBjb250YWlucyB0aGUgInRlbG5ldCIgcHJvdG9jb2wuCn0KCnB1YmxpY19zZXJ2ZXJbc2VydmVyXSB7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAjIGEgc2VydmVyIGV4aXN0cyBpbiB0aGUgcHVibGljX3NlcnZlciBzZXQgaWYuLi4KICAgIHNvbWUgaSwgagogICAgc2VydmVyIDo9IGlucHV0LnNlcnZlcnNbX10gICAgICAgICAgICAgICAgICAgICAgIyBpdCBleGlzdHMgaW4gdGhlIGlucHV0LnNlcnZlcnMgY29sbGVjdGlvbiBhbmQuLi4KICAgIHNlcnZlci5wb3J0c1tfXSA9PSBpbnB1dC5wb3J0c1tpXS5pZCAgICAgICAgICAgICMgaXQgcmVmZXJlbmNlcyBhIHBvcnQgaW4gdGhlIGlucHV0LnBvcnRzIGNvbGxlY3Rpb24gYW5kLi4uCiAgICBpbnB1dC5wb3J0c1tpXS5uZXR3b3JrID09IGlucHV0Lm5ldHdvcmtzW2pdLmlkICAjIHRoZSBwb3J0IHJlZmVyZW5jZXMgYSBuZXR3b3JrIGluIHRoZSBpbnB1dC5uZXR3b3JrcyBjb2xsZWN0aW9uIGFuZC4uLgogICAgaW5wdXQubmV0d29ya3Nbal0ucHVibGljICAgICAgICAgICAgICAgICAgICAgICAgIyB0aGUgbmV0d29yayBpcyBwdWJsaWMuCn0=",
+    "_class" : "net.boomerangplatform.entity.PolicyTemplateEntity"
+}

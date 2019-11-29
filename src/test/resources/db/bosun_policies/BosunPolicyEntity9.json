@@ -1,0 +1,21 @@
+{
+    "_id" : ObjectId("5dba1ce19e0f890001153730"),
+    "name" : "Glens Life",
+    "teamId" : "5db85635110fc4000140a5ab",
+    "createdDate" : ISODate("2019-10-30T23:29:37.744Z"),
+    "scope" : "team",
+    "definitions" : [ 
+        {
+            "policyTemplateId" : "5cdd8667f6ea74a9bbaf5022",
+            "rules" : [ 
+                {
+                    "severity" : "Low",
+                    "operator" : "less than or equal",
+                    "count" : "0"
+                }
+            ]
+        }
+    ],
+    "status" : "active",
+    "_class" : "net.boomerangplatform.entity.PolicyEntity"
+}

@@ -1,0 +1,22 @@
+{
+    "_id" : ObjectId("5dd32e7728215e00019d56ed"),
+    "name" : "Test Policy Using Invalid Tim Testing",
+    "teamId" : "5cf967488a6e7e0001ec9f23",
+    "createdDate" : ISODate("2019-11-18T23:51:19.064Z"),
+    "scope" : "team",
+    "definitions" : [ 
+        {
+            "policyTemplateId" : "5dcbd260a77ec5ba2fa317b3",
+            "rules" : [ 
+                {
+                    "it" : "testing"
+                }, 
+                {
+                    "it" : "here"
+                }
+            ]
+        }
+    ],
+    "status" : "active",
+    "_class" : "net.boomerangplatform.entity.PolicyEntity"
+}

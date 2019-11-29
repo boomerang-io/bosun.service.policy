@@ -1,0 +1,22 @@
+{
+    "_id" : ObjectId("5db86fb21e49b60001c33fc6"),
+    "name" : "Tyson's 2nd Policy",
+    "teamId" : "5db85635110fc4000140a5ab",
+    "createdDate" : ISODate("2019-10-29T00:00:00.000Z"),
+    "scope" : "team",
+    "status" : "active",
+    "definitions" : [ 
+        {
+            "policyTemplateId" : "5cd49777f6ea74a9bb6ac629",
+            "rules" : [ 
+                {
+                    "metric" : "issues-total",
+                    "operator" : "not equal",
+                    "" : "2"
+                }
+            ]
+        }
+    ],
+    "status" : "inactive",
+    "_class" : "net.boomerangplatform.entity.PolicyEntity"
+}

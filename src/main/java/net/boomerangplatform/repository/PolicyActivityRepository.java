@@ -11,5 +11,5 @@ public interface PolicyActivityRepository
     extends MongoRepository<PolicyActivityEntity, String>, PolicyActivityCustom {
 	
 	List<PolicyActivityEntity> findByTeamIdAndValidAndCreatedDateAfter(String teamId, Boolean valid, LocalDateTime date);
-//	List<PolicyActivityEntity> findByActivityIdAndValid(String activityId, Boolean valid);
+
 }

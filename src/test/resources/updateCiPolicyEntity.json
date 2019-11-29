@@ -1,10 +1,10 @@
 {
-    "id" : "5c5b5a0b352b1b614143b7c3",
+    "id" : "5db9a8c7b01c530001b838d1",
     "name" : "Code Low Validation",
     "teamId": "9999",
     "definitions" : [ 
         {
-            "ciPolicyDefinitionId" : "5cd328ae1e9bbbb710590d9d",
+            "policyTemplateId" : "5cd49777f6ea74a9bb6ac629",
             "rules" : [ 
                 {
                     "metric" : "lines",
