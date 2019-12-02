@@ -61,3 +61,17 @@ POST  /bosun/policies/validate
  ```
  
  ```
+
+## References
+
+### Spring Data Aggregations
+
+To get the violations we use a complex aggregation and the following links provided good reference material
+
+ - https://www.baeldung.com/spring-data-mongodb-projections-aggregations
+ - https://www.mkyong.com/mongodb/spring-data-mongodb-aggregation-grouping-example/
+ - https://gist.github.com/normoes/53c46a3ef2bbe3a1bff817573362f6ee
+ - https://docs.spring.io/spring-data/mongodb/docs/current/reference/html/#mongo.aggregation.supported-aggregation-operations
+ - https://mongodb.github.io/mongo-java-driver/3.4/builders/aggregation/#group
+ - https://stackoverflow.com/questions/44513423/mongodb-aggregate-query-to-java-code
+ - https://stackoverflow.com/questions/38202897/mongo-aggregation-in-java-group-with-multiple-fields
