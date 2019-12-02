@@ -41,7 +41,7 @@ public class BosunInternalServiceImpl implements BosunInternalService {
         TarArchiveEntry tae = new TarArchiveEntry(templateName);
 
         byte[] templateBytes = Base64.getDecoder().decode(entity.getRego());
-
+//      byte[] templateBytes = entity.getRego().getBytes("UTF-8");
         LOGGER.info(new String(templateBytes, "StandardCharsets.UTF_8"));
         tae.setSize(templateBytes.length);
         taos.putArchiveEntry(tae);
