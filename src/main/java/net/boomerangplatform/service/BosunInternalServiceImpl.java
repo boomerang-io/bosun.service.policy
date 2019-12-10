@@ -3,6 +3,7 @@ package net.boomerangplatform.service;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
@@ -42,7 +43,7 @@ public class BosunInternalServiceImpl implements BosunInternalService {
 
         byte[] templateBytes = Base64.getDecoder().decode(entity.getRego());
 //      byte[] templateBytes = entity.getRego().getBytes("UTF-8");
-        LOGGER.info(new String(templateBytes, "StandardCharsets.UTF_8"));
+        LOGGER.info(new String(templateBytes, StandardCharsets.UTF_8));
         tae.setSize(templateBytes.length);
         taos.putArchiveEntry(tae);
         // The write command allows you to write bytes to the current entry

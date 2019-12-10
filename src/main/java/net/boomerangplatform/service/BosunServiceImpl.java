@@ -281,7 +281,7 @@ public class BosunServiceImpl implements BosunService {
 
           PolicyValidationInput policyValidationInput = null;
 
-          if (!policyValidation.getInputs().isEmpty()) {
+          if (policyValidation.getInputs() != null && !policyValidation.getInputs().isEmpty()) {
             policyValidationInput = policyValidation.getInputs().stream()
                 .filter(
                     input -> policyTemplate.getPolicyTemplateId().equals(input.getTemplateId()))
