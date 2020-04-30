@@ -2,8 +2,6 @@ package net.boomerangplatform.repository.service;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -12,14 +10,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
 import net.boomerangplatform.repository.model.ArtifactSummary;
 import net.boomerangplatform.repository.model.DependencyGraph;
 import net.boomerangplatform.repository.model.SonarQubeReport;
 
 @Service
 public class RepositoryServiceImpl implements RepositoryService {
+	
+	private static final String PARAM_ARTIFACT_PATH = "{artifactPath}";
+	
+	private static final String PARAM_ARTIFACT_NAME = "{artifactName}";
+	
+	private static final String PARAM_ARTIFACT_VERSION = "{artifactVersion}";
 
-  private static final String PARAM_COMPONENT_ID = "{ciComponentId}";
+  private static final String PARAM_ID = "{id}";
 
   private static final String PARAM_VERSION = "{version}";
 
@@ -39,19 +44,20 @@ public class RepositoryServiceImpl implements RepositoryService {
   
   @Value("${repository.rest.url.sonarqubetestcoverage}")
   private String repositoryRestUrlSonarqubetestcoverage;
+  
+  @Value("${repository.rest.url.sonarqubetestcoveragedetail}")
+  private String repositoryRestUrlSonarqubetestcoveragedetail;
 
-  @Autowired
-  @Qualifier("internalRestTemplate")
-  private RestTemplate restTemplate;
+  private RestTemplate restTemplate = new RestTemplate();
 
   @Override
-  public DependencyGraph getDependencyGraph(String ciComponentId, String version) {
+  public DependencyGraph getDependencyGraph(String artifactPath, String artifactName,String artifactVersion) {
 
     final HttpHeaders headers = new HttpHeaders();
     final HttpEntity<String> request = new HttpEntity<>(headers);
 
     String url = repositoryRestUrlBase + repositoryRestUrlDependencygraph
-        .replace(PARAM_COMPONENT_ID, ciComponentId).replace(PARAM_VERSION, version);
+    		.replace(PARAM_ARTIFACT_PATH, artifactPath).replace(PARAM_ARTIFACT_NAME, artifactName).replace(PARAM_ARTIFACT_VERSION, artifactVersion);
 
     LOGGER.info("getDependencyGraph() - url: " + url);
 
@@ -59,7 +65,7 @@ public class RepositoryServiceImpl implements RepositoryService {
     try {
       final ResponseEntity<DependencyGraph> response =
           restTemplate.exchange(url, HttpMethod.GET, request, DependencyGraph.class);
-      result = response == null ? result : response.getBody();
+      result = response.getBody() == null ? result : response.getBody();
     } catch (final RestClientException e) {
       LOGGER.error(e.getMessage(), e);
     }
@@ -68,13 +74,13 @@ public class RepositoryServiceImpl implements RepositoryService {
   }
 
   @Override
-  public ArtifactSummary getArtifactSummary(String ciComponentId, String version) {
+  public ArtifactSummary getArtifactSummary(String artifactPath, String artifactName,String artifactVersion) {
 
     final HttpHeaders headers = new HttpHeaders();
     final HttpEntity<String> request = new HttpEntity<>(headers);
 
     String url = repositoryRestUrlBase + repositoryRestUrlArtifactsummary
-        .replace(PARAM_COMPONENT_ID, ciComponentId).replace(PARAM_VERSION, version);
+        .replace(PARAM_ARTIFACT_PATH, artifactPath).replace(PARAM_ARTIFACT_NAME, artifactName).replace(PARAM_ARTIFACT_VERSION, artifactVersion);
 
     LOGGER.info("getArtifactSummary() - url: " + url);
 
@@ -82,7 +88,7 @@ public class RepositoryServiceImpl implements RepositoryService {
     try {
       final ResponseEntity<ArtifactSummary> response =
           restTemplate.exchange(url, HttpMethod.GET, request, ArtifactSummary.class);
-      result = response == null ? result : response.getBody();
+      result = response.getBody() == null ? result : response.getBody();
     } catch (final RestClientException e) {
       LOGGER.error(e.getMessage(), e);
     }
@@ -91,13 +97,13 @@ public class RepositoryServiceImpl implements RepositoryService {
   }
 
   @Override
-  public SonarQubeReport getSonarQubeReport(String ciComponentId, String version) {
+  public SonarQubeReport getSonarQubeReport(String id, String version) {
 
     final HttpHeaders headers = new HttpHeaders();
     final HttpEntity<String> request = new HttpEntity<>(headers);
 
     String url = repositoryRestUrlBase + repositoryRestUrlSonarqubereport
-        .replace(PARAM_COMPONENT_ID, ciComponentId).replace(PARAM_VERSION, version);
+        .replace(PARAM_ID, id).replace(PARAM_VERSION, version);
 
     LOGGER.info("getSonarQubeReport() - url: " + url);
 
@@ -114,13 +120,13 @@ public class RepositoryServiceImpl implements RepositoryService {
   }
   
   @Override
-  public SonarQubeReport getSonarQubeTestCoverage(String ciComponentId, String version) {
+  public SonarQubeReport getSonarQubeTestCoverage(String id, String version) {
 
     final HttpHeaders headers = new HttpHeaders();
     final HttpEntity<String> request = new HttpEntity<>(headers);
 
     String url = repositoryRestUrlBase + repositoryRestUrlSonarqubetestcoverage
-        .replace(PARAM_COMPONENT_ID, ciComponentId).replace(PARAM_VERSION, version);
+        .replace(PARAM_ID, id).replace(PARAM_VERSION, version);
 
     LOGGER.info("getSonarQubeTestCoverage() - url: " + url);
 

@@ -10,20 +10,20 @@
 	</parent>
 	
 	<groupId>net.boomerangplatform</groupId>
-	<artifactId>service-citadel</artifactId>
+	<artifactId>service-bosun</artifactId>
 	<version>${version.name}</version>
 	<packaging>jar</packaging>
 
-	<name>service-citadel</name>
-	<description>Service for Citadel</description>
+	<name>service-bosun</name>
+	<description>Boomerang Bosun Service</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>11</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
-		<http.proxyHost></http.proxyHost><!-- set from env: proxy.boomerangplatform.net -->
-		<http.proxyPort></http.proxyPort><!-- set from env: 1080 -->
+		<http.proxyHost></http.proxyHost>
+		<http.proxyPort></http.proxyPort>
 		<jacoco.out.path>${project.build.directory}</jacoco.out.path>
 		<sonar.jacoco.reportPaths>${jacoco.out.path}/jacoco.exec</sonar.jacoco.reportPaths>
 		<jacoco.version>0.8.2</jacoco.version>
@@ -62,7 +62,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
-		
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
@@ -82,41 +81,41 @@
 		
 		<dependency>
 			<groupId>net.boomerangplatform</groupId>
-			<artifactId>lib-mongo-cicd</artifactId>
-			<version>0.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>net.boomerangplatform</groupId>
 			<artifactId>lib-mongo</artifactId>
 			<version>4.0.26</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>net.boomerangplatform</groupId>
-			<artifactId>lib-rest</artifactId>
-			<version>1.0.0</version>
+			<artifactId>lib-mongo-cicd</artifactId>
+			<version>0.0.9</version>
 		</dependency>
 		<dependency>
             <groupId>net.boomerangplatform</groupId>
             <artifactId>lib-security</artifactId>
             <version>1.2.13</version>
-        </dependency>
-        <dependency>
-            <groupId>net.boomerangplatform</groupId>
-            <artifactId>lib-opentracing</artifactId>
-            <version>1.0.3</version>
-        </dependency>
-		
+        </dependency>		
 		<dependency>
 			<groupId>net.boomerangplatform</groupId>
 			<artifactId>lib-testing</artifactId>
-			<version>1.0.2</version>
+			<version>1.0.4</version>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+		  <groupId>org.apache.commons</groupId>
+		  <artifactId>commons-compress</artifactId>
+		  <version>1.19</version>
+		</dependency>
+		<dependency>
+		  <groupId>commons-io</groupId>
+		  <artifactId>commons-io</artifactId>
+		  <version>2.6</version>
 		</dependency>
 	</dependencies>
 	

@@ -1,0 +1,55 @@
+{
+    "_id" : ObjectId("5ce312a72b9465b3a44aaa57"),
+    "key" : "unit_tests",
+    "name" : "Unit Tests",
+    "description" : "The following metrics are validated from SonarQube data collected in your CI pipeline when running Unit Tests during the Test activity.",
+    "order" : "1",
+    "config" : [ 
+        {
+            "key" : "metric",
+            "label" : "Metric",
+            "type" : "select",
+            "defaultValue" : "",
+            "required" : false,
+            "description" : "",
+            "options" : [ 
+                "tests", 
+                "test_errors", 
+                "test_failures", 
+                "skipped_tests", 
+                "test_success_percentage", 
+                "test_execution_time", 
+                "coverage", 
+                "lines_to_cover", 
+                "uncovered_lines", 
+                "line_coverage"
+            ]
+        }, 
+        {
+            "key" : "operator",
+            "label" : "Operator",
+            "type" : "select",
+            "defaultValue" : "",
+            "required" : false,
+            "description" : "",
+            "options" : [ 
+                "equal", 
+                "not equal", 
+                "less than", 
+                "less than or equal", 
+                "greater than", 
+                "greater than or equal"
+            ]
+        }, 
+        {
+            "key" : "value",
+            "label" : "Value",
+            "type" : "text",
+            "defaultValue" : "",
+            "required" : false,
+            "description" : "",
+            "options" : null
+        }
+    ],
+    "rego" : "cGFja2FnZSB1bml0X3Rlc3RzCgpkZWZhdWx0IHZhbGlkID0gZmFsc2UKCnZhbGlkID0gdHJ1ZSB7CiAgICBjb3VudChydWxlcykgPj0gMAogICAgY291bnQodmlvbGF0aW9ucykgPT0gMAp9CgpydWxlc1t7CiAgICAibWV0cmljIjogbWV0cmljLAogICAgInZhbHVlIjogdmFsdWUsCiAgICAib3BlcmF0b3IiOiBvcGVyYXRvciwgCiAgICAibWVhc3VyZSI6IG1lYXN1cmUKfV0gewogICAgbWV0cmljIDo9IGlucHV0LnBvbGljeS5ydWxlc1tpXS5tZXRyaWMKICAgIHJ1bGUgOj0gaW5wdXQucG9saWN5LnJ1bGVzW2ldCiAgICBtZWFzdXJlIDo9IHJ1bGUudmFsdWUKICAgIG9wZXJhdG9yIDo9IHJ1bGUub3BlcmF0b3IKICAgIHZhbHVlIDo9IGlucHV0LmRhdGEubWVhc3VyZXNbbWV0cmljXQp9Cgp2aW9sYXRpb25zW3sKICAgICJtZXRyaWMiOiBtZXRyaWMsCiAgICAibWVzc2FnZSI6IG1lc3NhZ2UsCiAgICAidmFsaWQiOiBmYWxzZQp9XSB7CiAgICBtZXRyaWMgOj0gcnVsZXNbaV0ubWV0cmljCiAgICBub3QgdmFsaWRfdmFsdWUocnVsZXNbaV0udmFsdWUsIHJ1bGVzW2ldLm1lYXN1cmUsIHJ1bGVzW2ldLm9wZXJhdG9yKQogICAgbWVzc2FnZSA6PSBzcHJpbnRmKCIldiAlcyAldiB3YXMgbm90IHNhdGlzZmllZCIsIFtydWxlc1tpXS52YWx1ZSwgcnVsZXNbaV0ub3BlcmF0b3IsIHJ1bGVzW2ldLm1lYXN1cmVdKQp9Cgp2YWxpZF92YWx1ZSh2YWx1ZSwgbWVhc3VyZSwgb3BlcmF0b3IpIHsKICAgIG9wZXJhdG9yID09ICJlcXVhbCIKICAgIHRvX251bWJlcih2YWx1ZSkgPSB0b19udW1iZXIobWVhc3VyZSkKfSBlbHNlIHsKICAgIG9wZXJhdG9yID09ICJub3QgZXF1YWwiCiAgICB0b19udW1iZXIodmFsdWUpICE9IHRvX251bWJlcihtZWFzdXJlKQp9IGVsc2UgewogICAgb3BlcmF0b3IgPT0gImxlc3MgdGhhbiIKICAgIHRvX251bWJlcih2YWx1ZSkgPCB0b19udW1iZXIobWVhc3VyZSkKfSBlbHNlIHsKICAgIG9wZXJhdG9yID09ICJsZXNzIHRoYW4gb3IgZXF1YWwiCiAgICB0b19udW1iZXIodmFsdWUpIDw9IHRvX251bWJlcihtZWFzdXJlKQp9ICBlbHNlIHsKICAgIG9wZXJhdG9yID09ICJncmVhdGVyIHRoYW4iCiAgICB0b19udW1iZXIodmFsdWUpID4gdG9fbnVtYmVyKG1lYXN1cmUpCn0gZWxzZSB7CiAgICBvcGVyYXRvciA9PSAiZ3JlYXRlciB0aGFuIG9yIGVxdWFsIgogICAgdG9fbnVtYmVyKHZhbHVlKSA+PSB0b19udW1iZXIobWVhc3VyZSkKfQ=="
+}

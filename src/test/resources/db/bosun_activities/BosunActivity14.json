@@ -1,0 +1,18 @@
+{
+    "_id" : ObjectId("5dd20dbbc277a312e4a6de49"),
+    "teamId" : "5db85635110fc4000140a5ab",
+    "referenceId" : "boomerangServiceFlow",
+    "referenceLink" : "https://launch.boomerangplatform.net/apps/ci/teams/gbs-engineering/boomerang.service.flow",
+    "policyId" : "5db9a8c7b01c530001b838d1",
+    "labels" : {},
+    "createdDate" : ISODate("2019-11-18T03:19:23.252Z"),
+    "results" : [ 
+        {
+            "policyTemplateId" : "5cd49777f6ea74a9bb6ac629",
+            "valid" : true,
+            "violations" : []
+        }
+    ],
+    "valid" : true,
+    "_class" : "net.boomerangplatform.entity.PolicyActivityEntity"
+}

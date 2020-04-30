@@ -1,40 +1,37 @@
 package net.boomerangplatform.model;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
-public class Result implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
+public class Result {
 
-	private String ciPolicyDefinitionId;
-	private boolean valid;
+	private String policyTemplateId;
+	private Boolean valid;
 	private List<ResultViolation> violations;
 
 	public Result() {
-		// Do nothing
+    	//do nothing
 	}
 
-	public String getCiPolicyDefinitionId() {
-		return ciPolicyDefinitionId;
+  public String getPolicyTemplateId() {
+		return policyTemplateId;
 	}
 
-	public void setCiPolicyDefinitionId(String ciPolicyDefinitionId) {
-		this.ciPolicyDefinitionId = ciPolicyDefinitionId;
+	public void setPolicyTemplateId(String policyTemplateId) {
+		this.policyTemplateId = policyTemplateId;
 	}
 
-	public boolean isValid() {
+	public Boolean getValid() {
 		return valid;
 	}
 
-	public void setValid(boolean valid) {
+	public void setValid(Boolean valid) {
 		this.valid = valid;
 	}
 
 	public List<ResultViolation> getViolations() {
 		if (violations == null) {
-			violations = new ArrayList<ResultViolation>();
+			violations = new ArrayList<>();
 		}
 		return violations;
 	}

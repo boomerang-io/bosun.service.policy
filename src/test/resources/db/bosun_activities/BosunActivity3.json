@@ -1,0 +1,29 @@
+{
+    "_id" : ObjectId("5db9ce6c808815d7e4828a4d"),
+    "teamId" : "5db85635110fc4000140a5ab",
+    "referenceId" : "glenda1234",
+    "policyId" : "5db9a8c7b01c530001b838d1",
+    "labels" : {
+        "sonarqube-id" : "5bc69daa1516b200011020ee",
+        "sonarqube-version" : "2.1.13-195",
+        "artifact-path" : "ise",
+        "artifact-name" : "boomerang.service.flow",
+        "artifact-version" : "2.1.13-195"
+    },
+    "createdDate" : ISODate("2019-10-30T06:00:00.000Z"),
+    "results" : [ 
+        {
+            "policyTemplateId" : "5cd49777f6ea74a9bb6ac629",
+            "valid" : false,
+            "violations" : [ 
+                {
+                    "metric" : "issues-major",
+                    "message" : "2 less than or equal 0 was not satisfied",
+                    "valid" : false
+                }
+            ]
+        }
+    ],
+    "valid" : false,
+    "_class" : "net.boomerangplatform.entity.PolicyActivityEntity"
+}

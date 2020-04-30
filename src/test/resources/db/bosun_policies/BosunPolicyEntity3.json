@@ -1,0 +1,31 @@
+{
+    "_id" : ObjectId("5db86c35110fc4000140a5ae"),
+    "name" : "Tysons Policy",
+    "teamId" : "5db85635110fc4000140a5ab",
+    "createdDate" : ISODate("2019-10-29T00:00:00.000Z"),
+    "scope" : "team",
+    "definitions" : [ 
+        {
+            "policyTemplateId" : "5cd49777f6ea74a9bb6ac629",
+            "rules" : [ 
+                {
+                    "metric" : "issues-total",
+                    "operator" : "not equal",
+                    "value" : "asdfasdf"
+                }
+            ]
+        }, 
+        {
+            "policyTemplateId" : "5ce312a72b9465b3a44aaa57",
+            "rules" : [ 
+                {
+                    "metric" : "tests",
+                    "operator" : "less than or equal",
+                    "value" : "1"
+                }
+            ]
+        }
+    ],
+    "status" : "inactive",
+    "_class" : "net.boomerangplatform.entity.PolicyEntity"
+}
