@@ -90,7 +90,6 @@
 			<artifactId>lib-mongo-cicd</artifactId>
 			<version>0.0.9</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>net.boomerangplatform</groupId>
 			<artifactId>lib-testing</artifactId>
