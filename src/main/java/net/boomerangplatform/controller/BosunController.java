@@ -23,7 +23,7 @@ import net.boomerangplatform.model.PolicyViolations;
 import net.boomerangplatform.service.BosunService;
 
 @RestController
-@RequestMapping("/bosun")
+@RequestMapping("/policy")
 public class BosunController {
 
   @Autowired

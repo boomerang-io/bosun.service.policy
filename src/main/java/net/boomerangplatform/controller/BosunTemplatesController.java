@@ -16,7 +16,7 @@ import net.boomerangplatform.model.PolicyTemplate;
 import net.boomerangplatform.service.BosunService;
 
 @RestController
-@RequestMapping("/bosun/templates")
+@RequestMapping("/policy/templates")
 public class BosunTemplatesController {
 
   @Autowired private BosunService bosunService;

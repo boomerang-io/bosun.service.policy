@@ -14,7 +14,7 @@ import net.boomerangplatform.model.PolicyValidation;
 import net.boomerangplatform.service.BosunService;
 
 @RestController
-@RequestMapping("/bosun/validate")
+@RequestMapping("/policy/validate")
 public class BosunValidationController {
 
   @Autowired

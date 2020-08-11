@@ -13,7 +13,7 @@ import net.boomerangplatform.model.PolicyTeam;
 import net.boomerangplatform.service.PolicyTeamService;
 
 @RestController
-@RequestMapping("/bosun/teams")
+@RequestMapping("/policy/teams")
 public class BosunTeamController {
 
   @Autowired
