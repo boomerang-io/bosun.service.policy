@@ -29,7 +29,7 @@ public class PolicyActivityCustomImpl implements PolicyActivityCustom {
       String policyId) {
 
     List<AggregationOperation> list = new ArrayList<>();
-    list.add(Aggregation.sort(Sort.by(Sort.Direction.DESC, "createdDate"));
+    list.add(Aggregation.sort(Sort.by(Sort.Direction.DESC, "createdDate")));
     list.add(Aggregation.match(new Criteria("policyId").is(policyId)));
     list.add(Aggregation.group("$referenceId").push("$$ROOT").as("documents"));
     list.add(Aggregation.replaceRoot(ArrayOperators.ArrayElemAt.arrayOf("documents").elementAt(0)));
