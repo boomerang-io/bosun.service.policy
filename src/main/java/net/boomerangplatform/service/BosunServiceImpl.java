@@ -91,7 +91,7 @@ public class BosunServiceImpl implements BosunService {
   @Override
   public List<PolicyTemplate> getAllTemplates() {
     List<PolicyTemplateEntity> entities =
-        policyTemplateRepository.findAll(new Sort(Sort.Direction.ASC, "order"));
+        policyTemplateRepository.findAll(Sort.by(Sort.Direction.ASC, "order"));
     List<PolicyTemplate> descriptions = new ArrayList<>();
 
     entities.forEach(entity -> {
