@@ -3,7 +3,7 @@ package net.boomerangplatform.service;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

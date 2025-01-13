@@ -1,11 +1,10 @@
 package net.boomerangplatform.rest;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.servlet.HandlerInterceptor;
 
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-
-public class AuthInterceptor extends HandlerInterceptorAdapter {
+public class AuthInterceptor implements HandlerInterceptor {
 
 	private ThreadLocal<String> threadLocal;
 
