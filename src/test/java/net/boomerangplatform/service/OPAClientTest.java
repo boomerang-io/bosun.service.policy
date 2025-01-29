@@ -1,120 +1,120 @@
-// package net.boomerangplatform.service;
+package net.boomerangplatform.service;
 
-// import static org.hamcrest.CoreMatchers.containsString;
-// import static org.junit.jupiter.api.Assertions.assertNotNull;
-// import static org.junit.jupiter.api.Assertions.assertThrows;
-// import static org.junit.jupiter.api.Assertions.assertTrue;
-// import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-// import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-// import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
-// import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
-// import java.io.File;
-// import java.io.IOException;
-// import java.nio.file.Files;
-// import java.nio.file.Path;
-// import org.junit.jupiter.api.BeforeEach;
-// import org.junit.jupiter.api.Test;
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.boot.test.context.SpringBootTest;
-// import org.springframework.http.HttpMethod;
-// import org.springframework.http.MediaType;
-// import org.springframework.test.context.ActiveProfiles;
-// import org.springframework.test.context.ContextConfiguration;
-// import org.springframework.test.web.client.MockRestServiceServer;
-// import org.springframework.web.client.RestTemplate;
-// import com.fasterxml.jackson.core.JsonProcessingException;
-// import com.fasterxml.jackson.databind.ObjectMapper;
-// import net.boomerangplatform.Application;
-// import net.boomerangplatform.opa.exception.OPAClientException;
-// import net.boomerangplatform.opa.model.DataRequest;
-// import net.boomerangplatform.opa.model.DataResponse;
-// import net.boomerangplatform.opa.model.DataResponseResult;
-// import net.boomerangplatform.opa.service.OpenPolicyAgentClient;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.web.client.RestTemplate;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import net.boomerangplatform.Application;
+import net.boomerangplatform.opa.exception.OPAClientException;
+import net.boomerangplatform.opa.model.DataRequest;
+import net.boomerangplatform.opa.model.DataResponse;
+import net.boomerangplatform.opa.model.DataResponseResult;
+import net.boomerangplatform.opa.service.OpenPolicyAgentClient;
 
-// @ContextConfiguration(classes = {Application.class})
-// @SpringBootTest
-// @ActiveProfiles("test")
-// public class OPAClientTest {
+@ContextConfiguration(classes = {Application.class})
+@SpringBootTest
+@ActiveProfiles("test")
+public class OPAClientTest {
 
-//   @Autowired
-//   private OpenPolicyAgentClient opaClient;
+  @Autowired
+  private OpenPolicyAgentClient opaClient;
 
-//   @Autowired
-//   protected RestTemplate restTemplate;
+  @Autowired
+  protected RestTemplate restTemplate;
 
-//   protected MockRestServiceServer server;
+  protected MockRestServiceServer server;
 
-//   private static final String opaURL = "http://localhost:8181/v1/data/";
+  private static final String opaURL = "http://localhost:8181/v1/data/";
 
-//   @BeforeEach
-//   public void setUp() {
-//     this.server = MockRestServiceServer.createServer(restTemplate);
-//   }
+  @BeforeEach
+  public void setUp() {
+    this.server = MockRestServiceServer.createServer(restTemplate);
+  }
 
-//   @Test
-//   public void testValidateData() throws IOException {
-//     DataRequest dataRequest = new ObjectMapper()
-//         .readValue(getMockFile("dataRequestWhitelistTrue.json"), DataRequest.class);
+  @Test
+  public void testValidateData() throws IOException {
+    DataRequest dataRequest = new ObjectMapper()
+        .readValue(getMockFile("dataRequestWhitelistTrue.json"), DataRequest.class);
 
-//     String key = dataRequest.getInput().getPolicy().getKey();
-//     String url = opaURL + key;
+    String key = dataRequest.getInput().getPolicy().getKey();
+    String url = opaURL + key;
 
-//     this.server.expect(requestTo(containsString(url))).andExpect(method(HttpMethod.POST))
-//         .andRespond(withSuccess(parseToJson(getDataResponse()), MediaType.APPLICATION_JSON));
+    this.server.expect(requestTo(containsString(url))).andExpect(method(HttpMethod.POST))
+        .andRespond(withSuccess(parseToJson(getDataResponse()), MediaType.APPLICATION_JSON));
 
-//     DataResponse dataResponse = opaClient.validateData(dataRequest);
+    DataResponse dataResponse = opaClient.validateData(dataRequest);
 
-//     assertNotNull(dataResponse);
-//     assertTrue(dataResponse.getResult().getValid());
+    assertNotNull(dataResponse);
+    assertTrue(dataResponse.getResult().getValid());
 
-//     this.server.verify();
-//   }
+    this.server.verify();
+  }
 
-//   @Test
-//   public void testValidateDataWithNullResponse() {
-//     assertThrows(OPAClientException.class, () -> {
-//       DataRequest dataRequest = new ObjectMapper()
-//           .readValue(getMockFile("dataRequestWhitelistFalse.json"), DataRequest.class);
+  @Test
+  public void testValidateDataWithNullResponse() {
+    assertThrows(OPAClientException.class, () -> {
+      DataRequest dataRequest = new ObjectMapper()
+          .readValue(getMockFile("dataRequestWhitelistFalse.json"), DataRequest.class);
 
-//       String key = dataRequest.getInput().getPolicy().getKey();
-//       String url = opaURL + key;
+      String key = dataRequest.getInput().getPolicy().getKey();
+      String url = opaURL + key;
 
-//       this.server.expect(requestTo(url)).andRespond(withBadRequest());
+      this.server.expect(requestTo(url)).andRespond(withBadRequest());
 
-//       opaClient.validateData(dataRequest);
+      opaClient.validateData(dataRequest);
 
-//       this.server.verify();
-//     });
-//   }
+      this.server.verify();
+    });
+  }
 
-//   private DataResponse getDataResponse() {
-//     DataResponse dataResponse = new DataResponse();
-//     DataResponseResult result = new DataResponseResult();
+  private DataResponse getDataResponse() {
+    DataResponse dataResponse = new DataResponse();
+    DataResponseResult result = new DataResponseResult();
 
-//     result.setValid(true);
-//     result.setViolations(null);
+    result.setValid(true);
+    result.setViolations(null);
 
-//     dataResponse.setResult(result);
+    dataResponse.setResult(result);
 
-//     return dataResponse;
-//   }
+    return dataResponse;
+  }
 
-//   protected String getMockFile(String path) {
+  protected String getMockFile(String path) {
 
-//     ClassLoader classLoader = getClass().getClassLoader();
-//     File file = new File(classLoader.getResource(path).getFile());
+    ClassLoader classLoader = getClass().getClassLoader();
+    File file = new File(classLoader.getResource(path).getFile());
 
-//     String content = "";
-//     try {
-//       content = new String(Files.readAllBytes(Path.of(file.getPath())));
-//     } catch (IOException e) {
-//       e.printStackTrace();
-//     }
-//     return content;
-//   }
+    String content = "";
+    try {
+      content = new String(Files.readAllBytes(Path.of(file.getPath())));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return content;
+  }
 
-//   protected String parseToJson(final Object template) throws JsonProcessingException {
-//     final ObjectMapper mapper = new ObjectMapper();
-//     return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(template);
-//   }
-// }
+  protected String parseToJson(final Object template) throws JsonProcessingException {
+    final ObjectMapper mapper = new ObjectMapper();
+    return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(template);
+  }
+}
