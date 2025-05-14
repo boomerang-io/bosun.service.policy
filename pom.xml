@@ -86,6 +86,7 @@
 				</exclusion>
 			</exclusions> -->
 		</dependency>
+		<!--
 		<dependency>
 			<groupId>net.boomerangplatform</groupId>
 			<artifactId>lib-security</artifactId>
@@ -97,7 +98,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
+		-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
