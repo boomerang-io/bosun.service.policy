@@ -31,8 +31,18 @@ public class SecurityConfig {
 //		return http.build();
 //	}
 
-	@Bean
-	public SecurityFilterChain setupNone(HttpSecurity http) throws Exception {
-		return http.csrf(csrf -> csrf.disable()).anonymous(a -> a.authorities()).build();
-	}
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable()) // Disable CSRF for stateless APIs
+            .authorizeHttpRequests(auth -> auth
+                .anyRequest().permitAll() // Allow all requests
+            )
+            .formLogin(form -> form.disable()) // Disable form login
+            .httpBasic(basic -> basic.disable()) // Disable basic authentication
+            .anonymous(withDefaults -> {}); // Enable anonymous access
+
+        return http.build();
+    }
+
 }
