@@ -76,6 +76,11 @@
 		    <artifactId>json</artifactId>
 		    <version>20250107</version>
 		</dependency>
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>6.2.0.Final</version>
+		</dependency>
 		<!--
 		<dependency>
 			<groupId>net.boomerangplatform</groupId>
