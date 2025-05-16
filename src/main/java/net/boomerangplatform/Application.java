@@ -8,7 +8,7 @@ import org.springframework.web.client.RestTemplate;
 import io.swagger.v3.oas.models.OpenAPI;
 
 @SpringBootApplication
-@ComponentScan("net.boomerangplatform.repository")
+@ComponentScan({"net.boomerangplatform.repository", "net.boomerangplatform.config"})
 public class Application {
 
   public static void main(String[] args) {

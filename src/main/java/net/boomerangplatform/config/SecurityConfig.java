@@ -9,16 +9,19 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
+import jakarta.annotation.PostConstruct;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, proxyTargetClass = true)
 public class SecurityConfig {
 
-	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-			throws Exception {
-		return authenticationConfiguration.getAuthenticationManager();
-	}
+
+	// @Bean
+	// public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+	// 		throws Exception {
+	// 	return authenticationConfiguration.getAuthenticationManager();
+	// }
 	
 //	@Bean
 //	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
