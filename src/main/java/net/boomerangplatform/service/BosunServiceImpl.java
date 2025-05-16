@@ -16,7 +16,6 @@ import org.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -81,14 +80,14 @@ public class BosunServiceImpl implements BosunService {
   @Autowired
   private OpenPolicyAgentClient openPolicyAgentClient;
 
-  private Clock clock;
+  private Clock clock = Clock.systemDefaultZone();
 
   private static final Logger LOGGER = LogManager.getLogger();
 
-  @Bean
-  public Clock clock() {
-    return Clock.systemDefaultZone();
-  }
+//  @Bean
+//  public Clock clock() {
+//    return Clock.systemDefaultZone();
+//  }
 
   @Override
   public List<PolicyTemplate> getAllTemplates() {
