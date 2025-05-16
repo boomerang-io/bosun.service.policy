@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
@@ -19,14 +20,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import net.boomerangplatform.entity.PolicyActivityEntity;
 import net.boomerangplatform.entity.PolicyEntity;
 import net.boomerangplatform.entity.PolicyTemplateEntity;
 import net.boomerangplatform.exception.BosunError;
 import net.boomerangplatform.exception.BosunException;
+import net.boomerangplatform.model.OperatorType;
 import net.boomerangplatform.model.Policy;
 import net.boomerangplatform.model.PolicyActivitiesInsights;
 import net.boomerangplatform.model.PolicyDefinition;
@@ -42,7 +46,6 @@ import net.boomerangplatform.model.Result;
 import net.boomerangplatform.model.ResultViolation;
 import net.boomerangplatform.model.Scope;
 import net.boomerangplatform.model.Status;
-import net.boomerangplatform.mongo.model.OperatorType;
 import net.boomerangplatform.opa.model.DataRequest;
 import net.boomerangplatform.opa.model.DataRequestInput;
 import net.boomerangplatform.opa.model.DataRequestPolicy;
@@ -78,7 +81,6 @@ public class BosunServiceImpl implements BosunService {
   @Autowired
   private OpenPolicyAgentClient openPolicyAgentClient;
 
-  @Autowired
   private Clock clock;
 
   private static final Logger LOGGER = LogManager.getLogger();
