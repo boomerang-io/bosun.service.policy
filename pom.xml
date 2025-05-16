@@ -81,43 +81,12 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>6.2.0.Final</version>
 		</dependency>
-		<!--
-		<dependency>
-			<groupId>net.boomerangplatform</groupId>
-			<artifactId>lib-mongo</artifactId>
-			<version>5.0.0</version>
-		</dependency>
-		-->
-		<!-- <dependency>
-			<groupId>net.boomerangplatform</groupId>
-			<artifactId>lib-mongo-cicd</artifactId>
-			<version>4.0.9</version>
-		</dependency> -->
 		<dependency>
 			<groupId>net.boomerangplatform</groupId>
 			<artifactId>lib-testing</artifactId>
 			<version>3.0.9</version>
 			<scope>test</scope>
-			<!-- <exclusions>
-				<exclusion>
-					<groupId>junit</groupId>
-					<artifactId>junit</artifactId>
-				</exclusion>
-			</exclusions> -->
 		</dependency>
-		<!--
-		<dependency>
-			<groupId>net.boomerangplatform</groupId>
-			<artifactId>lib-security</artifactId>
-			<version>3.0.9</version>
-			<exclusions>
-				<exclusion>
-					<groupId>net.boomerangplatform</groupId>
-					<artifactId>lib-mongo-core</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>

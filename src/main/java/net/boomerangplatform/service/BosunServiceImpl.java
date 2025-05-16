@@ -84,11 +84,6 @@ public class BosunServiceImpl implements BosunService {
 
   private static final Logger LOGGER = LogManager.getLogger();
 
-//  @Bean
-//  public Clock clock() {
-//    return Clock.systemDefaultZone();
-//  }
-
   @Override
   public List<PolicyTemplate> getAllTemplates() {
     List<PolicyTemplateEntity> entities =
