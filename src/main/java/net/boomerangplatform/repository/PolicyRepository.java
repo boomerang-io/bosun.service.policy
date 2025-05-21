@@ -3,10 +3,12 @@ package net.boomerangplatform.repository;
 import java.util.List;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
 import net.boomerangplatform.entity.PolicyEntity;
 import net.boomerangplatform.model.Scope;
 
+@Repository
 public interface PolicyRepository extends MongoRepository<PolicyEntity, String> {
 
   List<PolicyEntity> findByTeamId(String teamId);

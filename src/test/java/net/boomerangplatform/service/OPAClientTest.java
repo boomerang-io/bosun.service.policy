@@ -1,8 +1,9 @@
 package net.boomerangplatform.service;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
@@ -10,17 +11,15 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import java.nio.file.Path;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -32,7 +31,6 @@ import net.boomerangplatform.opa.model.DataResponse;
 import net.boomerangplatform.opa.model.DataResponseResult;
 import net.boomerangplatform.opa.service.OpenPolicyAgentClient;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {Application.class})
 @SpringBootTest
 @ActiveProfiles("test")
@@ -48,7 +46,7 @@ public class OPAClientTest {
 
   private static final String opaURL = "http://localhost:8181/v1/data/";
 
-  @Before
+  @BeforeEach
   public void setUp() {
     this.server = MockRestServiceServer.createServer(restTemplate);
   }
@@ -72,19 +70,21 @@ public class OPAClientTest {
     this.server.verify();
   }
 
-  @Test(expected = OPAClientException.class)
-  public void testValidateDataWithNullResponse() throws IOException {
-    DataRequest dataRequest = new ObjectMapper()
-        .readValue(getMockFile("dataRequestWhitelistFalse.json"), DataRequest.class);
+  @Test
+  public void testValidateDataWithNullResponse() {
+    assertThrows(OPAClientException.class, () -> {
+      DataRequest dataRequest = new ObjectMapper()
+          .readValue(getMockFile("dataRequestWhitelistFalse.json"), DataRequest.class);
 
-    String key = dataRequest.getInput().getPolicy().getKey();
-    String url = opaURL + key;
+      String key = dataRequest.getInput().getPolicy().getKey();
+      String url = opaURL + key;
 
-    this.server.expect(requestTo(url)).andRespond(withBadRequest());
+      this.server.expect(requestTo(url)).andRespond(withBadRequest());
 
-    opaClient.validateData(dataRequest);
+      opaClient.validateData(dataRequest);
 
-    this.server.verify();
+      this.server.verify();
+    });
   }
 
   private DataResponse getDataResponse() {
@@ -106,7 +106,7 @@ public class OPAClientTest {
 
     String content = "";
     try {
-      content = new String(Files.readAllBytes(Paths.get(file.getPath())));
+      content = new String(Files.readAllBytes(Path.of(file.getPath())));
     } catch (IOException e) {
       e.printStackTrace();
     }
