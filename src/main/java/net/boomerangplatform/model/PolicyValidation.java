@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonIgnoreProperties
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PolicyValidation {
 
   private String policyId;
