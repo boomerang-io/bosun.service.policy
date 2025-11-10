@@ -1,12 +1,16 @@
 package net.boomerangplatform.model;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 
 @JsonIgnoreProperties
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PolicyValidationInput {
+public class PolicyValidationInput implements Serializable {
+
+  private static final long serialVersionUID = 1L;
 
   private String templateId;
   private JsonNode data;
