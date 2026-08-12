@@ -8,12 +8,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import net.boomerangplatform.Application;
-import net.boomerangplatform.MongoConfig;
 import net.boomerangplatform.model.PolicyTeam;
 
 @ActiveProfiles(profiles = "test")
 @SpringBootTest
-@ContextConfiguration(classes = {Application.class, MongoConfig.class})
+@ContextConfiguration(classes = {Application.class})
 public class TeamServiceTest extends BosunTests {
 
   @Autowired
