@@ -74,6 +74,21 @@
             	<artifactId>tomcat-embed-core</artifactId>
             	<version>11.0.25</version>
         	</dependency>
+			<dependency>
+    			<groupId>org.apache.tomcat.embed</groupId>
+    			<artifactId>tomcat-embed-websocket</artifactId>
+    			<version>11.0.25</version>
+			</dependency>
+			<dependency>
+    			<groupId>org.mongodb</groupId>
+    			<artifactId>mongodb-driver-core</artifactId>
+    			<version>5.9.2</version>
+			</dependency>
+			<dependency>
+    			<groupId>org.mongodb</groupId>
+    			<artifactId>mongodb-driver-sync</artifactId>
+    			<version>5.11.1</version>
+			</dependency>
 			<!-- Fix for CVE-2025-68161 -->
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
