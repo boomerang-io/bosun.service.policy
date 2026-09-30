@@ -1,12 +1,18 @@
 package net.boomerangplatform.model;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonIgnoreProperties
-public class PolicyValidation {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class PolicyValidation implements Serializable {
+
+  private static final long serialVersionUID = 1L;
 
   private String policyId;
   private String referenceId;
@@ -40,6 +46,9 @@ public class PolicyValidation {
   }
 
   public Map<String, String> getLabels() {
+  	if (labels == null) {
+  		return new HashMap<String, String>();
+  	}
     return labels;
   }
 
@@ -48,6 +57,9 @@ public class PolicyValidation {
   }
 
   public Map<String, String> getAnnotations() {
+  	if (annotations == null) {
+  		return new HashMap<String, String>();
+  	}
     return annotations;
   }
 

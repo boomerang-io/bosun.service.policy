@@ -237,11 +237,18 @@ public class BosunServiceImpl implements BosunService {
   public PolicyActivityEntity validatePolicy(PolicyValidation policyValidation) {
 
     PolicyEntity policyEntity =
-        policyRepository.findById(policyValidation.getPolicyId()).orElse(null);
-
-    if (policyEntity != null && policyEntity.getStatus().equals(Status.inactive)) {
+        policyRepository.findById(policyValidation.getPolicyId()).orElse(null);   
+   
+    if (policyEntity == null) {
+	    throw new BosunException(
+	        BosunError.POLICY_NOT_FOUND.getMessage(policyValidation.getPolicyId()));
+    }
+    
+    System.err.print("policyEntity: " + policyEntity.getId() + ", :" + policyEntity.getStatus().toString());
+    
+    if (policyEntity.getStatus().equals(Status.inactive)) {
       throw new BosunException(BosunError.POLICY_DELETED.getMessage(policyEntity.getId()));
-    } else if (policyEntity != null) {
+    } else {
       final PolicyActivityEntity policiesActivities = new PolicyActivityEntity();
       policiesActivities.setTeamId(policyEntity.getTeamId());
       policiesActivities.setPolicyId(policyEntity.getId());
@@ -260,9 +267,6 @@ public class BosunServiceImpl implements BosunService {
 
       policiesActivities.setResults(results);
       return policyActivityRepository.save(policiesActivities);
-    } else {
-      throw new BosunException(
-          BosunError.POLICY_NOT_FOUND.getMessage(policyValidation.getPolicyId()));
     }
   }
 
